@@ -1,23 +1,12 @@
-class Book {
-  constructor(id, price, image, name, author, description) {
-    this.id = id;
-    this.price = price;
-    this.image = image;
-    this.name = name;
-    this.author = author;
-    this.description = description;
-  }
+import { Schema, model } from 'mongoose';
 
-  toString() {
-    return `Book {
-      id: ${this.id},
-      price: ${this.price},
-      image: '${this.image}',
-      name: '${this.name}',
-      author: '${this.author}',
-      description: '${this.description}'
-    }`;
-  }
-}
+const BookSchema = new Schema({
+  _id: { type: Schema.Types.ObjectId, required: true },
+  price: { type: Number, required: true },
+  image: { type: String, required: true },
+  name: { type: String, required: true },
+  author: { type: String, required: true },
+  description: { type: String },
+}, { collection: 'book' }); 
 
-export default Book;
+export default model('Book', BookSchema);
