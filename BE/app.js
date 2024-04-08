@@ -32,19 +32,6 @@ app.use((req, res, next) => {
   next();
 });
 
-      // Tạo một người dùng mới
-      const newUser = new User({
-        lastName: "Phuc",
-        firstName: "Thanh",
-        email: "phuc@example.com",
-        password: "password123",
-        roles: "Admin"// Các vai trò có thể được thêm vào sau
-      });
-      
-
-      // Lưu người dùng mới vào cơ sở dữ liệu
-      const savedUser = await newUser.save();
-  
     
   
 
