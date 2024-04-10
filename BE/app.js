@@ -1,11 +1,11 @@
 import mongoose from 'mongoose';
 import express from "express";
 import dotenv from 'dotenv';
-import routerClient from './routerClient/index.js';
-import routerUser from './routerUser/index.js';
-import routerAdmin from './routerAdmin/index.js';
+import routerClient from '../router/customer/index.js';
+import routerUser from '../router/guest/index.js';
+import routerAdmin from '../router/admin/index.js';
 import cors from 'cors';
-import ErrorResponse from './Response/ErrorResponse.js';
+import ErrorResponse from './responses/ErrorResponse.js';
 import {authenticateJWT, isAdmin} from './controllers/AuthController.js';
 dotenv.config();
 
