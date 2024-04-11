@@ -18,7 +18,7 @@ app.use(express.static("."));
 app.use("/api/client", routerClient);
 // Middleware cho các yêu cầu tới /api/user
 app.use("/api/user", authenticateJWT, routerUser);
-// Middleware cho các yêu cầu tới /api/admin
+// Middleware cho các yêu cầu tới /api/admincd 
 app.use("/api/admin", authenticateJWT, isAdmin, routerAdmin);
 app.use((err, req, res, next) => {
   console.log(err.status);
