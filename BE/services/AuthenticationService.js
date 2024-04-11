@@ -1,6 +1,6 @@
-import User from '../models/user.js'
+import User from '../models/auth/user.js'
 import Bcrypt from 'bcryptjs'
-import ErrorRepsonse from '../Response/ErrorResponse.js';
+import ErrorRepsonse from '../responses/ErrorResponse.js';
 import jwt from 'jsonwebtoken';
 
 
