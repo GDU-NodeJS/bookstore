@@ -13,6 +13,7 @@ var userSchema = new Schema({
         unique:false,
         index:true,
     },
+
     firstName:{
         type:String,
         required:true,
@@ -30,11 +31,10 @@ var userSchema = new Schema({
         required:true,
     },
 
-    roles: [{ 
+    role: { 
         type:String,
-        required:true,
         default: 'User'
-    }],
+    },
 
 },
     {

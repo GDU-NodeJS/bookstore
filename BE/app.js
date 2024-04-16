@@ -1,18 +1,39 @@
 import mongoose from 'mongoose';
 import express from "express";
 import dotenv from 'dotenv';
-import router from './routes/index.js'
-import User from "./models/user.js";
-import Role from "./models/role.js";
-import role from './models/role.js';
+import routerClient from './routers/customer/index.js';
+import routerUser from './routers/guest/index.js';
+import routerAdmin from './routers/admin/index.js'
+import cors from 'cors';
+import ErrorResponse from './responses/ErrorResponse.js';
+import {authenticateJWT, isAdmin} from './controllers/AuthController.js';
 dotenv.config();
 
 
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 app.use(express.static("."));
-app.use("/api", router)
+app.use("/api/client", routerClient);
+// Middleware cho các yêu cầu tới /api/user
+app.use("/api/user", authenticateJWT, routerUser);
+// Middleware cho các yêu cầu tới /api/admin
+app.use("/api/admin", authenticateJWT, isAdmin, routerAdmin);
+app.use((err, req, res, next) => {
+  console.log(err.status);
+  err.statusCode = err.status ||500;
+  err.status = err.status || 'error' ;
+
+  res.status(err.statusCode).json({
+    status: err.status,
+    message:err.message,
+  });
+});
+
+app.use((req, res, next) => {
+  res.status(404).json({ error: 'Not Found' });
+});
 
 const mongoDBURL = process.env.mongoDBURL
 
@@ -33,7 +54,4 @@ app.use((req, res, next) => {
 });
 
     
-  
-
-
 export default app
