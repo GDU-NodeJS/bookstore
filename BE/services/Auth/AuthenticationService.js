@@ -1,8 +1,9 @@
-import User from '../models/auth/user.js'
+import User from '../../models/auth/user.js'
 import Bcrypt from 'bcryptjs'
-import ErrorRepsonse from '../responses/ErrorResponse.js';
+import ErrorRepsonse from '../../responses/ErrorResponse.js';
 import jwt from 'jsonwebtoken';
-
+import UserService from '../User/UserService.js';
+const userService = new UserService();
 
 class AuthenticationService{
 
@@ -12,16 +13,14 @@ class AuthenticationService{
 
     static register = async(bodyData) => {
         try {
-            const user = await User.findOne({ email: bodyData.email });
+            const user = await userService.findByEmail(bodyData.email);
             if (user) {
                 throw new ErrorRepsonse(400, 'Email already exists');
             }
     
             const hashedPassword = await Bcrypt.hash(bodyData.password, 12);
-            const savedUser = await User.create({
-                ...bodyData,
-                password: hashedPassword
-            });
+            const userToCreate = { ...bodyData, password: hashedPassword };
+            const savedUser = await userService.create(userToCreate);
     
             return { savedUser };
         } catch (error) {
@@ -31,7 +30,7 @@ class AuthenticationService{
     
     static authenticate = async(email, password) => {
         try {
-            const user = await User.findOne({ email });
+            const user = await userService.findByEmail(email);
             if (!user) {
                 throw new ErrorRepsonse(400, 'Email does not exist');
             }
