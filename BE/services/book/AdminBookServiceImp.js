@@ -5,7 +5,7 @@ class AdminBookServiceImp {
   
     async findById(id) {
       try {
-        const book = await BookRepository.findById(id);
+        const book = await bookRepository.findById(id);
         return book;
       } catch (err) {
         console.error(err);
@@ -15,7 +15,7 @@ class AdminBookServiceImp {
   
     async updateBook(id, newBook) {
       try {
-        const updatedBook = await this.bookRepository.findByIdAndUpdate(id, newBook, { new: true }); // Update and return updated doc
+        const updatedBook = await bookRepository.findByIdAndUpdate(id, newBook, { new: true }); // Update and return updated doc
         return updatedBook;
       } catch (err) {
         console.error(err);
@@ -25,7 +25,7 @@ class AdminBookServiceImp {
   
     async addBook(book) {
       try {
-        const newBook = await this.bookRepository.create(book); // Assuming create method in BookSchema
+        const newBook = await bookRepository.create(book); // Assuming create method in BookSchema
         return newBook;
       } catch (err) {
         console.error(err);
@@ -35,7 +35,7 @@ class AdminBookServiceImp {
   
     async removeBook(id) {
       try {
-        await this.bookRepository.findByIdAndDelete(id);
+        await bookRepository.findByIdAndDelete(id);
       } catch (err) {
         console.error(err);
         throw new Error('Error removing book'); // Re-throw for handling
@@ -44,7 +44,7 @@ class AdminBookServiceImp {
   
     async searchBooks(keyword) {
       try {
-        const books = await this.bookRepository.find({ name: { $regex: keyword, $options: 'i' } }); // Case-insensitive search by name
+        const books = await bookRepository.find({ name: { $regex: keyword, $options: 'i' } }); // Case-insensitive search by name
         return books;
       } catch (err) {
         console.error(err);

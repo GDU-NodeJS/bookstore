@@ -11,7 +11,7 @@ class BookRepository {
 
   async findByName(name) {
     try {
-      const book = await this.book.findOne({ name });
+      const book = await Book.findOne({ name });
       return book;
     } catch (err) {
       console.error(err);
@@ -21,7 +21,7 @@ class BookRepository {
 
   async findById(id) {
     try {
-      const book = await this.book.findById(id); 
+      const book = await Book.findById(id); 
       return book;
     } catch (err) {
       console.error(err);
@@ -31,7 +31,7 @@ class BookRepository {
 
   async findByAuthor(author) {
     try {
-      const books = await this.book.find({ author }); 
+      const books = await Book.find({ author }); 
       return books;
     } catch (err) {
       console.error(err);

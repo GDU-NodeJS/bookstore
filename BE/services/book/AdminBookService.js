@@ -3,7 +3,8 @@ const adminBookService = new AdminBookServiceImp();
 
 class AdminBookService {
     async findById(id){
-        adminBookService.findById(id);
+        const book = adminBookService.findById(id);
+        return book;
     }
     async getAllBooks(){
         const books = await adminBookService.getAllBooks();
