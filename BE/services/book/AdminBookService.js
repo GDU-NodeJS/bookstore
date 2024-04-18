@@ -1,4 +1,3 @@
-import book from "../../models/Book.js";
 import AdminBookServiceImp from "../../services/book/AdminBookServiceImp.js";
 const adminBookService = new AdminBookServiceImp();
 
