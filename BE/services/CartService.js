@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import CartModel from './models/Cart.js';
-import CartItemModel from './models/CartItem.js';
+import CartModel from './models/cart/cart.js';
+import CartItemModel from './models/cart/cartItem.js';
 
 const SESSION_KEY_CART = 'CART';
 
