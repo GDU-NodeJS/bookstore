@@ -1,23 +1,24 @@
+import mongoose from 'mongoose';
 import Cart from "../../models/cart/cart.js"
-class cartRepository{
-    contructor (){}
-    async findCartByUserId(userId)
-    {
-        try{
-            const cart = await Cart.findOne({user: userId}).populate('cartItems');
-            return cart;
-        } catch( err)
-        {
-            console.error(err);
-            thorw 
-        }
-    }
-    async saveCart(cart)
-    {
-        return await cart.save();
-    }
-    async deleteCart(cartId)
-    {
-        
-    }
+class CartRepository {
+  constructor() {
+  }
+
+  async findByUserId(userId) {
+    return await Cart.findOne({ user: userId }).populate('cartItems');
+  }
+
+  async create(cart) {
+    return await cart.save();
+  }
+
+  async update(cart) {
+    return await cart.save();
+  }
+
+  async deleteByUserId(userId) {
+    return await Cart.findOneAndDelete({ user: userId });
+  }
 }
+
+export default CartRepository;
