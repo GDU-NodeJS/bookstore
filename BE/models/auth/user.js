@@ -36,6 +36,11 @@ var userSchema = new Schema({
         default: 'User'
     },
 
+    isEnable:{
+        type: Boolean,
+        default: false
+    }
+
 },
     {
         timestamps: true.valueOf,
