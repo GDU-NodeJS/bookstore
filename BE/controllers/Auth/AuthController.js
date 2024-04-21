@@ -1,16 +1,19 @@
 
 import jwt from 'jsonwebtoken'
-import AuthService from '../../services/Auth/AuthenticationService.js';
+import AuthService from '../../services/Auth/AuthenticationService.js'
+import TokenRegistration from '../../models/auth/tokenregistration.js';
 
-
-
+import UserService from '../../services/User/UserService.js';
+const userService = new UserService();
 export async function signup(req, res, next) {
     try {
-        const { error, savedUser } = await AuthService.register(req.body);
+        const { error, savedUser ,confirmationUrl} = await AuthService.register(req);
 
         if (error) {
             throw error; // Chuyển lỗi cho middleware xử lý lỗi
         }
+        
+        
 
         res.json({
             status: 201,
@@ -72,4 +75,42 @@ export const isAdmin = async (req, res, next) => {
         next(error);
     }
 };
+
+export async function confirmRegistration(req,res,next) {
+    const { token } = req.params;
+    // Tìm token trong collection TokenRegistration
+    const tokenRegistration = await TokenRegistration.findOne({ token })
+      
+  
+    if (!tokenRegistration) {
+      return res.status(400).send('Invalid Token');
+    }
+  
+    // Kiểm tra token đã hết hạn hay chưa
+    if (tokenRegistration.expiresAt < Date.now()) {
+      await TokenRegistration.deleteOne({ token });
+      return res.status(400).send('Token has expired');
+    }
+  
+    // Kích hoạt tài khoản người dùng
+    const user = await userService.findByEmail(tokenRegistration.userEmail);
+    console.log(tokenRegistration.userEmail);
+    
+    user.isEnable = true;
+    await user.save();
+  
+    // Xóa token khỏi collection TokenRegistration
+    await TokenRegistration.deleteOne({ token });
+  
+    res.json({
+        status: 200,
+        message: "Account activation successful",
+        data: [{
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            role: user.role
+        }]
+    });
+  };
 

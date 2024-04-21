@@ -5,8 +5,7 @@ import routerClient from './routers/customer/index.js';
 import routerUser from './routers/guest/index.js';
 import routerAdmin from './routers/admin/index.js'
 import cors from 'cors';
-import ErrorResponse from './responses/ErrorResponse.js';
-import {authenticateJWT, isAdmin} from './controllers/AuthController.js';
+import {authenticateJWT, isAdmin} from './controllers/Auth/AuthController.js';
 dotenv.config();
 
 
