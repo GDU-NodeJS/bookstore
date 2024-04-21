@@ -1,4 +1,7 @@
+import mongoose from 'mongoose';
 import Book from '../models/Book.js';
+import book from '../routers/customer/book/index.js';
+import { ObjectId } from 'mongodb';
 
 class BookRepository {
   constructor() {
@@ -21,11 +24,14 @@ class BookRepository {
 
   async findById(id) {
     try {
-      const book = await Book.findById(id); 
+      const book = await Book.findById(id);
+      if (!book) {
+        return null;
+      }
       return book;
     } catch (err) {
       console.error(err);
-      throw new Error('Error finding book by ID'); 
+      throw new Error('Error finding book by id');
     }
   }
 

@@ -1,9 +1,9 @@
 
 import { Router } from "express";
-import BookController from "../../../controllers/book/AdminBookController.js";
+import ClientBookController from "../../../controllers/book/ClientBookController.js";
 
 const book = Router();
-const bookController = new BookController();
+const bookController = new ClientBookController();
 book.get('/getAll', bookController.getBooks.bind(bookController));
 book.get('/:id', bookController.getBookById.bind(bookController));
 

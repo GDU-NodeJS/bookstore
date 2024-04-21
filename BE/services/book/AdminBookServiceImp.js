@@ -2,34 +2,33 @@ import BookRepository from "../../dao/BookRepository.js";
 const bookRepository = new BookRepository();
 
 class AdminBookServiceImp {
-  
     async findById(id) {
       try {
         const book = await bookRepository.findById(id);
         return book;
       } catch (err) {
         console.error(err);
-        throw new Error('Error finding book by ID'); // Re-throw for handling
+        throw new Error('Error finding book by ID');
       }
     }
   
     async updateBook(id, newBook) {
       try {
-        const updatedBook = await bookRepository.findByIdAndUpdate(id, newBook, { new: true }); // Update and return updated doc
+        const updatedBook = await bookRepository.findByIdAndUpdate(id, newBook, { new: true }); 
         return updatedBook;
       } catch (err) {
         console.error(err);
-        throw new Error('Error updating book'); // Re-throw for handling
+        throw new Error('Error updating book'); 
       }
     }
   
     async addBook(book) {
       try {
-        const newBook = await bookRepository.create(book); // Assuming create method in BookSchema
+        const newBook = await bookRepository.create(book); 
         return newBook;
       } catch (err) {
         console.error(err);
-        throw new Error('Error adding book'); // Re-throw for handling
+        throw new Error('Error adding book'); 
       }
     }
   
@@ -38,27 +37,27 @@ class AdminBookServiceImp {
         await bookRepository.findByIdAndDelete(id);
       } catch (err) {
         console.error(err);
-        throw new Error('Error removing book'); // Re-throw for handling
+        throw new Error('Error removing book'); 
       }
     }
   
     async searchBooks(keyword) {
       try {
-        const books = await bookRepository.find({ name: { $regex: keyword, $options: 'i' } }); // Case-insensitive search by name
+        const books = await bookRepository.find({ name: { $regex: keyword, $options: 'i' } });
         return books;
       } catch (err) {
         console.error(err);
-        throw new Error('Error searching books'); // Re-throw for handling
+        throw new Error('Error searching books');
       }
     }
   
     async getAllBooks() {
       try {
-        const books = await bookRepository.findAll(); // Find all documents
+        const books = await bookRepository.findAll();
         return books;
       } catch (err) {
         console.error(err);
-        throw new Error('Error getting all books'); // Re-throw for handling
+        throw new Error('Error getting all books'); 
       }
     }
   }
