@@ -14,9 +14,9 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(express.static("."));
-app.use("/api/client", routerClient);
+app.use("/api/guest", routerClient);
 // Middleware cho các yêu cầu tới /api/user
-app.use("/api/user", authenticateJWT, routerUser);
+app.use("/api/customer", authenticateJWT, routerUser);
 // Middleware cho các yêu cầu tới /api/admincd 
 app.use("/api/admin", authenticateJWT, isAdmin, routerAdmin);
 app.use((err, req, res, next) => {
