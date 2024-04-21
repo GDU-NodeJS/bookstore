@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 import express from "express";
 import dotenv from 'dotenv';
-import routerClient from './routers/customer/index.js';
-import routerUser from './routers/guest/index.js';
+import routerCustomer from './routers/customer/index.js';
+import routerGuest from './routers/guest/index.js';
 import routerAdmin from './routers/admin/index.js'
 import cors from 'cors';
 import {authenticateJWT, isAdmin} from './controllers/Auth/AuthController.js';
@@ -14,9 +14,9 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(express.static("."));
-app.use("/api/guest", routerClient);
+app.use("/api/guest", routerGuest);
 // Middleware cho các yêu cầu tới /api/user
-app.use("/api/customer", authenticateJWT, routerUser);
+app.use("/api/customer", authenticateJWT, routerCustomer);
 // Middleware cho các yêu cầu tới /api/admincd 
 app.use("/api/admin", authenticateJWT, isAdmin, routerAdmin);
 app.use((err, req, res, next) => {
