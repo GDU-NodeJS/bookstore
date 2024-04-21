@@ -1,4 +1,4 @@
-import CategoryRepository from "../../dao/CategoryRepository";
+import CategoryRepository from "../../dao/CategoryRepository.js";
 const categoryRepository = new CategoryRepository();
 
 class ClientCategoryServiceImp {
