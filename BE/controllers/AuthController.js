@@ -1,6 +1,6 @@
 
 import jwt from 'jsonwebtoken'
-import AuthService from '../services/AuthenticationService.js';
+import AuthService from '../services/Auth/AuthenticationService.js';
 
 
 
