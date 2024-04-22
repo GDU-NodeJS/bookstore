@@ -1,4 +1,4 @@
-import ClientCategoryService from "../../services/category/ClientCategoryService";
+import ClientCategoryService from "../../services/category/ClientCategoryService.js";
 const clientCategoryService = new ClientCategoryService();
 
 class ClientCategoryController {
@@ -6,7 +6,7 @@ class ClientCategoryController {
 
     async getCategories(req, res){
         try{
-            const categories = await adminCategoryService.getAllCategory();
+            const categories = await clientCategoryService.getAllCategories();
             return res.status(200).json({
                 status: 200,
                 message : "Successfully retrieved data",
@@ -18,3 +18,4 @@ class ClientCategoryController {
         }
     }
 }
+export default ClientCategoryController;

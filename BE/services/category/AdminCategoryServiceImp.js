@@ -1,4 +1,4 @@
-import CategoryRepository from "../../dao/CategoryRepository";
+import CategoryRepository from "../../dao/CategoryRepository.js";
 
 const categoryRepository = new CategoryRepository();
 
@@ -14,7 +14,7 @@ class AddminCategoryServiceImp {
     }
     async updateCategory(id, category){
         try{
-            const updateCategory = await categoryRepository.findByIdandUpdate(id, category,{new : true});
+            const updateCategory = await categoryRepository.findByIdAndUpdate(id, category,{new : true});
             return updateCategory;
         }catch (err){
             console.error(err);
@@ -27,12 +27,12 @@ class AddminCategoryServiceImp {
             return newCategory;
         }catch (err){
             console.error(err);
-            throw new Error("Not add category");
+            throw new Error("Error adding the category");
         }
-    }
+    }    
     async deleteCategory(id){
         try{
-             await categoryRepository.findByIdandDelete(id);
+             await categoryRepository.findByIdAndDelete(id);
         }catch (err){
             console.error(err);
             throw new Error("Not delete category");
