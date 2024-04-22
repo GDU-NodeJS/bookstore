@@ -29,7 +29,7 @@ class cartController{
 
     async removeFromCart(req, res) {
     try {
-        const { bookId } = req.params;
+        const bookId  = req.params.bookId;
         await this._cartService.removeFromCart(req, bookId);
         return res.status(200).json({ message: 'Remove from cart successfully' });
     } catch (err) {
@@ -40,8 +40,8 @@ class cartController{
 
     async updateCart(req, res) {
     try {
-        const { bookId } = req.params;
-        const { quantity } = req.body;
+        const bookId  = req.params.bookId;
+        const quantity = req.params.quantity;
         await this._cartService.updateCart(req, bookId, quantity);
         return res.status(200).json({ message: 'Update cart successfully' });
     } catch (err) {

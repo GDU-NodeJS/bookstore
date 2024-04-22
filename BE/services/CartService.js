@@ -25,8 +25,8 @@ class CartService {
     return !!authHeader;
   }
 
-  async getUserId(req) {
-    return req.session.user._id;
+   getUserId(req) {
+    return req.session.user.id;
   }
 
   async getCartFromDatabase(userId) {
@@ -54,9 +54,8 @@ class CartService {
         existingItem.quantity = cartItem.quantity;
         updatedCartItems.push(existingItem);
       } else {
-        let cartId = cart._id;
         const book = await adminBookServiceImp.findById(bookId);
-        const newItem = new CartItem({ book, quantity: cartItem.quantity, cart: cartId });
+        const newItem = new CartItem({ book, quantity: cartItem.quantity, cart: cart._id });
         newCartItems.push(newItem);
       }
     }
@@ -65,12 +64,12 @@ class CartService {
       .filter(item => !updatedCartItems.includes(item))
       .map(item => item._id);
 
-    await cartItemRepository.deleteMany(itemIdsToRemove);
+    await cartItemRepository.deleteCart(itemIdsToRemove);
     await Promise.all(updatedCartItems.map(item => cartItemRepository.updateCartItem(item._id, item.quantity)));
     await Promise.all(newCartItems.map(item => cartItemRepository.createCartItem(item)));
 
     cart.cartItems = [...updatedCartItems, ...newCartItems].map(item => item._id);
-    await cartRepository.update(cart);
+    await cartRepository.update(cart._id,cart);
   }
 
   async addToCart(req, bookId, quantity) {
@@ -81,7 +80,7 @@ class CartService {
       let cartMap = await this.getCartFromDatabase(userId);
       let cartItem = cartMap[bookId];
       if (cartItem) {
-        cartItem.quantity += quantity;
+        cartItem.quantity =(parseInt(cartItem.quantity) + parseInt(quantity)).toString();
       } else {
         cartItem = { book: bookId, quantity };
         cartMap[bookId] = cartItem;
@@ -91,7 +90,7 @@ class CartService {
       const cartMap = this.getCartFromSession(req);
       let cartItem = cartMap[bookId];
       if (cartItem) {
-        cartItem.quantity += quantity;
+        cartItem.quantity =(parseInt(cartItem.quantity) + parseInt(quantity)).toString();
       } else {
         cartItem = { book: bookId, quantity };
         cartMap[bookId] = cartItem;
@@ -148,7 +147,7 @@ class CartService {
       const userId = await this.getUserId(req);
       const cart = await cartRepository.findByUserId(userId);
       if (cart) {
-        await cartItemRepository.deleteMany(cart.cartItems);
+        await cartItemRepository.deleteCart(cart._id);
         cart.cartItems = [];
         await cartRepository.update(cart);
       }
@@ -160,7 +159,7 @@ class CartService {
   }
 
   async getCart(req) {
-    const userId = req.params.id;
+    const userId = this.getUserId(req);
     const isLoggedIn = this.isUserLoggedIn(req);
 
     if (isLoggedIn) {

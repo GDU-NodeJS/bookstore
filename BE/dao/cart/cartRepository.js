@@ -13,8 +13,8 @@ class CartRepository {
     return await cart.save();
   }
 
-  async update(cart) {
-    return await Cart.findByIdAndUpdate(cartId, updateData, { new: true });
+  async update(cartId,cart) {
+    return await Cart.findByIdAndUpdate(cartId, cart, { new: true });
   }
   async deleteByUserId(userId) {
     return await Cart.findOneAndDelete({ user: userId });
