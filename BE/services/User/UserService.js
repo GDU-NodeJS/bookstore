@@ -19,10 +19,10 @@ class UserService {
         return users;
     }
     async createUser(user) {
-        await userService.createUser(user);
+        return await userService.createUser(user);
     }
     async updateUser(id, userData) {
-        await userService.updateUser(id, userData);
+        return await userService.updateUser(id, userData);
     }
     async deleteUser(id) {
         await userService.deleteUser(id);

@@ -1,4 +1,4 @@
-import UserRepository from "../../dao/UsesrRepository.js";
+import UserRepository from "../../dao/UserRepository.js";
 const userRepository = new UserRepository();
 
 class UserServiceImp {
