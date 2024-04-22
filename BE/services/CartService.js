@@ -4,6 +4,7 @@ import CartItemRepository from '../dao/cart/cartItemRepository.js';
 import AdminBookServiceImp from './book/AdminBookServiceImp.js';
 import UserRepository from "../dao/UserRepository.js";
 import CartItem from "../models/cart/cartItem.js";
+import User from "../models/auth/user.js";
 const SESSION_KEY_CART = 'CART';
 const cartRepository = new CartRepository();
 const cartItemRepository = new CartItemRepository();
@@ -25,7 +26,7 @@ class CartService {
   }
 
   async getUserId(req) {
-    return await req.params.id;
+    return req.session.user._id;
   }
 
   async getCartFromDatabase(userId) {
@@ -53,8 +54,9 @@ class CartService {
         existingItem.quantity = cartItem.quantity;
         updatedCartItems.push(existingItem);
       } else {
+        let cartId = cart._id;
         const book = await adminBookServiceImp.findById(bookId);
-        const newItem = new CartItem({ book, quantity: cartItem.quantity, cart: cart._id });
+        const newItem = new CartItem({ book, quantity: cartItem.quantity, cart: cartId });
         newCartItems.push(newItem);
       }
     }
