@@ -1,24 +1,18 @@
-import Category from "../models/category";
+import Category from "../models/category.js";
 
 class CategoryRepository{
     constructor(){
-
     }
 
     async findAll() {
-        try{
-            const categories = await Category.find();
-            return categories;
-        }
-        catch(err){
-            console.error(err);
-            throw new Error("Not finding all categories " );
-        }
+        const categories = await Category.find();
+        return categories;
+
     }
 
     async findByName(name) {
         try{
-            const category = await Category.findOne(name);
+            const category = await Category.findOne({ name: name });
             return category;
         }
         catch(err){
@@ -37,7 +31,34 @@ class CategoryRepository{
             throw new Error("Not finding by id category ");
         }
     }
-    
+    async create(categoryData) {
+        try {
+            const newCategory = new Category(categoryData);
+            const savedCategory = await newCategory.save();
+            return savedCategory;
+        } catch (err) {
+            console.error(err);
+            throw new Error("Error adding the category");
+        }
+    }
+    async findByIdAndUpdate(id, categoryData) {
+        try {
+            const updatedCategory = await Category.findByIdAndUpdate(id, categoryData, { new: true });
+            return updatedCategory;
+        } catch (err) {
+            console.error(err);
+            throw new Error("Error updating the category");
+        }
+    }
+
+    async findByIdAndDelete(id) {
+        try {
+            await Category.findByIdAndDelete(id);
+        } catch (err) {
+            console.error(err);
+            throw new Error("Error deleting the category");
+        }
+    }
 }
 
 export default CategoryRepository;
