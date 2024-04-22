@@ -3,7 +3,7 @@ const adminBookService = new AdminBookServiceImp();
 
 class AdminBookService {
     async findById(id){
-        const book = adminBookService.findById(id);
+        const book = await adminBookService.findById(id);
         return book;
     }
     async getAllBooks(){
@@ -11,13 +11,13 @@ class AdminBookService {
         return books;
     }
     async addBook(book){
-        adminBookService.addBook(book);
+        await adminBookService.addBook(book);
     }
     async updateBook(id, newBook){
-        adminBookService.updateBook(id, newBook);
+        await adminBookService.updateBook(id, newBook);
     }
     async removeBook(id){
-        adminBookService.removeBook(id);
+        await adminBookService.removeBook(id);
     }
   }
   

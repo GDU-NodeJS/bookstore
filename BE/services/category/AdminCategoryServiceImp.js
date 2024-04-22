@@ -30,7 +30,7 @@ class AddminCategoryServiceImp {
             throw new Error("Error adding the category");
         }
     }    
-    async deleteCategory(id){
+    async removeCategory(id){
         try{
              await categoryRepository.findByIdAndDelete(id);
         }catch (err){

@@ -6,6 +6,7 @@ const BookSchema = new Schema({
   name: { type: String, required: true },
   author: { type: String, required: true },
   description: { type: String },
-}, { collection: 'book' }); 
+  categories: [{ type: Schema.Types.ObjectId, ref: 'Category' }]
+}, { collection: 'book' });
 
 export default model('Book', BookSchema);

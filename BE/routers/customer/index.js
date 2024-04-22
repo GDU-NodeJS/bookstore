@@ -5,7 +5,6 @@ import categoryRouter from "./category/index.js";
 
 const routerCustomer = Router();
 
-
 routerCustomer.use("/book",book);
 routerCustomer.use("/category", categoryRouter);
 routerCustomer.use("/cart", cart)
