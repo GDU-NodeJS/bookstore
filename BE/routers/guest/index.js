@@ -1,5 +1,5 @@
 import { Router } from "express";
 
-const routerAdmin = Router();
+const routerGuest = Router();
 
-export default routerAdmin;
+export default routerGuest;
