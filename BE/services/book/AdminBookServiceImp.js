@@ -34,7 +34,7 @@ class AdminBookServiceImp {
   
     async removeBook(id) {
       try {
-        await bookRepository.findByIdAndDelete(id);
+        await bookRepository.removeBook(id);
       } catch (err) {
         console.error(err);
         throw new Error('Error removing book'); 

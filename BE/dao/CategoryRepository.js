@@ -4,13 +4,19 @@ class CategoryRepository {
   constructor() {}
 
   async findAll() {
-    const categories = await Category.find().populate('books'); // Populate books on each category
+    const categories = await Category.find().populate({
+        path: 'books',
+        select: 'name'
+    }); 
     return categories;
   }
 
   async findByName(name) {
     try {
-      const category = await Category.findOne({ name }).populate('books'); // Populate books
+      const category = await Category.findOne({ name }).populate({
+        path: 'books',
+        select: 'name'
+    }); 
       return category;
     } catch (err) {
       console.error(err);
@@ -20,7 +26,10 @@ class CategoryRepository {
 
   async findById(id) {
     try {
-      const category = await Category.findById(id).populate('books'); // Populate books
+      const category = await Category.findById(id).populate({
+        path: 'books',
+        select: 'name'
+    }); 
       if (!category) {
         return null;
       }
