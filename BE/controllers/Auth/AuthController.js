@@ -44,6 +44,12 @@ export async function signin(req, res, next) {
             expiresIn: process.env.JWT_EXPIRATION,
         });
 
+        req.session.user = {
+
+            id: user._id,
+            email: user.email,
+        }
+
         res.json({
             status: 200,
             message: "Successfully login ",
