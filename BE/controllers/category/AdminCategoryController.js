@@ -1,5 +1,4 @@
-import category from "../../models/category";
-import AdminCategoryService from "../../services/category/AdminCategoryService";
+import AdminCategoryService from "../../services/category/AdminCategoryService.js";
 const adminCategoryService = new AdminCategoryService();
 
 class AdminCategoryController{
@@ -22,7 +21,7 @@ class AdminCategoryController{
     async getCategoryById(req, res){
         try{
             const categoryId = req.params.id;
-            const categoy = await adminCategoryService.findById(categoryId);
+            const category = await adminCategoryService.finById(categoryId);
             if (!category){
                 return res.status(404).json({
                     status: 404,

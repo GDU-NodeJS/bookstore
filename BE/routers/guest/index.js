@@ -1,5 +1,12 @@
 import { Router } from "express";
+import auth  from "./Authen/index.js";
+import book from "./book/index.js";
 
-const routerAdmin = Router();
+import category from "./category/index.js";
+const routerGuest = Router();
 
-export default routerAdmin;
+routerGuest.use("/auth", auth);
+routerGuest.use("/book", book);
+routerGuest.use("/category",category);
+
+export default routerGuest;

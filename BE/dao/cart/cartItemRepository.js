@@ -19,5 +19,4 @@ class cartItemRepository{
     async deleteCart(cartId){
         return await CartItem.deleteMany({cart: cartId});
     }
-} 
-export default cartItemRepository;
+} export default cartItemRepository;

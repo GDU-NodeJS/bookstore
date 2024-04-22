@@ -1,7 +1,7 @@
 import AdminBookService from "../../services/book/AdminBookService.js"; // Assuming AdminBookService.js in the same directory
 const adminBookService = new AdminBookService();
 
-class BookController {
+class AdminBookController {
   constructor() {}
 
   async getBooks(req, res) {
@@ -83,4 +83,4 @@ class BookController {
   }
 }
 
-export default BookController;
+export default AdminBookController;

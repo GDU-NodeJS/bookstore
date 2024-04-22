@@ -31,8 +31,7 @@ class UserRepository {
 
   async create(userData) {
     try {
-      const user = new User(userData);
-      await user.save();
+      const user = await User.create(userData);
       return user;
     } catch (err) {
       console.error(err);

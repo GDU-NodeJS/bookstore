@@ -1,11 +1,10 @@
-import { Schema, model, mongoose } from 'mongoose'; // Erase if already required
+import { Schema, SchemaType, model, mongoose } from 'mongoose'; // Erase if already required
 
 
 const COLLECTION_NAME = "users";
 const DOCUMENT_NAME = "User";
 // Declare the Schema of the Mongo model
 var userSchema = new Schema({
-
 
     lastName:{
         type:String,
@@ -35,6 +34,11 @@ var userSchema = new Schema({
         type:String,
         default: 'User'
     },
+
+    isEnable:{
+        type: Boolean,
+        default: false
+    }
 
 },
     {

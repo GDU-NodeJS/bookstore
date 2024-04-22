@@ -1,11 +1,12 @@
 import { Router } from "express";
 import book from "./book/index.js";
-import auth from "./Authen/index.js";
 import cart from "./cart/index.js"
-const routerClient = Router();
+import categoryRouter from "./category/index.js";
 
-routerClient.use("/book",book);
-routerClient.use("/auth", auth);
-routerClient.use("/cart",cart);
+const routerCustomer = Router();
 
-export default routerClient;
+routerCustomer.use("/book",book);
+routerCustomer.use("/category", categoryRouter);
+routerCustomer.use("/cart", cart)
+
+export default routerCustomer;

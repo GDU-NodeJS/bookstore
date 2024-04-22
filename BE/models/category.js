@@ -1,8 +1,8 @@
 import { Schema, model } from "mongoose";
 
 const CategorySchema = new Schema({
-    _id: { type: Schema.Types.ObjectId, required: true },
-    name: {type: String, required: true},
-},{collation: categories});
+    name: { type: String, required: true },
+    books: [{ type: Schema.Types.ObjectId, ref: 'Book' }]
+  },{ collection: "category"});
 
 export default model ("Category",CategorySchema);

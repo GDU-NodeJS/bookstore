@@ -1,4 +1,4 @@
-import AddminCategoryServiceImp from "./AdminCategoryServiceImp";
+import AddminCategoryServiceImp from "./AdminCategoryServiceImp.js";
 const addminCategoryService = new AddminCategoryServiceImp();
 
 class AddminCategoryService {
@@ -11,7 +11,7 @@ class AddminCategoryService {
         return categories;
     }
     async addCategory(category) {
-        await addminCategoryService.addCategory(category);
+        return await addminCategoryService.addCategory(category);
     }
     async updateCategory(id,category) {
         await addminCategoryService.updateCategory(id,category);

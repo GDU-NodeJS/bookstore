@@ -1,15 +1,21 @@
 import mongoose from 'mongoose';
 import CartRepository from '../dao/cart/cartRepository.js';
 import CartItemRepository from '../dao/cart/cartItemRepository.js';
-import UserRepository from "../dao/UsesrRepository.js";
+import AdminBookServiceImp from './book/AdminBookServiceImp.js';
+import UserRepository from "../dao/UserRepository.js";
+import CartItem from "../models/cart/cartItem.js";
+import User from "../models/auth/user.js";
 const SESSION_KEY_CART = 'CART';
-
+const cartRepository = new CartRepository();
+const cartItemRepository = new CartItemRepository();
+const adminBookServiceImp = new AdminBookServiceImp();
 class CartService {
-  getCartFromSession(session) {
-    let cartMap = session[SESSION_KEY_CART];
+
+  getCartFromSession(req) {
+    let cartMap = req.session[SESSION_KEY_CART];
     if (!cartMap) {
       cartMap = {};
-      session[SESSION_KEY_CART] = cartMap;
+      req.session[SESSION_KEY_CART] = cartMap;
     }
     return cartMap;
   }
@@ -19,38 +25,37 @@ class CartService {
     return !!authHeader;
   }
 
-  async getUserId(session) {
-    const user = await UserRepository.findOne({ _id: session.user });
-    return user?._id;
+   getUserId(req) {
+    return req.session.user.id;
   }
 
   async getCartFromDatabase(userId) {
-    const cart = await CartRepository.findByUserId(userId);
+    const cart = await cartRepository.findByUserId(userId);
     const cartMap = {};
-    if (cart) {
-      const cartItems = await CartItemRepository.findCartItemByCart(cart._id);
-      cartItems.forEach(item => {
+
+    if (cart && cart.cartItems) {
+      cart.cartItems.forEach(item => {
         cartMap[item.book._id] = item;
       });
     }
+
     return cartMap;
   }
 
   async storeCartInDatabase(userId, cartMap) {
-    const cart = await CartRepository.findByUserId(userId);
+    const cart = await cartRepository.findByUserId(userId);
 
-    const existingCartItemIds = cart.cartItems.map(item => item._id);
     const newCartItems = [];
     const updatedCartItems = [];
 
     for (const [bookId, cartItem] of Object.entries(cartMap)) {
-      const existingItem = cart.cartItems.find(item => item.book.toString() === bookId);
+      const existingItem = cart?.cartItems.find(item => item.book.toString() === bookId);
       if (existingItem) {
         existingItem.quantity = cartItem.quantity;
         updatedCartItems.push(existingItem);
       } else {
-        const book = await mongoose.model('Book').findById(bookId);
-        const newItem = new CartItemRepository.CartItemModel({ book, quantity: cartItem.quantity, cart: cart._id });
+        const book = await adminBookServiceImp.findById(bookId);
+        const newItem = new CartItem({ book, quantity: cartItem.quantity, cart: cart._id });
         newCartItems.push(newItem);
       }
     }
@@ -59,68 +64,65 @@ class CartService {
       .filter(item => !updatedCartItems.includes(item))
       .map(item => item._id);
 
-    await CartItemRepository.deleteMany(itemIdsToRemove);
-    await Promise.all(updatedCartItems.map(item => CartItemRepository.updateCartItem(item._id, item.quantity)));
-    await Promise.all(newCartItems.map(item => CartItemRepository.createCartItem(item)));
+    await cartItemRepository.deleteCart(itemIdsToRemove);
+    await Promise.all(updatedCartItems.map(item => cartItemRepository.updateCartItem(item._id, item.quantity)));
+    await Promise.all(newCartItems.map(item => cartItemRepository.createCartItem(item)));
 
     cart.cartItems = [...updatedCartItems, ...newCartItems].map(item => item._id);
-    await CartRepository.update(cart);
+    await cartRepository.update(cart._id,cart);
   }
 
   async addToCart(req, bookId, quantity) {
-    const session = req.session;
     const isLoggedIn = this.isUserLoggedIn(req);
 
     if (isLoggedIn) {
-      const userId = await this.getUserId(session);
+      const userId = await this.getUserId(req);
       let cartMap = await this.getCartFromDatabase(userId);
       let cartItem = cartMap[bookId];
       if (cartItem) {
-        cartItem.quantity += quantity;
+        cartItem.quantity =(parseInt(cartItem.quantity) + parseInt(quantity)).toString();
       } else {
         cartItem = { book: bookId, quantity };
         cartMap[bookId] = cartItem;
       }
       await this.storeCartInDatabase(userId, cartMap);
     } else {
-      const cartMap = this.getCartFromSession(session);
+      const cartMap = this.getCartFromSession(req);
       let cartItem = cartMap[bookId];
       if (cartItem) {
-        cartItem.quantity += quantity;
+        cartItem.quantity =(parseInt(cartItem.quantity) + parseInt(quantity)).toString();
       } else {
         cartItem = { book: bookId, quantity };
         cartMap[bookId] = cartItem;
       }
-      session[SESSION_KEY_CART] = cartMap;
+      req.session[SESSION_KEY_CART] = cartMap;
     }
   }
 
   async removeFromCart(req, bookId) {
-    const session = req.session;
     const isLoggedIn = this.isUserLoggedIn(req);
 
     if (isLoggedIn) {
-      const userId = await this.getUserId(session);
+      const userId = await this.getUserId(req);
       const cartMap = await this.getCartFromDatabase(userId);
       const itemToRemove = cartMap[bookId];
       if (itemToRemove) {
-        await CartItemRepository.deleteCartItem(itemToRemove._id);
+        await cartItemRepository.deleteCartItem(itemToRemove._id);
         delete cartMap[bookId];
         await this.storeCartInDatabase(userId, cartMap);
       }
     } else {
-      const cartMap = this.getCartFromSession(session);
+      const cartMap = this.getCartFromSession(req);
       delete cartMap[bookId];
-      session[SESSION_KEY_CART] = cartMap;
+      req.session[SESSION_KEY_CART] = cartMap;
     }
   }
 
   async updateCart(req, bookId, quantity) {
-    const session = req.session;
     const isLoggedIn = this.isUserLoggedIn(req);
 
     if (isLoggedIn) {
-      const userId = await this.getUserId(session);
+      const userId = await this.getUserId(req);
       const cartMap = await this.getCartFromDatabase(userId);
       const cartItem = cartMap[bookId];
       if (cartItem) {
@@ -128,12 +130,12 @@ class CartService {
         await this.storeCartInDatabase(userId, cartMap);
       }
     } else {
-      const cartMap = this.getCartFromSession(session);
+      const cartMap = this.getCartFromSession(req);
       const cartItem = cartMap[bookId];
       if (cartItem) {
         cartItem.quantity = quantity;
       }
-      session[SESSION_KEY_CART] = cartMap;
+      req.session[SESSION_KEY_CART] = cartMap;
     }
   }
 
@@ -142,32 +144,34 @@ class CartService {
     const isLoggedIn = this.isUserLoggedIn(req);
 
     if (isLoggedIn) {
-      const userId = await this.getUserId(session);
-      const cart = await CartRepository.findByUserId(userId);
+      const userId = await this.getUserId(req);
+      const cart = await cartRepository.findByUserId(userId);
       if (cart) {
-        await CartItemRepository.deleteMany(cart.cartItems);
+        await cartItemRepository.deleteCart(cart._id);
         cart.cartItems = [];
-        await CartRepository.update(cart);
+        await cartRepository.update(cart);
       }
     } else {
-      const cartMap = this.getCartFromSession(session);
+      const cartMap = this.getCartFromSession(req);
       cartMap = {};
-      session[SESSION_KEY_CART] = cartMap;
+      req.session[SESSION_KEY_CART] = cartMap;
     }
   }
 
   async getCart(req) {
-    const session = req.session;
+    const userId = this.getUserId(req);
     const isLoggedIn = this.isUserLoggedIn(req);
 
     if (isLoggedIn) {
-      const userId = await this.getUserId(session);
       const cartMap = await this.getCartFromDatabase(userId);
       return Object.values(cartMap);
     } else {
-      const cartMap = this.getCartFromSession(session);
+      const cartMap = this.getCartFromSession(req);
       return Object.values(cartMap);
     }
+  }
+  async createCart(cart){
+    return await cartRepository.create(cart);
   }
 }
 
