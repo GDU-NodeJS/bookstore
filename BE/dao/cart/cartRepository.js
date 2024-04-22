@@ -8,14 +8,14 @@ class CartRepository {
     return await Cart.findOne({ user: userId }).populate('cartItems');
   }
 
-  async create(cart) {
+  async create(cartData) {
+    const cart = new Cart(cartData);
     return await cart.save();
   }
 
   async update(cart) {
-    return await cart.save();
+    return await Cart.findByIdAndUpdate(cartId, updateData, { new: true });
   }
-
   async deleteByUserId(userId) {
     return await Cart.findOneAndDelete({ user: userId });
   }

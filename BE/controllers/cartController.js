@@ -7,7 +7,8 @@ class cartController{
 
     async addToCart(req, res) {
         try {
-          const { bookId, quantity } = req.body;
+          const bookId = req.params.bookId;
+          const quantity = req.params.quantity;
           await this._cartService.addToCart(req, bookId, quantity);
           return res.status(200).json({ message: 'Add to cart successfully' });
         } catch (err) {

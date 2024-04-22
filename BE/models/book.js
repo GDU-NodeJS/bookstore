@@ -1,7 +1,6 @@
 import { Schema, model } from 'mongoose';
 
 const BookSchema = new Schema({
-  _id: { type: Schema.Types.ObjectId, required: true },
   price: { type: Number, required: true },
   image: { type: String, required: true },
   name: { type: String, required: true },
