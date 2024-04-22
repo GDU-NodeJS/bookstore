@@ -7,6 +7,17 @@ class BookRepository {
   constructor() {
   }
 
+  async create(bookData) {
+    try {
+      const newBook = new Book(bookData);
+      const book = await newBook.save();
+      return book;
+    } catch (err) {
+      console.error(err);
+      throw new Error('Error creating book');
+    }
+  }
+
   async findAll(){
     const books = await Book.find();
     return books;
