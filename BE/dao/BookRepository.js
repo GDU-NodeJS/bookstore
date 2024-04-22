@@ -1,11 +1,7 @@
-import mongoose from 'mongoose';
 import Book from '../models/Book.js';
-import book from '../routers/customer/book/index.js';
-import { ObjectId } from 'mongodb';
 
 class BookRepository {
-  constructor() {
-  }
+  constructor() {}
 
   async create(bookData) {
     try {
@@ -18,14 +14,17 @@ class BookRepository {
     }
   }
 
-  async findAll(){
-    const books = await Book.find();
+  async findAll() {
+    const books = await Book.find().populate({
+      path: 'categories',
+      select: '-__v'
+    }); 
     return books;
   }
 
   async findByName(name) {
     try {
-      const book = await Book.findOne({ name });
+      const book = await Book.findOne({ name }).populate('categories'); // Populate categories
       return book;
     } catch (err) {
       console.error(err);
@@ -35,7 +34,7 @@ class BookRepository {
 
   async findById(id) {
     try {
-      const book = await Book.findById(id);
+      const book = await Book.findById(id).populate('categories'); // Populate categories
       if (!book) {
         return null;
       }
@@ -48,11 +47,35 @@ class BookRepository {
 
   async findByAuthor(author) {
     try {
-      const books = await Book.find({ author }); 
+      const books = await Book.find({ author }).populate('categories'); // Populate categories
       return books;
     } catch (err) {
       console.error(err);
-      throw new Error('Error finding books by author'); 
+      throw new Error('Error finding books by author');
+    }
+  }
+
+  async addCategory(bookId, categoryId) {
+    try {
+      const book = await Book.findByIdAndUpdate(bookId, { $push: { categories: categoryId } }, { new: true });
+      if (!book) {
+        throw new Error('Book not found');
+      }
+      return book;
+    } catch (err) {
+      throw new Error('Error adding category to book');
+    }
+  }
+
+  async removeCategory(bookId, categoryId) {
+    try {
+      const book = await Book.findByIdAndUpdate(bookId, { $pull: { categories: categoryId } }, { new: true });
+      if (!book) {
+        throw new Error('Book not found');
+      }
+      return book;
+    } catch (err) {
+      throw new Error('Error removing category from book');
     }
   }
 }
