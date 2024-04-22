@@ -7,7 +7,7 @@ class MailService {
 
     static registration(token, email, req, from = 'BookStore Registration') {
       return new Promise((resolve, reject) => {
-        const confirmationUrl = `${req.protocol}://${req.get('host')}/api/client/auth/confirm-registration/${token}`;
+        const confirmationUrl = `${req.protocol}://${req.get('host')}/api/guest/auth/confirm-registration/${token}`;
         const mailOptions = {
           from: from,
           to: email,
