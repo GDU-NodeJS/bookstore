@@ -6,7 +6,7 @@ class AddminCategoryServiceImp {
     async findById(id){
         try{
             const category = await categoryRepository.findById(id);
-        return category;
+            return category;
         } catch(err){
             console.error(err);
             throw new Error("Not Found by id category");
