@@ -1,5 +1,8 @@
 import { Router } from "express";
+import auth  from "./Authen/index.js";
 
-const routerAdmin = Router();
+const routerGuest = Router();
 
-export default routerAdmin;
+
+routerGuest.use("/auth", auth);
+export default routerGuest;
