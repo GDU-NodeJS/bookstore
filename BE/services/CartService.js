@@ -1,10 +1,7 @@
-import mongoose from 'mongoose';
 import CartRepository from '../dao/cart/cartRepository.js';
 import CartItemRepository from '../dao/cart/cartItemRepository.js';
 import AdminBookServiceImp from './book/AdminBookServiceImp.js';
-import UserRepository from "../dao/UserRepository.js";
 import CartItem from "../models/cart/cartItem.js";
-import User from "../models/auth/user.js";
 const SESSION_KEY_CART = 'CART';
 const cartRepository = new CartRepository();
 const cartItemRepository = new CartItemRepository();
@@ -170,8 +167,33 @@ class CartService {
       return Object.values(cartMap);
     }
   }
+  async getCartItem(cartItemId, req) {
+    const userId = this.getUserId(req);
+    const isLoggedIn = this.isUserLoggedIn(req);
+  
+    if (isLoggedIn) {
+      const cartMap = await this.getCartFromDatabase(userId);
+      const cartItem = Object.values(cartMap).find(
+        (model) => model._doc._id.equals(cartItemId)
+      );
+  
+      return cartItem;
+    } else {
+      const cartMap = this.getCartFromSession(req);
+  
+      const cartItem = Object.values(cartMap).find(
+        (model) => model._doc._id.equals(cartItemId)
+      );
+  
+      return cartItem;
+    }
+  }
+  
   async createCart(cart){
     return await cartRepository.create(cart);
+  }
+  async checkout(cartItemId, req){
+    
   }
 }
 

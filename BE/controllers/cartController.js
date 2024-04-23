@@ -8,7 +8,10 @@ class cartController{
     async addToCart(req, res) {
         try {
           const bookId = req.params.bookId;
-          const quantity = req.params.quantity;
+          let quantity = req.params.quantity;
+          if (quantity == undefined) {
+            quantity = 1;
+          }
           await this._cartService.addToCart(req, bookId, quantity);
           return res.status(200).json({ message: 'Add to cart successfully' });
         } catch (err) {
@@ -18,13 +21,27 @@ class cartController{
       }
     
     async getCart(req, res) {
-    try {
-        const cart = await this._cartService.getCart(req);
-        return res.status(200).json({ data: cart, message: 'Get cart successfully' });
-    } catch (err) {
-        console.error('Error getting cart:', err);
-        return res.status(500).json({ message: err.message });
+        try {
+            const cart = await this._cartService.getCart(req);
+            return res.status(200).json({ data: cart, message: 'Get cart successfully' });
+        } catch (err) {
+            console.error('Error getting cart:', err);
+            return res.status(500).json({ message: err.message });
+        }
     }
+    async getCartItem(req, res) {
+        try {
+            const cartItemId = req.params.cartItemId;
+            const cart = await this._cartService.getCartItem(cartItemId, req);
+            return res.status(200).json({ 
+                status: 200, 
+                message: 'Get cart successfully',
+                data: cart
+             });
+        } catch (err) {
+            console.error('Error getting cart:', err);
+            return res.status(500).json({ message: err.message });
+        }
     }
 
     async removeFromCart(req, res) {
