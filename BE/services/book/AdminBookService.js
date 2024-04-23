@@ -1,23 +1,23 @@
 import AdminBookServiceImp from "../../services/book/AdminBookServiceImp.js";
-const adminBookService = new AdminBookServiceImp();
+const adminBookServiceImp = new AdminBookServiceImp();
 
 class AdminBookService {
     async findById(id){
-        const book = await adminBookService.findById(id);
+        const book = await adminBookServiceImp.findById(id);
         return book;
     }
     async getAllBooks(){
-        const books = await adminBookService.getAllBooks();
+        const books = await adminBookServiceImp.getAllBooks();
         return books;
     }
     async addBook(book){
-        await adminBookService.addBook(book);
+        await adminBookServiceImp.addBook(book);
     }
     async updateBook(id, newBook){
-        await adminBookService.updateBook(id, newBook);
+        await adminBookServiceImp.updateBook(id, newBook);
     }
     async removeBook(id){
-        await adminBookService.removeBook(id);
+        await adminBookServiceImp.removeBook(id);
     }
   }
   

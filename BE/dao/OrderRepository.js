@@ -2,7 +2,9 @@ import Order from "../models/order.js";
 
 class OrderRepository {
   constructor() {}
-  async createOrder(orderData) {
+
+  //user
+  async user_createOrder(orderData) {
     try {
       const order = new Order(orderData);
       return await order.save();
@@ -11,7 +13,7 @@ class OrderRepository {
     }
   }
 
-  async getAllOrders(userId) {
+  async user_getAllOrders(userId) {
     try {
       return await Order.find({ user: userId });
     } catch (err) {
@@ -19,7 +21,7 @@ class OrderRepository {
     }
   }
 
-  async getOrderById(orderId, userId) {
+  async user_getOrderById(userId, orderId) {
     try {
       return await Order.findOne({ _id: orderId, user: userId });
     } catch (err) {
@@ -27,7 +29,7 @@ class OrderRepository {
     }
   }
 
-  async getOrdersByStatus(userId, status) {
+  async user_getOrdersByStatus(userId, status) {
     try {
       return await Order.find({ user: userId, status });
     } catch (err) {
@@ -35,15 +37,7 @@ class OrderRepository {
     }
   }
 
-  async updateOrder(orderId, userId, updateData) {
-    try {
-      return await Order.findOneAndUpdate({ _id: orderId, user: userId }, updateData, { new: true });
-    } catch (err) {
-      throw new Error(`Failed to update order ${orderId} for user ${userId}: ${err.message}`);
-    }
-  }
-
-  async cancelOrder(orderId, userId) {
+  async user_cancelOrder(userId, orderId) {
     try {
       return await Order.findOneAndUpdate({ _id: orderId, user: userId }, { status: 'CANCELLED' }, { new: true });
     } catch (err) {
@@ -51,7 +45,25 @@ class OrderRepository {
     }
   }
 
-  async adminFindOrderById(orderId) {
+  //admin
+
+  async admin_updateOrder(orderId, status) {
+    try {
+      return await Order.findOneAndUpdate({ _id: orderId }, { status }, { new: true });
+    } catch (err) {
+      throw new Error(`Failed to update order ${orderId}: ${err.message}`);
+    }
+  }
+
+  async admin_getAllOrders(){
+    try {
+      return await Order.findAll();
+    } catch (err) {
+      throw new Error(`Failed to get all orders: ${err.message}`);
+    }
+  }
+
+  async admin_getOrderById(orderId) {
     try {
       return await Order.findOne({ _id: orderId });
     } catch (err) {
@@ -59,7 +71,7 @@ class OrderRepository {
     }
   }
 
-  async adminFindOrdersByStatus(status) {
+  async admin_getOrdersByStatus(status) {
     try {
       return await Order.find({ status });
     } catch (err) {
@@ -67,27 +79,11 @@ class OrderRepository {
     }
   }
 
-  async findOrdersByUserId(userId) {
+  async admin_getOrdersByUser(userId) {
     try {
       return await Order.find({ user: userId });
     } catch (err) {
       throw new Error(`Failed to find orders for user ${userId}: ${err.message}`);
-    }
-  }
-
-  async userFindOrderById(userId, orderId) {
-    try {
-      return await Order.findOne({ _id: orderId, user: userId });
-    } catch (err) {
-      throw new Error(`Failed to find order ${orderId} for user ${userId}: ${err.message}`);
-    }
-  }
-
-  async findOrdersByUserIdAndStatus(userId, status) {
-    try {
-      return await Order.find({ user: userId, status });
-    } catch (err) {
-      throw new Error(`Failed to find orders with status ${status} for user ${userId}: ${err.message}`);
     }
   }
 }

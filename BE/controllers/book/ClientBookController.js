@@ -25,12 +25,6 @@ class ClientBookController {
     try {
       const bookId = req.params.id;
       const book = await adminBookService.findById(bookId);
-    //   if (book.$isEmpty) {
-    //     return res.status(404).json({
-    //       status: 404,
-    //       message: "Book not found",
-    //     });
-    //   }
       return res.status(200).json({
         status: 200,
         message: "Successfully retrieved the book",
