@@ -5,6 +5,7 @@ import routerCustomer from './routers/customer/index.js';
 import routerGuest from './routers/guest/index.js';
 import routerAdmin from './routers/admin/index.js'
 import cors from 'cors';
+import session from 'express-session';
 import {authenticateJWT, isAdmin} from './controllers/Auth/AuthController.js';
 dotenv.config();
 
@@ -14,6 +15,11 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(express.static("."));
+app.use(session({
+  secret: process.env.SESSION_KEY, // Khóa bí mật để mã hóa session
+  resave: false,
+  saveUninitialized: true
+}));
 app.use("/api/guest", routerGuest);
 // Middleware cho các yêu cầu tới /api/user
 app.use("/api/customer", authenticateJWT, routerCustomer);

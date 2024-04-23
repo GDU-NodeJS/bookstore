@@ -1,12 +1,14 @@
 import { Router } from "express";
 import book from "./book/index.js";
 import category from "./category/index.js";
+import cart from "./cart/index.js"
 import order from "./order/index.js";
-const routerClient = Router();
 
-routerClient.use("/book",book);
-routerClient.use("/category",category);
-routerClient.use("/order",order);
+const routerCustomer = Router();
 
+routerCustomer.use("/book",book);
+routerCustomer.use("/category",category);
+routerCustomer.use("/order",order);
+routerCustomer.use("/cart", cart)
 
-export default routerClient;
+export default routerCustomer;

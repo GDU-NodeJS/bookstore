@@ -7,6 +7,9 @@ const userService = new UserService();
 import crypto from 'crypto'
 import MailService from './MailService.js';
 import TokenRegistration from '../../models/auth/tokenregistration.js';
+import CartService from "../CartService.js";
+import Cart from "../../models/cart/cart.js";
+const cartService = new CartService();
 class AuthenticationService{
 
     constructor(){
@@ -19,19 +22,22 @@ class AuthenticationService{
           if (user) {
             throw new ErrorRepsonse(400, 'Email already exists');
           }
-      
+  
           const hashedPassword = await Bcrypt.hash(req.body.password, 12);
           const userData = { ...req.body, password: hashedPassword };
           const savedUser = await userService.createUser(userData);
-
+          
           if (!savedUser) {
             throw new ErrorRepsonse(500, 'Failed to create user');
           }
-      
+          
+          
           const token = crypto.randomBytes(20).toString('hex');
           await TokenRegistration.create({ token, userEmail: req.body.email });
-      
+          
           const confirmationUrl = MailService.registration(token, req.body.email, req,"BookStore Registration");
+          const newCart = new Cart({ user: savedUser._id, cartItems: [] });
+          await cartService.createCart(newCart);
           return { savedUser, confirmationUrl };
         } catch (error) {
           if (error instanceof ErrorRepsonse) {
