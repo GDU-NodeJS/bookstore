@@ -7,17 +7,21 @@ class ClientBookController {
   async getBooks(req, res) {
     try {
       const books = await adminBookService.getAllBooks();
-      return res.status(200).json({
-        status: 200,
+      const response = books.map(book => this.responseBook(book));
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
         message: "Successfully retrieved data",
-        data: books,
+        data: response,
       });
     } catch (err) {
-        return res.status(500).json({
-            status: 500,
-            message: "Error retrieving the book",
-            data: err,
-        })
+      let errorMessage = err.message;
+        if (errorMessage.startsWith('Error: ')) {
+          errorMessage = errorMessage.slice(7);
+        }
+      return res.status(res.statusCode).json({
+          status: res.statusCode,
+          message: errorMessage
+      })
     }
   }
 
@@ -25,18 +29,33 @@ class ClientBookController {
     try {
       const bookId = req.params.id;
       const book = await adminBookService.findById(bookId);
-      return res.status(200).json({
-        status: 200,
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
         message: "Successfully retrieved the book",
         data: book,
       });
     } catch (err) {
-      return res.status(404).json({
-        status: 404,
-        message: "Book not found",
-        data: err,
+      let errorMessage = err.message;
+        if (errorMessage.startsWith('Error: ')) {
+          errorMessage = errorMessage.slice(7);
+        }
+      return res.status(res.statusCode).json({
+          status: res.statusCode,
+          message: errorMessage
       })
     }
+  }
+  responseBook(book){
+    const categories = book.categories.map(category => category.name);
+    return {
+      id: book._id,
+      price: book.price,
+      image: book.image,
+      name: book.name,
+      author: book.author,
+      description: book.description,
+      categories: categories
+    };
   }
 }
 

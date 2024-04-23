@@ -13,7 +13,6 @@ class AdminOrderController {
                 data: response,
             });
         } catch (err) {
-            console.log(err);
           let errorMessage = err.message;
           if (errorMessage.startsWith('Error: ')) {
             errorMessage = errorMessage.slice(7);

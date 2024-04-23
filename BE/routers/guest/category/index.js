@@ -4,6 +4,6 @@ import ClientCategoryController from "../../../controllers/category/ClientCatego
 const categoryRouter = Router();
 const categoryController = new ClientCategoryController();
 
-categoryRouter.get('/getAll', categoryController.getCategories);
+categoryRouter.get('/getAll', categoryController.getCategories.bind(categoryController));
 
 export default categoryRouter;

@@ -7,7 +7,7 @@ const userService = new UserService();
 import crypto from 'crypto'
 import MailService from './MailService.js';
 import TokenRegistration from '../../models/auth/tokenregistration.js';
-import CartService from "../CartService.js";
+import CartService from "../../services/cart/CartServiceImp.js";
 import Cart from "../../models/cart/cart.js";
 const cartService = new CartService();
 class AuthenticationService{

@@ -1,6 +1,6 @@
-import CartService from "../services/CartService.js"
+import CartService from "../services/cart/CartService.js"
 
-class cartController{
+class CartController{
     constructor() {
         this._cartService = new CartService();
     }
@@ -93,4 +93,4 @@ class cartController{
         }
     }
 }
-export default cartController;
+export default CartController;

@@ -4,10 +4,10 @@ import AdminBookController from "../../../controllers/book/AdminBookController.j
 const adminBook = Router();
 const adminBookController = new AdminBookController();
 
-adminBook.get("/getAll", adminBookController.getBooks);
-adminBook.get("/:id", adminBookController.getBookById);
-adminBook.post("/add", adminBookController.addBook);
-adminBook.put("/update/:id", adminBookController.updateBook);
-adminBook.delete("/delete/:id", adminBookController.removeBook);
+adminBook.get("/getAll", adminBookController.getBooks.bind(adminBookController));
+adminBook.get("/:id", adminBookController.getBookById.bind(adminBookController));
+adminBook.post("/add", adminBookController.addBook.bind(adminBookController));
+adminBook.patch("/update/:id", adminBookController.updateBook.bind(adminBookController));
+adminBook.delete("/delete/:id", adminBookController.removeBook.bind(adminBookController));
 
 export default adminBook;
