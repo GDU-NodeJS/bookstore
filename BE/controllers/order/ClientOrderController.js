@@ -14,15 +14,21 @@ class ClientOrderController{
               data: response,
           });
       } catch (err) {
-          console.error("Error fetching orders: ", err);
-          return res.status(500).send("Error fetching orders");
+        let errorMessage = err.message;
+        if (errorMessage.startsWith('Error: ')) {
+          errorMessage = errorMessage.slice(7);
+        }
+          return res.status(400).json({
+            status: 400,
+            message: errorMessage
+          });
       }
   }
 
   async getOrderById(req, res) {
       try {
           const orderId = req.params.orderId;
-          const order = await clientOrderService.findOrderById(orderId, req, req.session);
+          const order = await clientOrderService.getOrderById(orderId, req);
           if (order) {
               return res.status(200).json({
                   status: 200,
@@ -36,15 +42,21 @@ class ClientOrderController{
               });
           }
       } catch (err) {
-          console.error("Error fetching order by ID: ", err);
-          return res.status(500).send("Error fetching order by ID");
+        let errorMessage = err.message;
+        if (errorMessage.startsWith('Error: ')) {
+          errorMessage = errorMessage.slice(7);
+        }
+          return res.status(400).json({
+            status: 400,
+            message: errorMessage
+          });
       }
   }
 
   async getOrderByStatus(req, res) {
       try {
           const status = req.query.s;
-          const orders = await clientOrderService.findOrderByStatus(status, req, req.session);
+          const orders = await clientOrderService.getOrderByStatus(status, req);
           const response = orders.map(order => this.responseOrder(order));
           return res.status(200).json({
               status: 200,
@@ -52,8 +64,14 @@ class ClientOrderController{
               data: response,
           });
       } catch (err) {
-          console.error("Error fetching orders by status: ", err);
-          return res.status(500).send("Error fetching orders by status");
+        let errorMessage = err.message;
+        if (errorMessage.startsWith('Error: ')) {
+          errorMessage = errorMessage.slice(7);
+        }
+          return res.status(400).json({
+            status: 400,
+            message: errorMessage
+          });
       }
   }
 
@@ -66,18 +84,27 @@ class ClientOrderController{
               message: "Cancel order successfully",
           });
       } catch (err) {
-          console.error("Error cancelling order: ", err);
-          return res.status(500).send("Error cancelling order");
+        let errorMessage = err.message;
+        if (errorMessage.startsWith('Error: ')) {
+          errorMessage = errorMessage.slice(7);
+        }
+          return res.status(400).json({
+            status: 400,
+            message: errorMessage
+          });
       }
   }
 
     responseOrder(order) {
+        const user = order.user.buffer;
+        const userId = user.toString('hex');
       return {
           id: order._id,
           date: order.date,
           payment: order.payment,
           booklist: order.bookList,
           status: order.status,
+          user_id: userId
       };
   }
 }

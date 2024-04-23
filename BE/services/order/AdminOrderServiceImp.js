@@ -1,10 +1,39 @@
 import OrderRepository from "../../dao/OrderRepository.js";
+import UserRepository from "../../dao/UserRepository.js";
+
 const orderRepository = new OrderRepository();
+const userRepository = new UserRepository();
 
 class AdminOrderServiceImp {
 
-    async getAllOrders() {
+    isUserLoggedIn(req) {
+        const authHeader = req.headers.authorization;
+        return !!authHeader;
+    }
+    
+    async getUserFromSession(req) {
+        if (!this.isUserLoggedIn(req)) {
+          throw new Error("User is not logged in");
+        }
+        const user = req.session.user;
+        const isUser = await this.isUser(user.id);
+        if (!isUser) {
+          throw new Error("Not the user");
+        }
+        return user;
+    }
+    
+    async isUser(userId) {
+        const role = await userRepository.getUserRole(userId); 
+        if (role === 'Admin') {
+          return true;
+        }
+        return false;
+    }
+
+    async getAllOrders(req) {
         try {
+            const user = await this.getUserFromSession(req);
             const orders = await orderRepository.admin_getAllOrders();
             return orders;
         } catch (error) {
@@ -12,29 +41,32 @@ class AdminOrderServiceImp {
             throw new Error("Not Found by id category");
         }
     }
-    async getOrderById(id){
+    async getOrderById(orderId, req){
         try {
-            const order = await orderRepository.admin_getOrderById(id);
+            const user = await this.getUserFromSession(req);
+            const order = await orderRepository.admin_getOrderById(orderId);
             return order;
         } catch (error) {
             console.error(err);
-            throw new Error("Not Found by id category");
+            throw new Error("Not Found by id");
         }
     }
 
-    async getOrderByStatus(status){
+    async getOrderByStatus(status, req){
         try {
+            const user = await this.getUserFromSession(req);
             const order = await orderRepository.admin_getOrdersByStatus(status);
             return order;
         } catch (error) {
             console.error(err);
-            throw new Error("Not Found by id category");
+            throw new Error("Not Found by status");
         }
     }
 
-    async getOrderByUser(userId) {
+    async getOrderByUser(userId, req) {
         try {
-            const order = await orderRepository.admin_getOrderByUser(userId);
+            const user = await this.getUserFromSession(req);
+            const order = await orderRepository.admin_getOrdersByUser(userId);
             return order;
         } catch (error) {
             console.error(err);
@@ -42,9 +74,11 @@ class AdminOrderServiceImp {
         }
     }
 
-    async updateOrder(oderId, status) {
+    async updateOrder(oderId, status, req) {
         try {
-            await orderRepository.admin_updateOrder(oderId, status);
+            const user = await this.getUserFromSession(req);
+            const str = status.toUpperCase();
+            await orderRepository.admin_updateOrder(oderId, str);
         } catch (error) {
             console.error(err);
             throw new Error("Not Found by id category");

@@ -25,7 +25,10 @@ class CartService {
     return !!authHeader;
   }
 
-   getUserId(req) {
+  getUserId(req) {
+    if (!this.isUserLoggedIn(req)) {
+      return null;
+    }
     return req.session.user.id;
   }
 

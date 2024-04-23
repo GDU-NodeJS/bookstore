@@ -1,7 +1,9 @@
 import OrderRepository from "../../dao/OrderRepository.js";
 import BookRepository from "../../dao/BookRepository.js";
+import UserRepository from "../../dao/UserRepository.js";
 const orderRepository = new OrderRepository();
 const bookRepository = new BookRepository();
+const userRepository = new UserRepository();
 
 class ClientOrderServiceImp {
 
@@ -12,7 +14,19 @@ class ClientOrderServiceImp {
 
   async getUserFromSession(req) {
     const user = req.session.user;
+    const isUser = await this.isUser(user.id);
+    if (!isUser) {
+      throw new Error("Not the user");
+    }
     return user;
+  }
+
+  async isUser(userId) {
+    const role = await userRepository.getUserRole(userId); 
+    if (role === 'User') {
+      return true;
+    }
+    return false;
   }
 
   async createOrder(userId, cartItem, req) {
@@ -50,24 +64,27 @@ class ClientOrderServiceImp {
     return await orderRepository.user_getAllOrders(userId);
   }
 
-  async getOrderById(id, request, session) {
-    const user = this.isUserLoggedIn(request, session);
-    if (!user) {
+  async getOrderById(orderId, req) {
+    const isLoggedIn = this.isUserLoggedIn(req);
+    const user = await this.getUserFromSession(req);
+
+    if (!isLoggedIn) {
       throw new Error("User is not logged in");
     }
 
-    const userId = user.userID;
-    return await orderRepository.user_getOrderById(userId, id);
+    const userId = user.id;
+    return await orderRepository.user_getOrderById(userId, orderId);
   }
 
-  async cancelOrder(id, request, session) {
-    const user = this.isUserLoggedIn(request, session);
-    if (!user) {
+  async cancelOrder(orderId, req) {
+    const isLoggedIn = this.isUserLoggedIn(req);
+    const user = await this.getUserFromSession(req);
+    if (!isLoggedIn) {
       throw new Error("User is not logged in");
     }
 
-    const userId = user.userID;
-    const order = await orderRepository.user_getOrderById(userId, id);
+    const userId = user.id;
+    const order = await orderRepository.user_getOrderById(userId, orderId);
     if (!order) {
       throw new Error("Order not found");
     }
@@ -80,16 +97,17 @@ class ClientOrderServiceImp {
       throw new Error("Order is not pending");
     }
 
-    await orderRepository.user_cancelOrder(userId, id, { status: 'CANCELLED' });
+    await orderRepository.user_cancelOrder(userId, orderId);
   }
 
-  async getOrderByStatus(status, request, session) {
-    const user = await this.isUserLoggedIn(request, session);
-    if (!user) {
+  async getOrderByStatus(status, req) {
+    const isLoggedIn = this.isUserLoggedIn(req);
+    const user = await this.getUserFromSession(req);
+    if (!isLoggedIn) {
       throw new Error("User is not logged in");
     }
 
-    const userId = user.userID;
+    const userId = user.id;
     return await orderRepository.user_getOrdersByStatus(userId, status);
   }
 }
