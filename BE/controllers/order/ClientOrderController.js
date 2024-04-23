@@ -6,7 +6,7 @@ class ClientOrderController{
 
     async getAllOrders(req, res) {
       try {
-          const orders = await clientOrderService.getAllOrder(req, req.session);
+          const orders = await clientOrderService.getAllOrders(req);
           const response = orders.map(order => this.responseOrder(order));
           return res.status(200).json({
               status: 200,

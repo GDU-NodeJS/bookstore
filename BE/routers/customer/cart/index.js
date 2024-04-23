@@ -8,5 +8,6 @@ cart.post('/add/:bookId', cartController.addToCart.bind(cartController));
 cart.post('/add/:bookId/:quantity', cartController.addToCart.bind(cartController));
 cart.post('/delete/:bookId', cartController.removeFromCart.bind(cartController))
 cart.post('/update/:bookId/:quantity',cartController.updateCart.bind(cartController))
-cart.get('/clearAll', cartController.clearCart.bind(cartController))
+cart.post('/clearAll', cartController.clearCart.bind(cartController))
+cart.post('/checkout/:cartItemId', cartController.checkout.bind(cartController))
 export default cart;

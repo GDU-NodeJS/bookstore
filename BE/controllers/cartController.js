@@ -68,13 +68,29 @@ class cartController{
     }
 
     async clearCart(req, res) {
-    try {
-        await this._cartService.clearCart(req);
-        return res.status(200).json({ message: 'Clear cart successfully' });
-    } catch (err) {
-        console.error('Error clearing cart:', err);
-        return res.status(500).json({ message: err.message });
+        try {
+            await this._cartService.clearCart(req);
+            return res.status(200).json({ message: 'Clear cart successfully' });
+        } catch (err) {
+            console.error('Error clearing cart:', err);
+            return res.status(500).json({ message: err.message });
+        }
     }
+    async checkout(req, res){
+        try {
+            const cartItemId = req.params.cartItemId;
+            await this._cartService.checkout(cartItemId, req);
+            return res.status(200).json({ 
+                status: 201,
+                message: 'Checkout successfully' 
+            });
+        } catch (err) {
+            console.error('Error checkout:', err);
+            return res.status(500).json({ 
+                status: 500,
+                message: err.message 
+            });
+        }
     }
 }
 export default cartController;

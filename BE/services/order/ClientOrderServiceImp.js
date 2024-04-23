@@ -1,51 +1,57 @@
 import OrderRepository from "../../dao/OrderRepository.js";
+import BookRepository from "../../dao/BookRepository.js";
 const orderRepository = new OrderRepository();
+const bookRepository = new BookRepository();
 
 class ClientOrderServiceImp {
 
-  async isUserLoggedIn(request, session) {
-    const user = await this.getUserFromSession(session);
-    return !!user;
+  isUserLoggedIn(req) {
+    const authHeader = req.headers.authorization;
+    return !!authHeader;
   }
 
-
-  async getUserFromSession(session) {
-    const user = session.USER;
+  async getUserFromSession(req) {
+    const user = req.session.user;
     return user;
   }
 
-  async createOrder(userId, cartItem, session) {
-    const user = await this.getUserFromSession(session);
-    if (!user) {
+  async createOrder(userId, cartItem, req) {
+    const isLoggedIn = this.isUserLoggedIn(req);
+    if (!isLoggedIn) {
       throw new Error("User is not logged in");
     }
 
+    const bookBuffer = cartItem.book.buffer;
+    const bookId = bookBuffer.toString('hex');
+
+    const book = await bookRepository.findById(bookId);
+
     const bookList = [cartItem.book];
-    const cartItemList = [cartItem];
-    const payment = cartItem.book.price * cartItem.quantity;
+    const payment = book.price * cartItem.quantity;
     const newOrderData = {
       date: new Date(),
       user: userId,
       bookList,
-      cartItemList,
       payment,
       status: 'PENDING'
     };
 
-    await orderRepository.createOrder(newOrderData);
+    await orderRepository.user_createOrder(newOrderData);
   }
-  async getAllOrder(request, session) {
-    const user = await this.isUserLoggedIn(request, session);
-    if (!user) {
+  
+  async getAllOrders(req) {
+    const isLoggedIn = this.isUserLoggedIn(req);
+    const user = await this.getUserFromSession(req);
+    if (!isLoggedIn) {
       throw new Error("User is not logged in");
     }
 
-    const userId = user.userID;
+    const userId = user.id;
     return await orderRepository.user_getAllOrders(userId);
   }
 
   async getOrderById(id, request, session) {
-    const user = await this.isUserLoggedIn(request, session);
+    const user = this.isUserLoggedIn(request, session);
     if (!user) {
       throw new Error("User is not logged in");
     }
@@ -55,7 +61,7 @@ class ClientOrderServiceImp {
   }
 
   async cancelOrder(id, request, session) {
-    const user = await this.isUserLoggedIn(request, session);
+    const user = this.isUserLoggedIn(request, session);
     if (!user) {
       throw new Error("User is not logged in");
     }
