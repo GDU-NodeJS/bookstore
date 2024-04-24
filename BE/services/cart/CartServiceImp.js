@@ -44,7 +44,9 @@ class CartServiceImp {
 
     if (cart && cart.cartItems) {
       cart.cartItems.forEach(item => {
-        cartMap[item.book._id] = item;
+        if(item.book){
+          cartMap[item.book._id] = item;
+        }
       });
     }
 
@@ -168,10 +170,10 @@ class CartServiceImp {
   }
 
   async getCart(req) {
-    const userId = this.getUserId(req);
     const isLoggedIn = this.isUserLoggedIn(req);
-
+    
     if (isLoggedIn) {
+      const userId = this.getUserId(req);
       const cartMap = await this.getCartFromDatabase(userId);
       return Object.values(cartMap);
     } else {
@@ -180,10 +182,10 @@ class CartServiceImp {
     }
   }
   async getCartItem(cartItemId, req) {
-    const userId = this.getUserId(req);
     const isLoggedIn = this.isUserLoggedIn(req);
-  
+    
     if (isLoggedIn) {
+      const userId = this.getUserId(req);
       const cartMap = await this.getCartFromDatabase(userId);
       const cartItem = Object.values(cartMap).find(
         (model) => model._doc._id.equals(cartItemId)
@@ -205,22 +207,22 @@ class CartServiceImp {
     return await cartRepository.create(cart);
   }
   async checkout(cartItemId, req) {
-    const userId = this.getUserId(req);
     const isLoggedIn = this.isUserLoggedIn(req);
-  
+    
     if (!isLoggedIn) {
       throw new Error('User must be logged in to checkout');
     }
-  
+    
     const cartItem = await this.getCartItem(cartItemId, req);
     const bookBuffer = cartItem.book.buffer;
     const bookId = bookBuffer.toString('hex');
-  
+    
     if (!cartItem) {
       throw new Error('Cart item not found');
     }
-
+    
     try {
+      const userId = this.getUserId(req);
       const order = await clientOrderService.createOrder(userId, cartItem, req);
       await this.removeFromCart(req, bookId);
       return order;
