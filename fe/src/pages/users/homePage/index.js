@@ -141,7 +141,7 @@ const HomePage = () => {
         categoryNames.forEach(genre => {
             const topBooksInGenre = data.filter(book =>
                 Array.isArray(book.categories) &&
-                book.categories.some(category => category.includes(genre))
+                book.categories.some(category => category.name === genre)
             );
             featproducts[genre] = {
                 title: genre,

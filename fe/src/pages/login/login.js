@@ -42,13 +42,13 @@ const LoginPage = () => {
             console.error('Lỗi khi kiểm tra và lấy dữ liệu giỏ hàng:', error);
         }
     };
-    useEffect(()=>{
+    useEffect(() => {
         getCart()
-    },[])
+    }, [])
     const handleAddToCart = async (product, quantity) => {
         // Kiểm tra xem người dùng đã đăng nhập chưa
         const isLoggedIn = cookies.get('token')
-        console.log('token: ',isLoggedIn)
+        console.log('token: ', isLoggedIn)
         axios.defaults.withCredentials = true;
         try {
             if (isLoggedIn) {
@@ -97,7 +97,7 @@ const LoginPage = () => {
         }
     }
     const handleLogin = async (e) => {
-        e.preventDefault();     
+        e.preventDefault();
         axios.defaults.withCredentials = true;
         const params = {
             "email": `${username}`,
@@ -129,25 +129,34 @@ const LoginPage = () => {
         }
     };
 
-
+    const height = window.innerHeight;
+    console.log('Chiều cao của màn hình:', height);
     return (
-        <div className="container">
-            <h2>Login Page</h2>
-            <form onSubmit={()=>handleLogin}>
-                <input
-                    type="text"
-                    placeholder="Username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                />
-                <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-                <button type="submit" >Login</button>
-            </form>
+        <div className="container" style={{height: `${height}px`}}>
+            <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                <div style={{width: '70%', height: `${height}px`}}>
+                    <h1>Bookstore</h1>
+                </div>
+                <div style={{width: '30%', height: `${height}px`}}>
+
+                    <h2>Login Page</h2>
+                    <form onSubmit={() => handleLogin}>
+                        <input
+                            type="text"
+                            placeholder="Username"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                        />
+                        <input
+                            type="password"
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                        <button type="submit" >Login</button>
+                    </form>
+                </div>
+            </div>
         </div>
     );
 };
