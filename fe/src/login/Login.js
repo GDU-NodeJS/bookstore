@@ -17,6 +17,9 @@ function LoginForm() {
       const responseData = response.data;
       const token = responseData.token;
       const role = responseData.data[0].role
+      const userId = responseData.data[0].id
+
+      localStorage.setItem('userId', userId)
   
       // Xác định tên của cookie tùy thuộc vào vai trò
       const cookieName = role === 'Admin' ? 'jwt' : 'client_jwt';
