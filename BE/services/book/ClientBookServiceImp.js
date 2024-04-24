@@ -30,6 +30,10 @@ class ClientBookSerivceImp {
           const filteredBooks = books.filter((book) =>
             book.name.toLowerCase().includes(name.toLowerCase())
           );
+          if(filteredBooks.length === 0 ){
+            
+            throw new Error("no book found for name ")
+          }
           return filteredBooks;
         } catch (err) {
           console.error(err);
