@@ -65,6 +65,7 @@ class ClientOrderController {
     try {
       const status = req.query.s;
       const orders = await clientOrderService.getOrderByStatus(status, req);
+      
       const response = [];
 
       for (const order of orders) {
