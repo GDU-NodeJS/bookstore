@@ -3,9 +3,12 @@ import CookieService from './cookie'; // Import service để làm việc với 
 
 const apiUrl = "http://localhost:8090/api/admin";
 
+axios.defaults.withCredentials = true;
+
 const userApi = {
   getAllUsers: async () => {
     try {
+      axios.defaults.withCredentials = true;
       const headers = await getRequestHeaders();
       const response = await axios.get(`${apiUrl}/user/getAll`, { headers });
       console.log(response)
@@ -17,6 +20,7 @@ const userApi = {
   },
   deleteUser: async (userId) => {
     try {
+      axios.defaults.withCredentials = true;
       const headers = await getRequestHeaders();
       const response = await axios.post(`${apiUrl}/user/delete/${userId}`, {}, { headers });
       return response.data;
@@ -27,6 +31,7 @@ const userApi = {
   },
   findUserById: async (userId) => {
     try {
+      axios.defaults.withCredentials = true;
       const headers = await getRequestHeaders();
       const response = await axios.get(`${apiUrl}/user/findbyid/${userId}`, { headers });
       return response.data;

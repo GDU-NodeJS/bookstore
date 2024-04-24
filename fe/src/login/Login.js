@@ -16,20 +16,21 @@ function LoginForm() {
       });
       const responseData = response.data;
       const token = responseData.token;
-      const role = responseData.data[0].role
-  
-      // Xác định tên của cookie tùy thuộc vào vai trò
-      const cookieName = role === 'Admin' ? 'jwt' : 'client_jwt';
-  
-      // Lưu token vào cookie với tên tương ứng
-      document.cookie = `${cookieName}=${token}; expires=${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toUTCString()}; path=/`;
-      console.log(`Token đã được lưu vào cookie "${cookieName}":`, token);
-      
-      // Xác định đường dẫn tùy thuộc vào vai trò
-      const redirectPath = role === 'Admin' ? '/admin' : '/client';
-  
-      // Chuyển hướng đến trang tương ứng với vai trò
-      navigate(redirectPath);
+      const role = responseData.data[0].role;
+
+      // Chỉ xử lý nếu người dùng là Admin
+      if (role === 'Admin') {
+        // Lưu token vào cookie
+        document.cookie = `jwt=${token}; expires=${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toUTCString()}; path=/`;
+
+        // Lưu token vào session storage
+        sessionStorage.setItem('jwt', token);
+
+        // Chuyển hướng đến trang admin
+        navigate('/admin');
+      } else {
+        console.error('Bạn không có quyền truy cập');
+      }
     } catch (error) {
       console.error('Đăng nhập thất bại:', error);
     }
