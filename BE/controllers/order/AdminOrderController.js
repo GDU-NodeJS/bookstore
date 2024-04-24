@@ -1,7 +1,7 @@
 import AdminOrderService from "../../services/order/AdminOrderService.js"
-import ClientBookSerivce from "../../services/book/ClientBookService.js"
+import AdminBookService from "../../services/book/AdminBookService.js"
 
-const bookService = new ClientBookSerivce();
+const bookService = new AdminBookService();
 const adminOrderService = new AdminOrderService();
 
 class AdminOrderController {
@@ -133,7 +133,7 @@ class AdminOrderController {
   async responseOrder(order) {
     const bookList = order.bookList[0].buffer;
     const bookId = bookList.toString('hex');
-    const book = await bookService.getBookById(bookId);
+    const book = await bookService.findById(bookId);
 
     return {
       _id: order._id,
