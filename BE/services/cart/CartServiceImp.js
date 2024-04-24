@@ -118,7 +118,7 @@ class CartServiceImp {
         let cartMap = await this.getCartFromDatabase(userId);
         let cartItem = cartMap[bookId];
         if (cartItem) {
-          cartItem.quantity =(parseInt(cartItem.quantity) + parseInt(quantity)).toString();
+          cartItem.quantity =(parseInt(cartItem.quantity) + parseInt(quantity));
         } else {
           cartItem = { book: bookId, quantity };
           cartMap[bookId] = cartItem;
