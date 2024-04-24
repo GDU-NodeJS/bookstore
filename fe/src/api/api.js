@@ -73,6 +73,15 @@ const authenticateApi = {
     } catch (error) {
       handleRequestError(error)
     }
+  },
+  resgister: async (params) => {
+    try {
+      axios.defaults.withCredentials = true
+      const response = await axios.post(`http://localhost:8090/api/guest/auth/register`,params)
+      return response.data;
+    } catch (error) {
+      handleRequestError(error)
+    }
   }
 }
 const orderApiForCustomer = {

@@ -45,7 +45,9 @@
             margin: 10px 0;
             width: 80%;
             margin-bottom: 40px;
-            span {
+            margin-right: 10px;
+            .username_header,
+            .password_header {
                 position: absolute;
                 font-size: 12px;
                 top: -7px;
@@ -85,12 +87,15 @@
             position: relative;
             width: 80%;
             margin-bottom: 40px;
-            span{
+            .or{
                 position: absolute;
                 top: -9px;
                 left: 47%;
                 background-color: white;
             }
+        }
+        .register{
+            display: flex;
         }
     }
 }

@@ -141,7 +141,7 @@ const Header = ({amount}) => {
                                     </button>
                                 </li>
                                 <li>
-                                    <button>
+                                    <button onClick={()=> navigate('/register')}>
                                         Đăng ký
                                     </button>
                                 </li>

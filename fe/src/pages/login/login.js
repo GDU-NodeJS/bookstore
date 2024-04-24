@@ -4,7 +4,7 @@ import { Link, Redirect, useNavigate } from "react-router-dom";
 import Cookies from 'universal-cookie';
 import { getJsessionIdFromResponse } from "../../component";
 import { authenticateApi, cartApi } from "../../api/api";
-import './style.scss'
+import '../login/style.scss'
 const LoginPage = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -147,7 +147,7 @@ const LoginPage = () => {
                     <h2>Đăng nhập</h2>
                     <form onSubmit={(e) => handleLogin(e)}>
                         <div className="username">
-                            <span>Username</span>
+                            <span className="username_header">Username</span>
                             <input
                                 type="text"
                                 placeholder="example@gmail.com"
@@ -156,7 +156,7 @@ const LoginPage = () => {
                             />
                         </div>
                         <div className="password">
-                            <span>Password</span>
+                            <span className="password_header">Password</span>
                             <input
                                 type="password"
                                 placeholder="example@123"
@@ -170,10 +170,10 @@ const LoginPage = () => {
                         <div className="hr">
 
                             <hr></hr>
-                            <span>hoặc</span>
+                            <span className="or">hoặc</span>
                         </div>
                         <div className="register">
-                            <span>Bạn chưa có tài khoản? </span>
+                            <span className="register_header">Bạn chưa có tài khoản? </span>
                             <Link to='/register'>Đăng ký</Link>
                         </div>
                     </form>

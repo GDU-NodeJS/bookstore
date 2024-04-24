@@ -26,7 +26,7 @@
         margin-top: 30px;
         background-color: white;
         /* margin-right: 10px; */
-        height: 15%;
+        height: 8%;
     }
 
     form {
@@ -34,17 +34,26 @@
         display: flex;
         flex-direction: column;
         background-color: white;
-        height: 85%;
+        height: 92%;
         align-items: center;
         width: 100%;
 
-        div {
+        .lastname,
+        .firstname,
+        .email,
+        .password,
+        .passwordconfirm {
             position: relative;
             height: 10%;
             margin: 10px 0;
             width: 80%;
-            margin-bottom: 40px;
-            span {
+            margin-bottom: 20px;
+            margin-right: 10px;
+            .lastname_header,
+            .firstname_header,
+            .email_header,
+            .password_header,
+            .passwordconfirm_header {
                 position: absolute;
                 font-size: 12px;
                 top: -7px;
@@ -73,7 +82,7 @@
         button {
             height: 10%;
             width: 50%;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
             background-color: #9C90D0;
             border: #9C90D0;
             font-size: 16px;
@@ -83,8 +92,8 @@
         .hr{
             position: relative;
             width: 80%;
-            margin-bottom: 40px;
-            span{
+            margin-bottom: 20px;
+            .or{
                 position: absolute;
                 top: -9px;
                 left: 47%;
@@ -92,4 +101,8 @@
             }
         }
     }
+}
+
+.error{
+    border-color: red;
 }
