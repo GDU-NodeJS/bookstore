@@ -59,7 +59,7 @@ export default function AddBook({ onAdd }) {
           price,
           description,
           bookImage: btoa(base64),
-          categoriesSet: selectedCategories.map(category => ({ categoriesID: category })),
+          categoriesSet: selectedCategories.map(category => ({ _id: category })),
         };
 
         console.log("Sending data:", bookData);
@@ -156,7 +156,7 @@ export default function AddBook({ onAdd }) {
                       onChange={() => {
                         const updatedCategories = selectedCategories.includes(category._id)
                           ? selectedCategories.filter(id => id !== category._id)
-                          : [...selectedCategories, category._];
+                          : [...selectedCategories, category._id];
                         setSelectedCategories(updatedCategories);
                       }}
                       color="primary"
