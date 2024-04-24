@@ -8,6 +8,7 @@ const orderApi = {
     try {
       const headers = await getRequestHeaders();
       const response = await axios.get(`${apiUrl}/order/getAll`, { headers });
+      console.log(response)
       return response.data;
     } catch (error) {
       console.error(error);
