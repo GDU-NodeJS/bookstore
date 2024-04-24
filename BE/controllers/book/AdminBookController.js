@@ -114,7 +114,6 @@ class AdminBookController {
   }
 
   responseBook(book){
-    const categories = book.categories.map(category => category.name);
     return {
       id: book._id,
       price: book.price,
@@ -122,7 +121,7 @@ class AdminBookController {
       name: book.name,
       author: book.author,
       description: book.description,
-      categories: categories
+      categories: book.categories
     };
   }
 }
