@@ -106,6 +106,7 @@ export default function OrderList() {
     const fetchData = async () => {
       try {
         const response = await orderApi.getAllOrders();
+        console.log("Response from getAllOrders:", response.data);
         const formattedOrders = response.data.map((order) => ({
           ...order,
           date: new Date(order.date).toLocaleDateString("en-GB"),
@@ -113,7 +114,7 @@ export default function OrderList() {
         setOrders(formattedOrders);
         const statusObj = {};
         formattedOrders.forEach((order) => {
-          statusObj[order.id] = order.status;
+          statusObj[order._id] = order.status;
           if (order.user_id) {
             fetchUserDetails(order.user_id);
           }
@@ -213,7 +214,7 @@ export default function OrderList() {
               <TableCell align="center">
                 <Select
                   size="small"
-                  value={orderStatuses[order.id]}
+                  value={orderStatuses[order._id]}
                   onChange={(event) => handleStatusChange(event, order.id)}
                 >
                   <MenuItem value="PENDING">Pending</MenuItem>
@@ -226,14 +227,14 @@ export default function OrderList() {
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={() => handleViewOrder(order.id)}
+                  onClick={() => handleViewOrder(order._id)}
                 >
                   View
                 </Button>
                 <Button
                   variant="contained"
                   color="secondary"
-                  onClick={() => handleUpdateOrder(order.id)}
+                  onClick={() => handleUpdateOrder(order._id)}
                   style={{ marginLeft: "10px" }}
                 >
                   Update

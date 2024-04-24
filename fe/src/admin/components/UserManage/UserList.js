@@ -49,7 +49,7 @@ function Row(props) {
         setOpenDialog(false);
         return;
       }
-      await onDelete(user._id); // Thay đổi user.userID thành user._id
+      await onDelete(user._id);
       setDeleteSuccessMessage(
         `${user.firstName} ${user.lastName} | ${user.role} deleted successfully`
       );

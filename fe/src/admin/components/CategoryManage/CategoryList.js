@@ -120,7 +120,7 @@ const CategoryList = () => {
               <TableRow>
                 {columns.map((column) => (
                   <TableCell
-                    key={column._id}
+                    key={column.id}
                     align={column.align}
                     style={{ minWidth: column.minWidth }}
                   >
