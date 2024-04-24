@@ -73,7 +73,8 @@ class ClientBookController {
         }
       return res.status(res.statusCode).json({
           status: res.statusCode,
-          message: errorMessage
+          message: errorMessage,
+          data: null
       })
     }
   }
