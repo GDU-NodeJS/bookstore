@@ -1,96 +1,188 @@
 import CartService from "../services/cart/CartService.js"
+import ClientBookSerivce from "../services/book/ClientBookService.js"
+const bookService = new ClientBookSerivce();
 
-class CartController{
-    constructor() {
-        this._cartService = new CartService();
-    }
+class CartController {
+  constructor() {
+    this._cartService = new CartService();
+  }
 
-    async addToCart(req, res) {
-        try {
-          const bookId = req.params.bookId;
-          let quantity = req.params.quantity;
-          if (quantity == undefined) {
-            quantity = 1;
-          }
-          await this._cartService.addToCart(req, bookId, quantity);
-          return res.status(200).json({ message: 'Add to cart successfully' });
-        } catch (err) {
-          console.error('Error adding to cart:', err);
-          return res.status(500).json({ message: err.message });
-        }
+  async addToCart(req, res) {
+    try {
+      const bookId = req.params.bookId;
+      let quantity = req.params.quantity;
+      if (quantity == undefined) {
+        quantity = 1;
       }
+      await this._cartService.addToCart(req, bookId, quantity);
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
+        message: "Successfully add to cart",
+      });
+    } catch (err) {
+      let errorMessage = err.message;
+      if (errorMessage.startsWith('Error: ')) {
+        errorMessage = errorMessage.slice(7);
+      }
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
+        message: errorMessage,
+      });
+    }
+  }
+
+  async getCart(req, res) {
+    try {
+      const cart = await this._cartService.getCart(req);
+      const response = [];
+
+      for (const cartItem of cart) {
+        const cartResponse = await this.responseCart(cartItem);
+        response.push(cartResponse);
+      }
+
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
+        message: "Successfully retrieved data",
+        data: response,
+      });
+    } catch (err) {
+      let errorMessage = err.message;
+      if (errorMessage.startsWith('Error: ')) {
+        errorMessage = errorMessage.slice(7);
+      }
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
+        message: errorMessage,
+      });
+    }
+  }
+
+  async getCartItem(req, res) {
+    try {
+      const cartItemId = req.params.cartItemId;
+      const cart = await this._cartService.getCartItem(cartItemId, req);
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
+        message: 'Get cart successfully',
+        data: await this.responseCart(cart)
+      });
+    } catch (err) {
+      let errorMessage = err.message;
+      if (errorMessage.startsWith('Error: ')) {
+        errorMessage = errorMessage.slice(7);
+      }
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
+        message: errorMessage,
+      });
+    }
+  }
+
+  async removeFromCart(req, res) {
+    try {
+      const bookId = req.params.bookId;
+      await this._cartService.removeFromCart(req, bookId);
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
+        message: 'Remove from cart successfully'
+      });
+    } catch (err) {
+      let errorMessage = err.message;
+      if (errorMessage.startsWith('Error: ')) {
+        errorMessage = errorMessage.slice(7);
+      }
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
+        message: errorMessage,
+      });
+    }
+  }
+
+  async updateCart(req, res) {
+    try {
+      const bookId = req.params.bookId;
+      const quantity = req.params.quantity;
+      await this._cartService.updateCart(req, bookId, quantity);
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
+        message: 'Update cart successfully'
+      });
+    } catch (err) {
+      let errorMessage = err.message;
+      if (errorMessage.startsWith('Error: ')) {
+        errorMessage = errorMessage.slice(7);
+      }
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
+        message: errorMessage,
+      });
+    }
+  }
+
+  async clearCart(req, res) {
+    try {
+      await this._cartService.clearCart(req);
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
+        message: 'Clear cart successfully'
+      });
+    } catch (err) {
+      let errorMessage = err.message;
+      if (errorMessage.startsWith('Error: ')) {
+        errorMessage = errorMessage.slice(7);
+      }
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
+        message: errorMessage,
+      });
+    }
+  }
+  async checkout(req, res) {
+    try {
+      const cartItemId = req.params.cartItemId;
+      await this._cartService.checkout(cartItemId, req);
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
+        message: 'Checkout cart successfully'
+      });
+    } catch (err) {
+      let errorMessage = err.message;
+      if (errorMessage.startsWith('Error: ')) {
+        errorMessage = errorMessage.slice(7);
+      }
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
+        message: errorMessage,
+      });
+    }
+  }
+  async responseCart(cart) {
+    const bookList = cart.book.buffer;
+    let bookId;
+    if(bookList){
+      bookId = bookList.toString('hex');
+    } else {
+      bookId = cart.book;
+    }
     
-    async getCart(req, res) {
-        try {
-            const cart = await this._cartService.getCart(req);
-            return res.status(200).json({ data: cart, message: 'Get cart successfully' });
-        } catch (err) {
-            console.error('Error getting cart:', err);
-            return res.status(500).json({ message: err.message });
-        }
+    const book = await bookService.getBookById(bookId);
+    return {
+      id: cart._id,
+      quantity: cart.quantity,
+      cart: {
+        id: cart.cart
+      },
+      book: {
+        id: cart.book,
+        price: book.price,
+        bookImage: book.image,
+        name: book.name,
+        author: book.author,
+        description: book.description,
+        categoriesSet: book.categories
+      }
     }
-    async getCartItem(req, res) {
-        try {
-            const cartItemId = req.params.cartItemId;
-            const cart = await this._cartService.getCartItem(cartItemId, req);
-            return res.status(200).json({ 
-                status: 200, 
-                message: 'Get cart successfully',
-                data: cart
-             });
-        } catch (err) {
-            console.error('Error getting cart:', err);
-            return res.status(500).json({ message: err.message });
-        }
-    }
-
-    async removeFromCart(req, res) {
-    try {
-        const bookId  = req.params.bookId;
-        await this._cartService.removeFromCart(req, bookId);
-        return res.status(200).json({ message: 'Remove from cart successfully' });
-    } catch (err) {
-        console.error('Error removing from cart:', err);
-        return res.status(500).json({ message: err.message });
-    }
-    }
-
-    async updateCart(req, res) {
-    try {
-        const bookId  = req.params.bookId;
-        const quantity = req.params.quantity;
-        await this._cartService.updateCart(req, bookId, quantity);
-        return res.status(200).json({ message: 'Update cart successfully' });
-    } catch (err) {
-        console.error('Error updating cart:', err);
-        return res.status(500).json({ message: err.message });
-    }
-    }
-
-    async clearCart(req, res) {
-        try {
-            await this._cartService.clearCart(req);
-            return res.status(200).json({ message: 'Clear cart successfully' });
-        } catch (err) {
-            console.error('Error clearing cart:', err);
-            return res.status(500).json({ message: err.message });
-        }
-    }
-    async checkout(req, res){
-        try {
-            const cartItemId = req.params.cartItemId;
-            await this._cartService.checkout(cartItemId, req);
-            return res.status(200).json({ 
-                status: 201,
-                message: 'Checkout successfully' 
-            });
-        } catch (err) {
-            console.error('Error checkout:', err);
-            return res.status(500).json({ 
-                status: 500,
-                message: err.message 
-            });
-        }
-    }
+  }
 }
 export default CartController;
