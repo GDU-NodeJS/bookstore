@@ -28,16 +28,17 @@ app.use("/api/guest", routerGuest);
 app.use("/api/customer", authenticateJWT, routerCustomer);
 // Middleware cho các yêu cầu tới /api/admincd 
 app.use("/api/admin", authenticateJWT, isAdmin, routerAdmin);
-// app.use((err, req, res, next) => {
-//   console.log(err.status);
-//   err.statusCode = err.status ||500;
-//   err.status = err.status || 'error' ;
 
-//   res.status(err.statusCode).json({
-//     status: err.status,
-//     message:err.message,
-//   });
-// });
+app.use((err, req, res, next) => {
+  console.log(err.status);
+  err.statusCode = err.status ||500;
+  err.status = err.status || 'error' ;
+
+  res.status(err.statusCode).json({
+    status: err.status,
+    message:err.message,
+  });
+});
 
 app.use((req, res, next) => {
   res.status(404).json({ error: 'Not Found' });
