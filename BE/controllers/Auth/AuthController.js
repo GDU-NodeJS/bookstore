@@ -5,9 +5,10 @@ import TokenRegistration from '../../models/auth/tokenregistration.js';
 
 import UserService from '../../services/User/UserService.js';
 const userService = new UserService();
+const authService = new AuthService();
 export async function signup(req, res, next) {
     try {
-        const { error, savedUser ,confirmationUrl} = await AuthService.register(req);
+        const { error, savedUser ,confirmationUrl} = await authService.register(req);
 
         if (error) {
             throw error; // Chuyển lỗi cho middleware xử lý lỗi
@@ -33,7 +34,7 @@ export async function signup(req, res, next) {
 export async function signin(req, res, next) {
     try {
         const { email, password } = req.body;
-        const { error, user } = await AuthService.authenticate(email, password);
+        const { error, user } = await authService.authenticate(email, password);
 
         if (error) {
             throw error; // Chuyển lỗi cho middleware xử lý lỗi
@@ -68,7 +69,7 @@ export async function signin(req, res, next) {
 
 export const authenticateJWT = async (req, res, next) => {
     try {
-        AuthService.authenticateJWT(req, res, next);
+        authService.authenticateJWT(req, res, next);
     } catch (error) {
         next(error);
     }
@@ -76,7 +77,7 @@ export const authenticateJWT = async (req, res, next) => {
 
 export const isAdmin = async (req, res, next) => {
     try {
-        AuthService.isAdmin(req, res, next);
+        authService.isAdmin(req, res, next);
     } catch (error) {
         next(error);
     }
@@ -87,7 +88,7 @@ export async function confirmRegistration(req,res,next) {
     // Tìm token trong collection TokenRegistration
     const tokenRegistration = await TokenRegistration.findOne({ token })
       
-  
+    
     if (!tokenRegistration) {
       return res.status(400).send('Invalid Token');
     }

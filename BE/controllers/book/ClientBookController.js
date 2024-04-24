@@ -1,41 +1,59 @@
-import AdminBookService from "../../services/book/AdminBookService.js"; // Assuming AdminBookService.js in the same directory
-const adminBookService = new AdminBookService();
+import ClientBookSerivce from "../../services/book/ClientBookService.js"; // Assuming clientBookService.js in the same directory
+const clientBookService = new ClientBookSerivce();
 
 class ClientBookController {
   constructor() {}
 
   async getBooks(req, res) {
     try {
-      const books = await adminBookService.getAllBooks();
-      return res.status(200).json({
-        status: 200,
+      const books = await clientBookService.getAllBooks();
+      const response = books.map(book => this.responseBook(book));
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
         message: "Successfully retrieved data",
-        data: books,
+        data: response,
       });
     } catch (err) {
-        return res.status(500).json({
-            status: 500,
-            message: "Error retrieving the book",
-            data: err,
-        })
+      let errorMessage = err.message;
+        if (errorMessage.startsWith('Error: ')) {
+          errorMessage = errorMessage.slice(7);
+        }
+      return res.status(res.statusCode).json({
+          status: res.statusCode,
+          message: errorMessage
+      })
     }
   }
 
   async getBookById(req, res) {
     try {
       const bookId = req.params.id;
-      const book = await adminBookService.findById(bookId);
-      return res.status(200).json({
-        status: 200,
+      const book = await clientBookService.getBookById(bookId);
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
         message: "Successfully retrieved the book",
-        data: book,
+        data: this.responseBook(book),
       });
     } catch (err) {
-      return res.status(404).json({
-        status: 404,
-        message: "Book not found",
-        data: err,
+      let errorMessage = err.message;
+        if (errorMessage.startsWith('Error: ')) {
+          errorMessage = errorMessage.slice(7);
+        }
+      return res.status(res.statusCode).json({
+          status: res.statusCode,
+          message: errorMessage
       })
+    }
+  }
+  responseBook(book){
+    return {
+      id: book._id,
+      price: book.price,
+      image: book.image,
+      name: book.name,
+      author: book.author,
+      description: book.description,
+      categories: book.categories
     }
   }
 }

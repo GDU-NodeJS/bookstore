@@ -7,14 +7,21 @@ class AdminBookController {
   async getBooks(req, res) {
     try {
       const books = await adminBookService.getAllBooks();
-      return res.status(200).json({
-        status: 200,
+      const response = books.map(book => this.responseBook(book));
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
         message: "Successfully retrieved data",
-        data: books,
+        data: response,
       });
     } catch (err) {
-      console.error('Error fetching books:', err);
-      return res.status(500).send('Error retrieving books');
+      let errorMessage = err.message;
+          if (errorMessage.startsWith('Error: ')) {
+            errorMessage = errorMessage.slice(7);
+          }
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
+        message: errorMessage,
+      });
     }
   }
 
@@ -23,48 +30,66 @@ class AdminBookController {
       const bookId = req.params.id;
       const book = await adminBookService.findById(bookId);
       if (!book) {
-        return res.status(404).json({
-          status: 404,
+        return res.status(res.statusCode).json({
+          status: res.statusCode,
           message: "Book not found",
         });
       }
-      return res.status(200).json({
-        status: 200,
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
         message: "Successfully retrieved the book",
-        data: book,
+        data: this.responseBook(book),
       });
     } catch (err) {
-      console.error('Error fetching the book:', err);
-      return res.status(500).send('Error retrieving the book');
+      let errorMessage = err.message;
+          if (errorMessage.startsWith('Error: ')) {
+            errorMessage = errorMessage.slice(7);
+          }
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
+        message: errorMessage,
+      });
     }
   }
 
   async addBook(req, res) {
     try {
-      const newBook = req.body; // Assuming request body contains the new book data
+      const newBook = req.body; 
       await adminBookService.addBook(newBook);
-      return res.status(201).json({
-        status: 201,
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
         message: "Book added successfully",
       });
     } catch (err) {
-      console.error('Error adding the book:', err);
-      return res.status(500).send('Error adding the book');
+      let errorMessage = err.message;
+          if (errorMessage.startsWith('Error: ')) {
+            errorMessage = errorMessage.slice(7);
+          }
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
+        message: errorMessage,
+      });
     }
   }
 
   async updateBook(req, res) {
     try {
       const bookId = req.params.id;
-      const updatedBook = req.body; // Assuming request body contains the updated book data
+      const updatedBook = req.body; 
       await adminBookService.updateBook(bookId, updatedBook);
-      return res.status(200).json({
-        status: 200,
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
         message: "Book updated successfully",
       });
     } catch (err) {
-      console.error('Error updating the book:', err);
-      return res.status(500).send('Error updating the book');
+      let errorMessage = err.message;
+          if (errorMessage.startsWith('Error: ')) {
+            errorMessage = errorMessage.slice(7);
+          }
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
+        message: errorMessage,
+      });
     }
   }
 
@@ -72,14 +97,32 @@ class AdminBookController {
     try {
       const bookId = req.params.id;
       await adminBookService.removeBook(bookId);
-      return res.status(200).json({
-        status: 200,
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
         message: "Book removed successfully",
       });
     } catch (err) {
-      console.error('Error removing the book:', err);
-      return res.status(500).send('Error removing the book');
+      let errorMessage = err.message;
+          if (errorMessage.startsWith('Error: ')) {
+            errorMessage = errorMessage.slice(7);
+          }
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
+        message: errorMessage,
+      });
     }
+  }
+
+  responseBook(book){
+    return {
+      id: book._id,
+      price: book.price,
+      image: book.image,
+      name: book.name,
+      author: book.author,
+      description: book.description,
+      categories: book.categories
+    };
   }
 }
 

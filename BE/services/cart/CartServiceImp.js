@@ -1,12 +1,15 @@
-import CartRepository from '../dao/cart/cartRepository.js';
-import CartItemRepository from '../dao/cart/cartItemRepository.js';
-import AdminBookServiceImp from './book/AdminBookServiceImp.js';
-import CartItem from "../models/cart/cartItem.js";
+import CartRepository from '../../dao/cart/cartRepository.js';
+import CartItemRepository from '../../dao/cart/cartItemRepository.js';
+import AdminBookServiceImp from '../book/AdminBookServiceImp.js';
+import CartItem from "../../models/cart/cartItem.js";
+import ClientOrderService from '../order/ClientOrderService.js';
 const SESSION_KEY_CART = 'CART';
 const cartRepository = new CartRepository();
 const cartItemRepository = new CartItemRepository();
 const adminBookServiceImp = new AdminBookServiceImp();
-class CartService {
+const clientOrderService = new ClientOrderService();
+
+class CartServiceImp {
 
   getCartFromSession(req) {
     let cartMap = req.session[SESSION_KEY_CART];
@@ -22,12 +25,21 @@ class CartService {
     return !!authHeader;
   }
 
-   getUserId(req) {
+  getUserId(req) {
+    if (!this.isUserLoggedIn(req)) {
+      return null;
+    }
     return req.session.user.id;
   }
 
   async getCartFromDatabase(userId) {
     const cart = await cartRepository.findByUserId(userId);
+    if (!cart){
+      await cartRepository.create({
+        user: userId,
+        cartItem: []
+      });
+    }
     const cartMap = {};
 
     if (cart && cart.cartItems) {
@@ -192,9 +204,30 @@ class CartService {
   async createCart(cart){
     return await cartRepository.create(cart);
   }
-  async checkout(cartItemId, req){
-    
+  async checkout(cartItemId, req) {
+    const userId = this.getUserId(req);
+    const isLoggedIn = this.isUserLoggedIn(req);
+  
+    if (!isLoggedIn) {
+      throw new Error('User must be logged in to checkout');
+    }
+  
+    const cartItem = await this.getCartItem(cartItemId, req);
+    const bookBuffer = cartItem.book.buffer;
+    const bookId = bookBuffer.toString('hex');
+  
+    if (!cartItem) {
+      throw new Error('Cart item not found');
+    }
+
+    try {
+      const order = await clientOrderService.createOrder(userId, cartItem, req);
+      await this.removeFromCart(req, bookId);
+      return order;
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 }
 
-export default CartService;
+export default CartServiceImp;

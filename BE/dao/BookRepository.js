@@ -121,6 +121,15 @@ class BookRepository {
       throw new Error('Error removing category from book');
     }
   }
+  async findByIdAndUpdate(id, newBook){
+    try {
+      const updateBook = await Book.findByIdAndUpdate(id, newBook, { new: true });
+      return updateBook;
+    } catch (err) {
+      console.error(err);
+      throw new Error('Error updating book');
+    }
+  }
 }
 
 export default BookRepository;

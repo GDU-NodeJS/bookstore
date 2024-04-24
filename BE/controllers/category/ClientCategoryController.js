@@ -7,14 +7,27 @@ class ClientCategoryController {
     async getCategories(req, res){
         try{
             const categories = await clientCategoryService.getAllCategories();
-            return res.status(200).json({
-                status: 200,
+            const response = categories.map(category => this.responseCategory(category));
+            return res.status(res.statusCode).json({
+                status: res.statusCode,
                 message : "Successfully retrieved data",
-                data : categories,
+                data : response,
             });
         } catch(err){
-            console.error("Error fetching categoies: ",err);
-            return res.status(500).send("Error fetching categories");
+            let errorMessage = err.message;
+            if (errorMessage.startsWith('Error: ')) {
+                errorMessage = errorMessage.slice(7);
+            }
+            return res.status(res.statusCode).json({
+                status: res.statusCode,
+                message: errorMessage,
+            });
+        }
+    }
+    responseCategory(category) {
+        return {
+            id: category._id,
+            name: category.name
         }
     }
 }

@@ -1,84 +1,133 @@
 import ClientOrderService from "../../services/order/ClientOrderService.js";
+import ClientBookSerivce from "../../services/book/ClientBookService.js"
+
+const bookService = new ClientBookSerivce();
 const clientOrderService = new ClientOrderService();
 
-class ClientOrderController{
-    constructor(){}
+class ClientOrderController {
+  constructor() { }
 
-    async getAllOrders(req, res) {
-      try {
-          const orders = await clientOrderService.getAllOrder(req, req.session);
-          const response = orders.map(order => this.responseOrder(order));
-          return res.status(200).json({
-              status: 200,
-              message: "Get all order successfully",
-              data: response,
-          });
-      } catch (err) {
-          console.error("Error fetching orders: ", err);
-          return res.status(500).send("Error fetching orders");
+  async getAllOrders(req, res) {
+    try {
+      const orders = await clientOrderService.getAllOrders(req);
+      const response = [];
+
+      for (const order of orders) {
+        const orderResponse = await this.responseOrder(order);
+        response.push(orderResponse);
       }
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
+        message: "Get all order successfully",
+        data: response,
+      });
+    } catch (err) {
+      let errorMessage = err.message;
+      if (errorMessage.startsWith('Error: ')) {
+        errorMessage = errorMessage.slice(7);
+      }
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
+        message: errorMessage
+      });
+    }
   }
 
   async getOrderById(req, res) {
-      try {
-          const orderId = req.params.orderId;
-          const order = await clientOrderService.findOrderById(orderId, req, req.session);
-          if (order) {
-              return res.status(200).json({
-                  status: 200,
-                  message: "Get order successfully",
-                  data: this.responseOrder(order),
-              });
-          } else {
-              return res.status(404).json({
-                  status: 404,
-                  message: "Order not found",
-              });
-          }
-      } catch (err) {
-          console.error("Error fetching order by ID: ", err);
-          return res.status(500).send("Error fetching order by ID");
+    try {
+      const orderId = req.params.orderId;
+      const order = await clientOrderService.getOrderById(orderId, req);
+      if (order) {
+        return res.status(res.statusCode).json({
+          status: res.statusCode,
+          message: "Get order successfully",
+          data: await this.responseOrder(order),
+        });
+      } else {
+        return res.status(res.statusCode).json({
+          status: res.statusCode,
+          message: "Order not found",
+        });
       }
+    } catch (err) {
+      let errorMessage = err.message;
+      if (errorMessage.startsWith('Error: ')) {
+        errorMessage = errorMessage.slice(7);
+      }
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
+        message: errorMessage
+      });
+    }
   }
 
   async getOrderByStatus(req, res) {
-      try {
-          const status = req.query.s;
-          const orders = await clientOrderService.findOrderByStatus(status, req, req.session);
-          const response = orders.map(order => this.responseOrder(order));
-          return res.status(200).json({
-              status: 200,
-              message: "Get order by status successfully",
-              data: response,
-          });
-      } catch (err) {
-          console.error("Error fetching orders by status: ", err);
-          return res.status(500).send("Error fetching orders by status");
+    try {
+      const status = req.query.s;
+      const orders = await clientOrderService.getOrderByStatus(status, req);
+      const response = [];
+
+      for (const order of orders) {
+        const orderResponse = await this.responseOrder(order);
+        response.push(orderResponse);
       }
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
+        message: "Get order by status successfully",
+        data: response,
+      });
+    } catch (err) {
+      let errorMessage = err.message;
+      if (errorMessage.startsWith('Error: ')) {
+        errorMessage = errorMessage.slice(7);
+      }
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
+        message: errorMessage
+      });
+    }
   }
 
   async cancelOrder(req, res) {
-      try {
-          const orderId = req.params.orderId;
-          await clientOrderService.cancelOrder(orderId, req, req.session);
-          return res.status(200).json({
-              status: 200,
-              message: "Cancel order successfully",
-          });
-      } catch (err) {
-          console.error("Error cancelling order: ", err);
-          return res.status(500).send("Error cancelling order");
+    try {
+      const orderId = req.params.orderId;
+      await clientOrderService.cancelOrder(orderId, req, req.session);
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
+        message: "Cancel order successfully",
+      });
+    } catch (err) {
+      let errorMessage = err.message;
+      if (errorMessage.startsWith('Error: ')) {
+        errorMessage = errorMessage.slice(7);
       }
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
+        message: errorMessage
+      });
+    }
   }
 
-    responseOrder(order) {
-      return {
-          id: order._id,
-          date: order.date,
-          payment: order.payment,
-          booklist: order.bookList,
-          status: order.status,
-      };
+  async responseOrder(order) {
+    const bookList = order.bookList[0].buffer;
+    const bookId = bookList.toString('hex');
+    const book = await bookService.getBookById(bookId);
+
+    return {
+      id: order._id,
+      date: order.date,
+      payment: order.payment,
+      bookList: {
+        id: order.book,
+        price: book.price,
+        bookImage: book.image,
+        name: book.name,
+        author: book.author,
+        description: book.description,
+        categoriesSet: book.categories
+      },
+      status: order.status
+    };
   }
 }
 

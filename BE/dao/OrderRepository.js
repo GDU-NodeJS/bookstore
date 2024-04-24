@@ -31,7 +31,8 @@ class OrderRepository {
 
   async user_getOrdersByStatus(userId, status) {
     try {
-      return await Order.find({ user: userId, status });
+      const regex = new RegExp(status, 'i');
+      return await Order.find({ user: userId, status: regex });
     } catch (err) {
       throw new Error(`Failed to get orders with status ${status} for user ${userId}: ${err.message}`);
     }
@@ -49,7 +50,7 @@ class OrderRepository {
 
   async admin_updateOrder(orderId, status) {
     try {
-      return await Order.findOneAndUpdate({ _id: orderId }, { status }, { new: true });
+      return await Order.findOneAndUpdate({ _id: orderId }, { status: status }, { new: true });
     } catch (err) {
       throw new Error(`Failed to update order ${orderId}: ${err.message}`);
     }
@@ -57,7 +58,7 @@ class OrderRepository {
 
   async admin_getAllOrders(){
     try {
-      return await Order.findAll();
+      return await Order.find();
     } catch (err) {
       throw new Error(`Failed to get all orders: ${err.message}`);
     }
@@ -73,7 +74,8 @@ class OrderRepository {
 
   async admin_getOrdersByStatus(status) {
     try {
-      return await Order.find({ status });
+      const regex = new RegExp(status, 'i');
+      return await Order.find({ status: regex });
     } catch (err) {
       throw new Error(`Failed to find orders with status ${status}: ${err.message}`);
     }

@@ -59,6 +59,15 @@ class UserRepository {
     }
   }
 
+  async getUserRole(id){
+    try {
+      const user = await User.findById(id);
+      return user.role;
+    } catch (err) {
+      console.error(err);
+      throw new Error('Error getting user role');
+    }
+  }
 }
 
 export default UserRepository;
