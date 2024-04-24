@@ -92,7 +92,7 @@ class ClientOrderController {
   async cancelOrder(req, res) {
     try {
       const orderId = req.params.orderId;
-      await clientOrderService.cancelOrder(orderId, req, req.session);
+      await clientOrderService.cancelOrder(orderId, req);
       return res.status(res.statusCode).json({
         status: res.statusCode,
         message: "Cancel order successfully",
