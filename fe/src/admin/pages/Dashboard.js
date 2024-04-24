@@ -115,7 +115,7 @@ export default function Dashboard() {
           <Box height={30} />
           <Grid container spacing={2}>
             <Grid item xs={12} sm={8}>
-              <Card sx={{ height: 450 }}>
+              <Card sx={{ height: 400 }}>
                 <CardContent></CardContent>
               </Card>
             </Grid>

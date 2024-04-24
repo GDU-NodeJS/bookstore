@@ -122,27 +122,6 @@ export default function ControlledAccordions() {
           <Typography>Thông tin chi tiết công việc</Typography>
         </AccordionDetails>
       </Accordion>
-      <Accordion
-        expanded={expanded === "panel6"}
-        onChange={handleChange("panel6")}
-      >
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel3bh-content"
-          id="panel3bh-header"
-        >
-          <Typography
-            className="pricetitle"
-            sx={{ width: "65%", flexShrink: 0 }}
-          >
-            <span className="pricetitle">Phạm Lê Huy Tiến</span>
-          </Typography>
-          <Typography sx={{ color: "text.secondary" }}>Front End</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Typography>Thông tin chi tiết công việc</Typography>
-        </AccordionDetails>
-      </Accordion>
 
       <Accordion
         expanded={expanded === "panel7"}
