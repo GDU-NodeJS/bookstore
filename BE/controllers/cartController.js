@@ -108,24 +108,24 @@ class CartController {
       next(err);
     }
   }
-  async responseCart(cart) {
-    const bookList = cart.book.buffer;
+  async responseCart(cartItem) {
+    const bookList = cartItem.book.buffer;
     let bookId;
     if(bookList){
       bookId = bookList.toString('hex');
     } else {
-      bookId = cart.book;
+      bookId = cartItem.book;
     }
     
     const book = await bookService.getBookById(bookId);
     return {
-      _id: cart._id,
-      quantity: cart.quantity,
+      _id: cartItem._id,
+      quantity: cartItem.quantity,
       cart: {
-        _id: cart.cart
+        _id: cartItem.cart
       },
       book: {
-        _id: cart.book,
+        _id: cartItem.book,
         price: book.price,
         bookImage: book.image,
         name: book.name,
