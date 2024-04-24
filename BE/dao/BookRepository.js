@@ -130,6 +130,34 @@ class BookRepository {
       throw new Error('Error updating book');
     }
   }
-}
+
+  async findByCategory(categoryId) {
+    try {
+      const category = await Category.findById(categoryId).populate({
+        path: 'books',
+        populate: { 
+          path: 'categories',
+          select: 'name'
+       }
+      });
+      if (!category) {
+        throw new Error(`Category with ID ${categoryId} not found`);
+      }
+  
+      const books = category.books.filter(book => book.categories.some(cat => cat._id.toString() === categoryId.toString()));
+  
+      if (books.length === 0) {
+        throw new Error(`No books found for category with ID ${categoryId}`);
+      }
+  
+      return books;
+    } catch (err) {
+      console.error(err);
+      throw new Error('Error finding books by category');
+    }
+  }
+  }
+
+
 
 export default BookRepository;

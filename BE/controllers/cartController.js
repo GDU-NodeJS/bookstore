@@ -99,10 +99,11 @@ class CartController {
   async checkout(req, res) {
     try {
       const cartItemId = req.params.cartItemId;
-      await this._cartService.checkout(cartItemId, req);
+      const url = await this._cartService.checkout(cartItemId, req);
       return res.status(res.statusCode).json({
         status: res.statusCode,
-        message: 'Checkout cart successfully'
+        message: 'Checkout cart successfully',
+        url: url
       });
     } catch (err) {
       next(err);
