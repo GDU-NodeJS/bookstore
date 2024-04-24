@@ -18,7 +18,7 @@ const categoryApi = {
   getBooksByCategoryId: async (id) => {
     try {
       const headers = await getRequestHeaders();
-      const response = await axios.get(`${apiUrl}/categories/${id}/books`, { headers });
+      const response = await axios.get(`${apiUrl}/category/${id}/books`, { headers });
       return response.data;
     } catch (error) {
       console.error(error);
@@ -29,7 +29,7 @@ const categoryApi = {
   createCategory: async (categoryData) => {
     try {
       const headers = await getRequestHeaders();
-      const response = await axios.post(`${apiUrl}/categories`, categoryData, { headers });
+      const response = await axios.post(`${apiUrl}/category/add`, categoryData, { headers });
       return response.data;
     } catch (error) {
       console.error(error);
@@ -37,10 +37,10 @@ const categoryApi = {
     }
   },
 
-  deleteCategory: async (categoryId) => {
+  deleteCategory: async (id) => {
     try {
       const headers = await getRequestHeaders();
-      const response = await axios.delete(`${apiUrl}/categories/delete?id=${categoryId}`, { headers });
+      const response = await axios.delete(`${apiUrl}/category/delete/${id}`, { headers });
       return response.data;
     } catch (error) {
       console.error(error);

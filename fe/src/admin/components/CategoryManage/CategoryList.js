@@ -33,7 +33,7 @@ const CategoryList = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedCategoryId, setSelectedCategoryId] = useState(null);
   const [deleteSuccessMessage, setDeleteSuccessMessage] = useState("");
-  
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -64,7 +64,7 @@ const CategoryList = () => {
   const handleDeleteCategory = async (categoryId) => {
     try {
       const categoryToDelete = categories.find(
-        (category) => category.categoriesID === categoryId
+        (category) => category.id === categoryId
       );
       if (!categoryToDelete) {
         console.error("Category not found");
@@ -142,9 +142,7 @@ const CategoryList = () => {
                           color="error"
                           size="small"
                           style={{ marginLeft: "8px" }}
-                          onClick={() =>
-                            handleDeleteDialogOpen(category.categoriesID)
-                          }
+                          onClick={() => handleDeleteDialogOpen(category.id)}
                         >
                           Delete
                         </Button>
