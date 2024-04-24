@@ -69,8 +69,10 @@ const HomePage = () => {
                     getCart()
                 }
             } else {
+                console.log('product: ',product)
+                console.log('id: ',product._id)
                 axios.defaults.withCredentials = true;
-                const response = await cartApi.addNoToken(product.id);
+                const response = await cartApi.addNoToken(product._id);
 
 
                 if (response.status === 200) {// Xử lý response từ API nếu thành công
@@ -210,6 +212,7 @@ const HomePage = () => {
     //     );
     // };
     console.log('fe: ', featproducts)
+    
     const renderSlider = () => {
         return (
             <>
@@ -277,11 +280,12 @@ const HomePage = () => {
             if (cartResponse.status === 200) {
 
                 const cartData = cartResponse;
+                console.log('cartData: ',cartData)
                 let sumQuantityBooks = 0;
                 if (cartData.data.length > 0) {
                     const cart1 = {
                         products: cartData.data.map(cartProduct => {
-                            sumQuantityBooks += cartProduct.quantity
+                            sumQuantityBooks += parseInt(cartProduct.quantity)
                             return {
                                 id: cartProduct.book.id,
                                 img: cartProduct.book.bookImage,
@@ -289,11 +293,13 @@ const HomePage = () => {
                                 author: cartProduct.book.author,
                                 description: cartProduct.book.description,
                                 price: cartProduct.book.price,
-                                quantity: cartProduct.quantity
+                                quantity: parseInt(cartProduct.quantity)
                             };
                         })
                     }
+                    console.log('cart: ',cart1)
                 };
+                console.log('quantity: ',sumQuantityBooks)
                 setAmount(sumQuantityBooks)
             }
         } catch (error) {

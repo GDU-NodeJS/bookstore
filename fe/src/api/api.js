@@ -67,6 +67,7 @@ const categoryApi = {
 const authenticateApi = {
   authen: async (params) => {
     try {
+      axios.defaults.withCredentials = true
       const response = await axios.post(`http://localhost:8090/api/guest/auth/authenticate`,params)
       return response.data;
     } catch (error) {
@@ -142,10 +143,80 @@ const cartApi = {
       handleRequestError(e)
     }
   },
+  addHaveQuantity: async (id,quantity) => {
+    const token = cookies.get('token')
+    try {
+      axios.defaults.withCredentials = true
+      const response = await axios.post(`http://localhost:8090/api/customer/cart/add/${id}/${quantity}`,null,{
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      return response.data
+    } catch (e) {
+      handleRequestError(e)
+    }
+  },
   addNoToken: async (id) => {
     try {
       axios.defaults.withCredentials = true
       const response = await axios.post(`http://localhost:8090/api/guest/cart/add/${id}`)
+      return response.data
+    } catch (e) {
+      handleRequestError(e)
+    }
+  },
+  addNoTokenHaveQuantity: async (id,quantity) => {
+    try {
+      axios.defaults.withCredentials = true
+      const response = await axios.post(`http://localhost:8090/api/guest/cart/add/${id}/${quantity}`)
+      return response.data
+    } catch (e) {
+      handleRequestError(e)
+    }
+  },
+  delete: async (id) =>{
+    const token = cookies.get('token')
+    try {
+      axios.defaults.withCredentials = true
+      const response = await axios.post(`http://localhost:8090/api/customer/cart/delete/${id}`,null,{
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      return response.data
+    } catch (e) {
+      handleRequestError(e)
+    }
+  },
+  deleteNoToken: async (id) =>{
+    try {
+      axios.defaults.withCredentials = true
+      const response = await axios.post(`http://localhost:8090/api/guest/cart/delete/${id}`)
+      return response.data
+    } catch (e) {
+      handleRequestError(e)
+    }
+  },
+  update: async (id,quantity) => {
+    const token = cookies.get('token')
+    try {
+      axios.defaults.withCredentials = true
+      const response = await axios.post(`http://localhost:8090/api/customer/cart/update/${id}/${quantity}`,null,{
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      return response.data
+    } catch (e) {
+      handleRequestError(e)
+    }
+  },
+  updateNoToken: async (id,quantity) => {
+    const token = cookies.get('token')
+    try {
+      axios.defaults.withCredentials = true
+      const response = await axios.post(`http://localhost:8090/api/guest/cart/update/${id}/${quantity}`)
       return response.data
     } catch (e) {
       handleRequestError(e)

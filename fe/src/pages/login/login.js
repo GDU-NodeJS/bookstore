@@ -21,14 +21,14 @@ const LoginPage = () => {
             const cartData = cartResponse;
             let sumQuantityBooks = 0;
             let sumPrice = 0;
-            const cart1 = {
+            if(cartData){const cart1 = {
                 products: cartData.data.map(cartProduct => {
                     sumQuantityBooks += cartProduct.quantity
                     sumPrice += cartProduct.quantity * cartProduct.book.price
                     return {
                         // idcart: cartProduct.cart.id,
                         idcartitem: cartProduct.id,
-                        id: cartProduct.book.id,
+                        id: cartProduct.book._id,
                         img: cartProduct.book.bookImage,
                         name: cartProduct.book.name,
                         author: cartProduct.book.author,
@@ -38,12 +38,12 @@ const LoginPage = () => {
                     };
                 })
             };
-            setCart(cart1);
-            console.log('cart1: ', cart1)
+            setCart(cart1);}
         } catch (error) {
             console.error('Lỗi khi kiểm tra và lấy dữ liệu giỏ hàng:', error);
         }
     };
+    console.log('cart: ',cart)
     useEffect(() => {
         getCart()
     }, [])
@@ -54,34 +54,26 @@ const LoginPage = () => {
         axios.defaults.withCredentials = true;
         try {
             if (isLoggedIn) {
-                for (let i = 0; i < quantity; i++) {
-                    const response = await axios.post(`http://localhost:8080/api/client/cart/add/${product.id}`, null, {
-                        // Đặt các headers cần thiết cho request, ví dụ như Authorization header nếu cần
-                        headers: {
-                            'Authorization': `Bearer ${isLoggedIn}`,
-                            'Content-Type': 'application/json'
-                        }
-                    });
-                    if (response.data.status === 200) {
+                    const response = await cartApi.addHaveQuantity(product.id,quantity);
+                    if (response.status === 200) {
                         console.log('Sản phẩm đã được thêm vào giỏ hàng thành công:', response.data);
-                        // getCart()
+                        getCart()
                     }
-                }
             } else {
-                for (let i = 0; i < quantity; i++) {
-                    const response = await axios.post(`http://localhost:8080/api/client/cart/add/${product.id}`, null, {
-                        // Đặt các headers cần thiết cho request, ví dụ như Authorization header nếu cần
-                        headers: {
-                            'Authorization': `Bearer ${isLoggedIn}`,
-                            'Content-Type': 'application/json'
-                        }
-                    });
+                // for (let i = 0; i < quantity; i++) {
+                //     const response = await axios.post(`http://localhost:8080/api/client/cart/add/${product.id}`, null, {
+                //         // Đặt các headers cần thiết cho request, ví dụ như Authorization header nếu cần
+                //         headers: {
+                //             'Authorization': `Bearer ${isLoggedIn}`,
+                //             'Content-Type': 'application/json'
+                //         }
+                //     });
 
-                    if (response.data.status === 200) {
-                        console.log('Sản phẩm đã được thêm vào giỏ hàng thành công:', response.data);
-                        // getCart()
-                    }
-                }
+                //     if (response.data.status === 200) {
+                //         console.log('Sản phẩm đã được thêm vào giỏ hàng thành công:', response.data);
+                //         // getCart()
+                //     }
+                // }
             }
         } catch (error) {
             // Xử lý lỗi nếu request gặp vấn đề
@@ -92,8 +84,8 @@ const LoginPage = () => {
     const handleDeleteItemCartSession = async (product) => {
 
         axios.defaults.withCredentials = true
-        const responsedelete = await axios.post(`http://localhost:8080/api/client/cart/delete/${product.id}`);
-        if (responsedelete.data.status === 200) {
+        const responsedelete = await cartApi.deleteNoToken(product.id)
+        if (responsedelete.status === 200) {
             console.log('Sản phẩm đã được xoa khoi giỏ hàng thành công:', responsedelete.data);
         }
     }
@@ -120,19 +112,16 @@ const LoginPage = () => {
             cookies.set('token', response.token, { path: '/', maxAge: 604800 }); // expires in 7 days
 
             console.log('Đăng nhập thành công');
+            console.log("cart: ",cart)
             if (cart) {
                 cart.products.forEach((element) => {
                     handleAddToCart(element, element.quantity)
                     handleDeleteItemCartSession(element)
                 })
             }
-            window.location.href = '/';
+            // window.location.href = '/';
         }
     };
-    const navigate = useNavigate()
-    const handleRegisterButton = () => {
-        navigate('/register')
-    }
     useEffect(() => {
         setHeght(window.innerHeight)
     }, [])
@@ -156,7 +145,7 @@ const LoginPage = () => {
                 <div style={{ width: '30%', }} className="right">
 
                     <h2>Đăng nhập</h2>
-                    <form onSubmit={() => handleLogin}>
+                    <form onSubmit={(e) => handleLogin(e)}>
                         <div className="username">
                             <span>Username</span>
                             <input

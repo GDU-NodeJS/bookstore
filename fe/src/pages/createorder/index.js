@@ -7,6 +7,7 @@ import './style.scss'
 import Image from '../../assets/meo-chien-binh-tap-6-thoi-khac-tam-toi_128863_1.jpg'
 import { useNavigate, useLocation } from "react-router-dom";
 import { cartApi } from "../../api/api";
+import { formatCurrency } from "../../utils/format_tien";
 const CreateOrder = () => {
     const [cart, setCart] = useState()
     const [amount, setAmount] = useState(0)
@@ -16,8 +17,10 @@ const CreateOrder = () => {
     const selectedBooks = location.state?.selectedBooks
     const cookies = new Cookies()
     const [cartItemSelected, setCartItemSelected] = useState()
-    console.log('selected: ',selectedBooks)
-    
+    const [paymentMethod, setPaymentMethod] = useState('cash_on_delivery')
+    console.log('pm',paymentMethod)
+    console.log('selected: ', selectedBooks)
+    const [language, setLanguage] = useState(0)
     useEffect(() => {
         getCart();
     }, []);
@@ -30,33 +33,35 @@ const CreateOrder = () => {
                 cartResponse = await cartApi.getAll();
             } else {
                 axios.defaults.withCredentials = true;
-                cartResponse = await axios.get('http://localhost:8080/api/client/cart/getAll');
+                cartResponse = await cartApi.getAllNoToken()
             }
             const cartData = cartResponse;
             let sumQuantityBooks = 0;
             let sumPrice = 0;
-            const cart1 = {
-                id: cartData.data[0].cart.id,
-                products: cartData.data.map(cartProduct => {
-                    sumQuantityBooks += cartProduct.quantity
-                    sumPrice += cartProduct.quantity * cartProduct.book.price
+            const cartProducts = await Promise.all(cartData.data.map((cartProduct) => {
+                sumQuantityBooks += cartProduct.quantity
 
-                    return {
-                        idcartitem: cartProduct.id,
-                        id: cartProduct.book.id,
-                        img: cartProduct.book.bookImage,
-                        name: cartProduct.book.name,
-                        author: cartProduct.book.author,
-                        description: cartProduct.book.description,
-                        price: cartProduct.book.price,
-                        quantity: cartProduct.quantity
-                    };
-                })
-            };
+                return {
+                    idcart: cartProduct.cart._id,
+                    idcartitem: cartProduct._id,
+                    id: cartProduct.book._id,
+                    img: cartProduct.book.bookImage,
+                    name: cartProduct.book.name,
+                    author: cartProduct.book.author,
+                    description: cartProduct.book.description,
+                    price: cartProduct.book.price,
+                    quantity: cartProduct.quantity
+                };
+
+            }));
+            console.log('cartdata: ', cartData.data)
             setAmount(sumQuantityBooks)
+            console.log('cart1: ', cartProducts)
+            // const selectedBooksInCart = cartProducts.filter(item => selectedBooks.includes(item.idcartitem));
+            const selectedBooksInCart = cartProducts.filter(item => selectedBooks.includes(item.idcartitem));
+            console.log('select: ', selectedBooksInCart)
+            selectedBooksInCart.map((item) => sumPrice += item.price * item.quantity)
             setPrice(sumPrice)
-            console.log('cart1: ',cart1)
-            const selectedBooksInCart = cartData.data.filter(item => selectedBooks.includes(item.id.toString()));
             setCart(selectedBooksInCart);
         } catch (error) {
             console.error('Lỗi khi kiểm tra và lấy dữ liệu giỏ hàng:', error);
@@ -72,7 +77,7 @@ const CreateOrder = () => {
                         Authorization: `Bearer ${cookies.get('token')}`
                     }
                 });
-                if(response.data.status === 200) {
+                if (response.data.status === 200) {
                     navigate('/cart')
                 }
             } catch (error) {
@@ -81,11 +86,17 @@ const CreateOrder = () => {
         }
 
     }
+    const handlePaymentMethodChange = (selectedMethod) => {
+        setPaymentMethod(selectedMethod);
+        // Thực hiện các hành động tương ứng với phương thức thanh toán được chọn
+        console.log('Phương thức thanh toán đã chọn:', selectedMethod);
+    };
     console.log('cart', cart)
+    window.cart = cart
     return (
         <>
             <Header amount={amount} />
-            <div className="container">
+            <div className="container" style={{ minHeight: '510px' }}>
                 <div className="orderpage_header">
                     <span>Số lượng</span>
                     <span>Giá</span>
@@ -94,13 +105,13 @@ const CreateOrder = () => {
                     {cart ? (
                         cart.map((item, index) => (
                             <div key={index} className="book_detail">
-                                <div className="img" style={{ backgroundImage: `url(${Image})` }}></div>
+                                <div className="img" style={{ backgroundImage: `url(${item.img})` }}></div>
                                 <div className="book_detail_text">
-                                    <div>{item.book.name}</div>
-                                    <div>{item.book.author}</div>
+                                    <div>{item.name}</div>
+                                    <div>{item.author}</div>
                                 </div>
                                 <div className="quantity"><span>{item.quantity}</span></div>
-                                <div className="price"><span>{item.book.price * item.quantity}</span></div>
+                                <div className="price"><span>{item.price * item.quantity}</span></div>
                             </div>
                         ))
                     ) : (
@@ -108,18 +119,20 @@ const CreateOrder = () => {
                     )}
                 </div>
                 <div className="box_payment_price">
-
                     <div className="payment_method">
                         <div className="">Phương thức thanh toán:</div>
-                        <div>thanh toán khi nhận hàng</div>
+                        <select onChange={(e) => handlePaymentMethodChange(e.target.value)}>
+                            <option value="cash_on_delivery">Thanh toán khi nhận hàng</option>
+                            <option value="bank_transfer">Chuyển khoản</option>
+                        </select>
                     </div>
                     <div className="price_box">
                         <div>Tổng tiền:</div>
-                        <div>{price}</div>
+                        <div>{formatCurrency(price, language)}</div>
                     </div>
                 </div>
                 <div className="button_box">
-                    <button className="button_cancel" onClick={()=> navigate('/cart')}>Hủy</button>
+                    <button className="button_cancel" onClick={() => navigate('/cart')}>Hủy</button>
                     <button className="button_order" onClick={() => handleOrder(selectedBooks)}>Đặt hàng</button>
                 </div>
             </div>
