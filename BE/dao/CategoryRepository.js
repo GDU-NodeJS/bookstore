@@ -51,6 +51,16 @@ class CategoryRepository {
     }
   }
 
+  async populate(model) {
+    try {
+      const object = await Category.populate(model);
+      return object;
+    } catch (err) {
+      console.error(err);
+      throw new Error('Error populate objejct the category');
+    }
+  }
+
   async findByIdAndUpdate(id, categoryData) {
     try {
       const updatedCategory = await Category.findByIdAndUpdate(id, categoryData, { new: true });
