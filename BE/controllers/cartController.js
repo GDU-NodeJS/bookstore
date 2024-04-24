@@ -96,7 +96,7 @@ class CartController {
       next(err);
     }
   }
-  async checkout(req, res) {
+  async checkout(req, res, next) {
     try {
       const cartItemId = req.params.cartItemId;
       const url = await this._cartService.checkout(cartItemId, req);

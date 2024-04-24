@@ -72,11 +72,7 @@ const CreateOrder = () => {
         for (const a of arr) {
             try {
                 axios.defaults.withCredentials = true;
-                const response = await axios.post(`http://localhost:8080/api/client/cart/checkout/${a}`, null, {
-                    headers: {
-                        Authorization: `Bearer ${cookies.get('token')}`
-                    }
-                });
+                const response = await cartApi.checkout(a)
                 if (response.data.status === 200) {
                     navigate('/cart')
                 }
@@ -111,7 +107,7 @@ const CreateOrder = () => {
                                     <div>{item.author}</div>
                                 </div>
                                 <div className="quantity"><span>{item.quantity}</span></div>
-                                <div className="price"><span>{item.price * item.quantity}</span></div>
+                                <div className="price"><span>{formatCurrency((item.price * item.quantity),language)}</span></div>
                             </div>
                         ))
                     ) : (

@@ -21,7 +21,7 @@ const BookDetail = () => {
     const [bookSomeGenre, setBookSomeGenre] = useState()
     const [amount, setAmount] = useState()
     const getBooksByWord = async () => {
-        console.log('searchTerm: ',searchTerm)
+        console.log('searchTerm: ', searchTerm)
         try {
             axios.defaults.withCredentials = true;
             const response = await bookApi.getById(searchTerm);
@@ -38,48 +38,48 @@ const BookDetail = () => {
         const fetchData = async () => {
             await getBooksByWord();
         };
-    
+
         fetchData();
-        
+
         // Truyền searchTerm vào dependency array nếu bạn muốn cập nhật dữ liệu khi searchTerm thay đổi
     }, [searchTerm]);
     const getBooks = async () => {
         axios.defaults.withCredentials = true;
         const response = await bookApi.getAll();
-        
+
         const genre = [];
         if (book) {
             book.categories.forEach((item) => {
                 genre.push(item.name);
             });
         }
-    
+
         const bs = genre.map((item) => {
             // return response.data.data.filter((b) => {
             //     // return b.categories.includes(item);
             // });
         });
-    
+
         // Gộp các mảng thành một mảng duy nhất
         const mergedArray = bs.reduce((accumulator, currentValue) => {
             return accumulator.concat(currentValue);
         }, []);
-    
+
         // Đảm bảo mergedArray không rỗng trước khi gán
         if (mergedArray.length > 0) {
             setBookSomeGenre(mergedArray);
         }
-       
+
     };
-   
-    useEffect(()=>{
+
+    useEffect(() => {
         getBooks()
-        console.log('bsg: ',bookSomeGenre)
-    },[searchParams])
+        console.log('bsg: ', bookSomeGenre)
+    }, [searchParams])
     useEffect(() => {
         getCart();
     }, []);
-    
+
     const getCart = async () => {
         const isLoggedIn = cookies.get('token')
 
@@ -92,15 +92,15 @@ const BookDetail = () => {
             } else {
                 // Người dùng chưa đăng nhập
                 axios.defaults.withCredentials = true;
-                cartResponse = await axios.get('http://localhost:8080/api/client/cart/getAll');
+                cartResponse = await cartApi.getAllNoToken()
             }
 
             const cartData = cartResponse;
             console.log('cartData:', cartData);
-            let sumQuantityBooks =0
+            let sumQuantityBooks = 0
             const cart = {
                 products: cartData.data.map(cartProduct => {
-                    sumQuantityBooks += cartProduct.quantity
+                    sumQuantityBooks += parseInt(cartProduct.quantity)
                     return {
                         id: cartProduct.book.id,
                         img: cartProduct.book.bookImage,
@@ -128,54 +128,36 @@ const BookDetail = () => {
             if (isLoggedIn) {
                 if (quantity === 1) {
                     // Gửi request POST đến API endpoint để thêm sản phẩm vào cơ sở dữ liệu
-                    const response = await axios.post(`http://localhost:8080/api/client/cart/add/${product.id}`,null,{
-                        // Đặt các headers cần thiết cho request, ví dụ như Authorization header nếu cần
-                        headers: {
-                            'Authorization': `Bearer ${isLoggedIn}`,
-                            'Content-Type': 'application/json'
-                        }
-                    });
+                    const response = await cartApi.add(product._id)
 
-                    if (response.data.status === 200) {
+                    if (response.status === 200) {
                         console.log('Sản phẩm đã được thêm vào giỏ hàng thành công:', response.data);
                         updateCartItemCount(response.data.status)
                         getCart()
                     }
                 } else {
                     let oldQuantity
-                    const existingProduct = cart.products.find(item => item.id === product.id)
+                    const existingProduct = cart.products.find(item => item.id === product._id)
                     if (existingProduct) {
-                        oldQuantity = existingProduct.quantity
-                        const response = await axios.post(`http://localhost:8080/api/client/cart/uppdate/${product.id}/${oldQuantity + quantity}`,null, {
-                            // Đặt các headers cần thiết cho request, ví dụ như Authorization header nếu cần
-                            headers: {
-                                'Authorization': `Bearer ${isLoggedIn}`,
-                                'Content-Type': 'application/json'
-                            }
-                        });
-                        if (response.data.status === 200) {
-                            updateCartItemCount(response.data.status)
+                        oldQuantity = parseInt(existingProduct.quantity)
+                        const response = await cartApi.update(product._id, quantity)
+                        if (response.status === 200) {
+                            updateCartItemCount(response.status)
                             getCart()
                         }
                     } else {
-                        const response = await axios.post(`http://localhost:8080/api/client/cart/add/${product.id}`,null,{
-                            // Đặt các headers cần thiết cho request, ví dụ như Authorization header nếu cần
-                            headers: {
-                                'Authorization': `Bearer ${isLoggedIn}`,
-                                'Content-Type': 'application/json'
-                            }
-                        });
-                        if (response.data.status === 200) {
-                            const response = await axios.post(`http://localhost:8080/api/client/cart/uppdate/${product.id}/${quantity}`, null,{
-                                // Đặt các headers cần thiết cho request, ví dụ như Authorization header nếu cần
-                                headers: {
-                                    'Authorization': `Bearer ${isLoggedIn}`,
-                                    'Content-Type': 'application/json'
-                                }
-                            });
-                            if (response.data.status === 200) {
-    
-                                updateCartItemCount(response.data.status)
+                        const response = await cartApi.addHaveQuantity(product._id,quantity)
+                        if (response.status === 200) {
+                            // const response = await axios.post(`http://localhost:8080/api/client/cart/uppdate/${product.id}/${quantity}`, null, {
+                            //     // Đặt các headers cần thiết cho request, ví dụ như Authorization header nếu cần
+                            //     headers: {
+                            //         'Authorization': `Bearer ${isLoggedIn}`,
+                            //         'Content-Type': 'application/json'
+                            //     }
+                            // });
+                            if (response.status === 200) {
+
+                                updateCartItemCount(response.status)
                                 getCart()
                             }
                         }
@@ -185,11 +167,11 @@ const BookDetail = () => {
 
                 if (quantity === 1) {
                     // Gửi request POST đến API endpoint để thêm sản phẩm vào cơ sở dữ liệu
-                    const response = await axios.post(`http://localhost:8080/api/client/cart/add/${product.id}`);
+                    const response = await cartApi.addNoToken(product._id)
 
-                    if (response.data.status === 200) {
+                    if (response.status === 200) {
                         console.log('Sản phẩm đã được thêm vào giỏ hàng thành công:', response.data);
-                        updateCartItemCount(response.data.status)
+                        updateCartItemCount(response.status)
                         getCart()
                     }
                 } else {
@@ -197,21 +179,21 @@ const BookDetail = () => {
                     const existingProduct = cart.products.find(item => item.id === product.id)
                     if (existingProduct) {
                         oldQuantity = existingProduct.quantity
-                        const response = await axios.post(`http://localhost:8080/api/client/cart/uppdate/${product.id}/${oldQuantity + quantity}`);
-                        if (response.data.status === 200) {
-    
-                            updateCartItemCount(response.data.status)
+                        const response = await cartApi.updateNoToken(product._id, quantity+oldQuantity)
+                        if (response.status === 200) {
+
+                            updateCartItemCount(response.status)
                             getCart()
                         }
                     } else {
-                        const response = await axios.post(`http://localhost:8080/api/client/cart/add/${product.id}`);
-                        if (response.data.status === 200) {
-                            const response = await axios.post(`http://localhost:8080/api/client/cart/uppdate/${product.id}/${quantity}`);
-                            if (response.data.status === 200) {
-    
-                                updateCartItemCount(response.data.status)
+                        const response = await cartApi.addNoTokenHaveQuantity(product._id,quantity)
+                        if (response.status === 200) {
+                            // const response = await axios.post(`http://localhost:8080/api/client/cart/uppdate/${product.id}/${quantity}`);
+                            // if (response.data.status === 200) {
+
+                                updateCartItemCount(response.status)
                                 getCart()
-                            }
+                            // }
                         }
                     }
                 }
@@ -230,8 +212,8 @@ const BookDetail = () => {
     // const renderSlider = () => {
     //     return (
     //         <>
-            
-                
+
+
     //                 <div style={{ marginBottom: 50 }}>
     //                     <div className="container container__categories_slider">
     //                         <div className="categories_slider_header">
@@ -270,51 +252,49 @@ const BookDetail = () => {
     //                         </div>
     //                     </div>
     //                 </div>
-                
-               
+
+
     //         </>
     //     )
     // }
     return (
         <>
-        <Header amount={amount}/>
-        <div className='container'>
-            {book && <ul className='content book'>
-                <li className='image' style={{ backgroundImage: `url(${Image})` }}></li>
-                <li className='book_detail'>
-                    <ul className='detail'>
-                        <li className='name'>{book.name}</li>
-                        <li className='price'>{formatCurrency(book.price)}</li>
-                        <li className='categories'>
-                            <div>categories:</div>
-                            <ul>
-                                {book.categories.map((item, index)=>(
-                                    <li key={index}>{item.name}</li>
-                                ))}
-                            </ul>
-                        </li>
-                        <li className='button'>
-                            <ul className='button_box'>
-                                <li>
-                                    <button onClick={() => setQuantity(quantity - 1)}>-</button>
-                                </li>
-                                <li className='amount'>{quantity}</li>
-                                <li>
-                                    <button onClick={() => setQuantity(quantity + 1)}>+</button>
-                                </li>
-                            </ul>
-                        </li>
-                        <li className='button_addtocart'>
-                            <button onClick={() => handleAddToCart(book, quantity)}>Thêm vào giỏ hàng</button>
-                        </li>
-                        <li className='description'>{book.description}Đắc Nhân Tâm (How to Win Friends and Influence People) được mệnh danh là quyển sách hay nhất, nổi tiếng nhất, bán chạy nhất và nó có tầm ảnh hưởng đi xa nhất mọi thời đại, Đắc Nhân Tâm của soạn giả Dale Carnegie là 1 quyển sách hay nên đọc để bạn biết về nghệ thuật thu phục lòng người và làm tất cả mọi người phải yêu mến mình.
-
-Quyển sách này cũng nêu bật lên các nguyên tắc trong việc đối nhân xử thế rất khôn ngoan bắt đầu từ việc thấu hiểu, thành thật với chính bản thân mình cũng như gợi ý cho người đọc cách biết quan tâm đến những người kế bên để cùng hòa nhập, cùng nhau phát triển khả năng của chính mình và mọi người lên 1 tầm cao mới.</li>
-                    </ul>
-                </li>
-            </ul>}
-        </div>
-        <Footer/>
+            <Header amount={amount} />
+            <div className='container'>
+                {book && <ul className='content book'>
+                    <li className='image' style={{ backgroundImage: `url(${book.image})` }}></li>
+                    <li className='book_detail'>
+                        <ul className='detail'>
+                            <li className='name'>{book.name}</li>
+                            <li className='price'>{formatCurrency(book.price)}</li>
+                            <li className='categories'>
+                                <div>categories:</div>
+                                <ul>
+                                    {book.categories.map((item, index) => (
+                                        <li key={index}>{item.name}</li>
+                                    ))}
+                                </ul>
+                            </li>
+                            <li className='button'>
+                                <ul className='button_box'>
+                                    <li>
+                                        <button onClick={() => setQuantity(quantity - 1)}>-</button>
+                                    </li>
+                                    <li className='amount'>{quantity}</li>
+                                    <li>
+                                        <button onClick={() => setQuantity(quantity + 1)}>+</button>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li className='button_addtocart'>
+                                <button onClick={() => handleAddToCart(book, quantity)}>Thêm vào giỏ hàng</button>
+                            </li>
+                            <li className='description'>{book.description}</li>
+                        </ul>
+                    </li>
+                </ul>}
+            </div>
+            <Footer />
         </>
     )
 }

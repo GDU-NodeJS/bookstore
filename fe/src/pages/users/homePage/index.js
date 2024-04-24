@@ -238,7 +238,7 @@ const HomePage = () => {
 
                                                         <ul className="featured__item_pic_hover">
                                                             <li>
-                                                                <button onClick={() => navigate(`/detail?id=${item.id}`)}>
+                                                                <button onClick={() => navigate(`/detail?id=${item._id}`)}>
                                                                     <FaEye />
                                                                 </button>
                                                             </li>

@@ -83,7 +83,7 @@ const Header = ({amount}) => {
                                 <li className="categories__drop_header">Danh mục</li>
                                 {data.map((genre, index) => (
                                     <li key={index} className="categories__drop_item">
-                                        <Link to={`/find?category=${genre.name}`}>{genre.name}</Link>
+                                        <Link to={`/find?category=${genre._id}`}>{genre.name}</Link>
                                     </li>
 
                                 ))}

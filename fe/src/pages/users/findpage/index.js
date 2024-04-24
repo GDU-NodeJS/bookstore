@@ -14,42 +14,43 @@ const FindPage = () => {
     const navigate = useNavigate()
     const [searchParams] = useSearchParams();
     const searchTerm = searchParams.get('search');
-    const queryString = searchParams.toString().split('='); // "category=Fantasy+&+Science+fiction"
-    const category = decodeURIComponent(queryString[1].replace(/\+/g, ' '));
+    // const queryString = searchParams.toString().split('='); // "category=Fantasy+&+Science+fiction"
+    // const category = decodeURIComponent(queryString[1].replace(/\+/g, ' '));
+    const category = searchParams.get('category')
     const [cate, setCate] = useState([])
     const [books, setBooks] = useState([])
     const [pageNumber, setPageNumber] = useState(0); // Thêm state để lưu trang hiện tại
     const booksPerPage = 15; // Số lượng sách trên mỗi trang
     const [amount, setAmount] = useState()
     const cookies = new Cookies()
-    const chonsse = (categoryname) => {
-        if (Number.isNaN(Number(categoryname))){if (categoryname === '') {
-            const element = document.querySelector(`.all`);
-            const elementselected = document.querySelector(`.selected`);
-            if (elementselected) {
-                elementselected.classList.remove('selected')
-            }
-            if (element) {
-                // Thêm class 'selected' vào phần tử
-                element.classList.add('selected');
-                console.log('class: ', element.classList)
-            }
-        } else {
-            const element = document.querySelector(`.${nospace(categoryname)}`);
-            const elementselected = document.querySelector(`.selected`);
-            if (elementselected) {
-                elementselected.classList.remove('selected')
-            }
-            // Kiểm tra xem phần tử có tồn tại không
-            if (element) {
-                // Thêm class 'selected' vào phần tử
-                element.classList.add('selected');
-            }
-        }}
-    }
-    useEffect(() => {
-        chonsse(category)
-    }, [category])
+    // const chonsse = (categoryname) => {
+    //     if (Number.isNaN(Number(categoryname))){if (categoryname === '') {
+    //         const element = document.querySelector(`.all`);
+    //         const elementselected = document.querySelector(`.selected`);
+    //         if (elementselected) {
+    //             elementselected.classList.remove('selected')
+    //         }
+    //         if (element) {
+    //             // Thêm class 'selected' vào phần tử
+    //             element.classList.add('selected');
+    //             console.log('class: ', element.classList)
+    //         }
+    //     } else {
+    //         const element = document.querySelector(`.${nospace(categoryname)}`);
+    //         const elementselected = document.querySelector(`.selected`);
+    //         if (elementselected) {
+    //             elementselected.classList.remove('selected')
+    //         }
+    //         // Kiểm tra xem phần tử có tồn tại không
+    //         if (element) {
+    //             // Thêm class 'selected' vào phần tử
+    //             element.classList.add('selected');
+    //         }
+    //     }}
+    // }
+    // useEffect(() => {
+    //     chonsse(category)
+    // }, [category])
     const getCates = async () => {
         axios.defaults.withCredentials = true;
         const response = await categoryApi.getAll()
@@ -57,8 +58,8 @@ const FindPage = () => {
     }
     const getBooksByWord = async (searchTerm) => {
         axios.defaults.withCredentials = true;
-        const response = await axios.get(`http://localhost:8080/api/client/book/search?keyword=${searchTerm}`)
-        setBooks(response.data.data)
+        const response = await bookApi.searchByName(searchTerm)
+        setBooks(response.data[0])
     }
     const getBooks = async () => {
         axios.defaults.withCredentials = true;
@@ -85,11 +86,17 @@ const FindPage = () => {
         console.log('selected: ',selected)
         setPageNumber(selected);
     };
+    const [temp, setTemp] = useState()
     const getBooksByCateOfParams = async (category) => {
         axios.defaults.withCredentials = true;
-        const response = await bookApi.getAll()
-        const booksbycate = response.data.filter((item) => item.categories[0].includes(category))
-        setBooks(booksbycate)
+        const response = await bookApi.searchByCategory(category)
+        if (response.message === "Error searching for books by category") {
+            alert('không tìm thấy cuonons sách nào với categoty ban chọn')
+            setBooks([])
+        } else {
+
+            setBooks(books)
+        }
     }
     const handleAdd = async (product) => {
         // Kiểm tra xem người dùng đã đăng nhập chưa
@@ -98,23 +105,17 @@ const FindPage = () => {
         try {
             if (isLoggedIn) {
                 // Gửi request POST đến API endpoint để thêm sản phẩm vào cơ sở dữ liệu
-                const response = await axios.post(`http://localhost:8080/api/client/cart/add/${product.id}`, null, {
-                    // Đặt các headers cần thiết cho request, ví dụ như Authorization header nếu cần
-                    headers: {
-                        'Authorization': `Bearer ${isLoggedIn}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
+                const response = await cartApi.add(product._id)
 
-                if (response.data.status === 200) {// Xử lý response từ API nếu thành công
+                if (response.status === 200) {// Xử lý response từ API nếu thành công
                     console.log('Sản phẩm đã được thêm vào giỏ hàng thành công:', response.data);
                     getCart()
                     updateCartItemCount(response.data.status)
                 }
             } else {
 
-                const response1 = await axios.post(`http://localhost:8080/api/client/cart/add/${product.id}`);
-                if (response1.data.status === 200) {
+                const response1 = await cartApi.addNoToken(product._id)
+                if (response1.status === 200) {
                     getCart()
                     console.log('Chưa đăng nhập sản phẩm đã được thêm vào giỏ hàng thành công:', response1.data);
                     updateCartItemCount(response1.data.status)
@@ -142,7 +143,7 @@ const FindPage = () => {
             } else {
                 // Người dùng chưa đăng nhập
                 axios.defaults.withCredentials = true;
-                cartResponse = await axios.get('http://localhost:8080/api/client/cart/getAll');
+                cartResponse = await cartApi.getAllNoToken()
             }
 
             const cartData = cartResponse;
@@ -177,10 +178,10 @@ const FindPage = () => {
             setAmount(amount)
         }
     }
-    const nospace = (str) => {
-        const validClassName = str.replace(/[^\w-]/g, '');
-        return validClassName
-    }
+    // const nospace = (str) => {
+    //     const validClassName = str.replace(/[^\w-]/g, '');
+    //     return validClassName
+    // }
     return (
         <>
             <Header amount={amount} />
@@ -190,7 +191,7 @@ const FindPage = () => {
                         <li className="content_left_headers">Danh mục</li>
                         <li className="all" onClick={() => { navigate(`/find?category=`); handlePageChange({selected: 0})}}>Tất cả</li>
                         {cate && cate.map((item, index) => (
-                            <li className={`${nospace(item.name)}`} key={index} onClick={() => { navigate(`/find?category=${item.name}`); handlePageChange({selected: 0})}}>{item.name}</li>
+                            <li className={`${item.id}`} key={index} onClick={() => { navigate(`/find?category=${item._id}`); handlePageChange({selected: 0})}}>{item.name}</li>
                         ))}
                     </ul>
                     <div className="content_right">
@@ -204,7 +205,7 @@ const FindPage = () => {
                                 .map((item, index) => (
                                     <li key={index} className="book_box">
                                         <ul key={index}>
-                                            <li className="book_img" style={{ backgroundImage: `url(${Image})` }}>
+                                            <li className="book_img" style={{ backgroundImage: `url(${item.image})` }}>
                                                 <ul className="featured__item_pic_hover">
                                                     <li>
                                                         <button onClick={() => navigate(`/detail?id=${item.id}`)}>
