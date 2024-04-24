@@ -13,7 +13,10 @@ dotenv.config();
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true // Allow sending cookies and other credentials
+}));
 app.use(express.static("."));
 app.use(session({
   secret: process.env.SESSION_KEY, // Khóa bí mật để mã hóa session
