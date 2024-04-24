@@ -1,13 +1,15 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Redirect } from "react-router-dom";
+import { Link, Redirect, useNavigate } from "react-router-dom";
 import Cookies from 'universal-cookie';
 import { getJsessionIdFromResponse } from "../../component";
 import { authenticateApi, cartApi } from "../../api/api";
+import './style.scss'
 const LoginPage = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [cart, setCart] = useState()
+    const [height, setHeght] = useState()
     const cookies = new Cookies()
     const getCart = async () => {
         try {
@@ -60,7 +62,6 @@ const LoginPage = () => {
                             'Content-Type': 'application/json'
                         }
                     });
-
                     if (response.data.status === 200) {
                         console.log('Sản phẩm đã được thêm vào giỏ hàng thành công:', response.data);
                         // getCart()
@@ -128,35 +129,68 @@ const LoginPage = () => {
             window.location.href = '/';
         }
     };
-
-    const height = window.innerHeight;
+    const navigate = useNavigate()
+    const handleRegisterButton = () => {
+        navigate('/register')
+    }
+    useEffect(() => {
+        setHeght(window.innerHeight)
+    }, [])
     console.log('Chiều cao của màn hình:', height);
     return (
-        <div className="container" style={{height: `${height}px`}}>
-            <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                <div style={{width: '70%', height: `${height}px`}}>
+        <div className="containe" style={{ height: `${height}px` }}>
+            <div style={{
+                height: `${height * (10 / 100)}px`,
+                display: 'flex',
+                'align-items': 'center',
+                'margin-left': '50px',
+                'font-size': '20px',
+            }}>
+                <h2>Bookstore</h2>
+            </div>
+            <div style={{ height: `${height * (80 / 100)}px`, display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#9C90D0', margin: '' }}>
+                <div style={{ width: '70%', height: `${height * (80 / 100)}px` }} className="left">
                     <h1>Bookstore</h1>
+                    <span>Cửa hàng bán sách uy tín và chất lượng</span>
                 </div>
-                <div style={{width: '30%', height: `${height}px`}}>
+                <div style={{ width: '30%', }} className="right">
 
-                    <h2>Login Page</h2>
+                    <h2>Đăng nhập</h2>
                     <form onSubmit={() => handleLogin}>
-                        <input
-                            type="text"
-                            placeholder="Username"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                        />
-                        <input
-                            type="password"
-                            placeholder="Password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
-                        <button type="submit" >Login</button>
+                        <div className="username">
+                            <span>Username</span>
+                            <input
+                                type="text"
+                                placeholder="example@gmail.com"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                            />
+                        </div>
+                        <div className="password">
+                            <span>Password</span>
+                            <input
+                                type="password"
+                                placeholder="example@123"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                            <Link>Quên mật khẩu</Link>
+                        </div>
+
+                        <button type="submit" >Đăng nhập</button>
+                        <div className="hr">
+
+                            <hr></hr>
+                            <span>hoặc</span>
+                        </div>
+                        <div className="register">
+                            <span>Bạn chưa có tài khoản? </span>
+                            <Link to='/register'>Đăng ký</Link>
+                        </div>
                     </form>
                 </div>
             </div>
+            <div style={{ height: `${height * (10 / 100)}px` }}></div>
         </div>
     );
 };

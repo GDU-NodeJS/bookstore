@@ -274,24 +274,28 @@ const HomePage = () => {
                 cartResponse = await cartApi.getAllNoToken();
                 console.log('gio hang khi chua đnag nhap: ', cartResponse)
             }
+            if (cartResponse.status === 200) {
 
-            const cartData = cartResponse;
-            let sumQuantityBooks = 0;
-            const cart1 = {
-                products: cartData.data.map(cartProduct => {
-                    sumQuantityBooks += cartProduct.quantity
-                    return {
-                        id: cartProduct.book.id,
-                        img: cartProduct.book.bookImage,
-                        name: cartProduct.book.name,
-                        author: cartProduct.book.author,
-                        description: cartProduct.book.description,
-                        price: cartProduct.book.price,
-                        quantity: cartProduct.quantity
-                    };
-                })
-            };
-            setAmount(sumQuantityBooks)
+                const cartData = cartResponse;
+                let sumQuantityBooks = 0;
+                if (cartData.data.length > 0) {
+                    const cart1 = {
+                        products: cartData.data.map(cartProduct => {
+                            sumQuantityBooks += cartProduct.quantity
+                            return {
+                                id: cartProduct.book.id,
+                                img: cartProduct.book.bookImage,
+                                name: cartProduct.book.name,
+                                author: cartProduct.book.author,
+                                description: cartProduct.book.description,
+                                price: cartProduct.book.price,
+                                quantity: cartProduct.quantity
+                            };
+                        })
+                    }
+                };
+                setAmount(sumQuantityBooks)
+            }
         } catch (error) {
             console.error('Lỗi khi kiểm tra và lấy dữ liệu giỏ hàng:', error);
         }
