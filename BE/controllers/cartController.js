@@ -7,7 +7,7 @@ class CartController {
     this._cartService = new CartService();
   }
 
-  async addToCart(req, res) {
+  async addToCart(req, res,next) {
     try {
       const bookId = req.params.bookId;
       let quantity = req.params.quantity;
@@ -20,18 +20,11 @@ class CartController {
         message: "Successfully add to cart",
       });
     } catch (err) {
-      let errorMessage = err.message;
-      if (errorMessage.startsWith('Error: ')) {
-        errorMessage = errorMessage.slice(7);
-      }
-      return res.status(res.statusCode).json({
-        status: res.statusCode,
-        message: errorMessage,
-      });
+      next(err);
     }
   }
 
-  async getCart(req, res) {
+  async getCart(req, res, next) {
     try {
       const cart = await this._cartService.getCart(req);
       const response = [];
@@ -47,18 +40,11 @@ class CartController {
         data: response,
       });
     } catch (err) {
-      let errorMessage = err.message;
-      if (errorMessage.startsWith('Error: ')) {
-        errorMessage = errorMessage.slice(7);
-      }
-      return res.status(res.statusCode).json({
-        status: res.statusCode,
-        message: errorMessage,
-      });
+      next(err);
     }
   }
 
-  async getCartItem(req, res) {
+  async getCartItem(req, res, next) {
     try {
       const cartItemId = req.params.cartItemId;
       const cart = await this._cartService.getCartItem(cartItemId, req);
@@ -68,18 +54,11 @@ class CartController {
         data: await this.responseCart(cart)
       });
     } catch (err) {
-      let errorMessage = err.message;
-      if (errorMessage.startsWith('Error: ')) {
-        errorMessage = errorMessage.slice(7);
-      }
-      return res.status(res.statusCode).json({
-        status: res.statusCode,
-        message: errorMessage,
-      });
+      next(err);
     }
   }
 
-  async removeFromCart(req, res) {
+  async removeFromCart(req, res, next) {
     try {
       const bookId = req.params.bookId;
       await this._cartService.removeFromCart(req, bookId);
@@ -88,18 +67,11 @@ class CartController {
         message: 'Remove from cart successfully'
       });
     } catch (err) {
-      let errorMessage = err.message;
-      if (errorMessage.startsWith('Error: ')) {
-        errorMessage = errorMessage.slice(7);
-      }
-      return res.status(res.statusCode).json({
-        status: res.statusCode,
-        message: errorMessage,
-      });
+      next(err);
     }
   }
 
-  async updateCart(req, res) {
+  async updateCart(req, res, next) {
     try {
       const bookId = req.params.bookId;
       const quantity = req.params.quantity;
@@ -109,18 +81,11 @@ class CartController {
         message: 'Update cart successfully'
       });
     } catch (err) {
-      let errorMessage = err.message;
-      if (errorMessage.startsWith('Error: ')) {
-        errorMessage = errorMessage.slice(7);
-      }
-      return res.status(res.statusCode).json({
-        status: res.statusCode,
-        message: errorMessage,
-      });
+      next(err);
     }
   }
 
-  async clearCart(req, res) {
+  async clearCart(req, res, next) {
     try {
       await this._cartService.clearCart(req);
       return res.status(res.statusCode).json({
@@ -128,14 +93,7 @@ class CartController {
         message: 'Clear cart successfully'
       });
     } catch (err) {
-      let errorMessage = err.message;
-      if (errorMessage.startsWith('Error: ')) {
-        errorMessage = errorMessage.slice(7);
-      }
-      return res.status(res.statusCode).json({
-        status: res.statusCode,
-        message: errorMessage,
-      });
+      next(err);
     }
   }
   async checkout(req, res) {
@@ -148,34 +106,27 @@ class CartController {
         url: url
       });
     } catch (err) {
-      let errorMessage = err.message;
-      if (errorMessage.startsWith('Error: ')) {
-        errorMessage = errorMessage.slice(7);
-      }
-      return res.status(res.statusCode).json({
-        status: res.statusCode,
-        message: errorMessage,
-      });
+      next(err);
     }
   }
-  async responseCart(cart) {
-    const bookList = cart.book.buffer;
+  async responseCart(cartItem) {
+    const bookList = cartItem.book.buffer;
     let bookId;
     if(bookList){
       bookId = bookList.toString('hex');
     } else {
-      bookId = cart.book;
+      bookId = cartItem.book;
     }
     
     const book = await bookService.getBookById(bookId);
     return {
-      _id: cart._id,
-      quantity: cart.quantity,
+      _id: cartItem._id,
+      quantity: cartItem.quantity,
       cart: {
-        _id: cart.cart
+        _id: cartItem.cart
       },
       book: {
-        _id: cart.book,
+        _id: cartItem.book,
         price: book.price,
         bookImage: book.image,
         name: book.name,

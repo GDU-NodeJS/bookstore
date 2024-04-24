@@ -3,6 +3,7 @@ import CartItemRepository from '../../dao/cart/cartItemRepository.js';
 import AdminBookServiceImp from '../book/AdminBookServiceImp.js';
 import CartItem from "../../models/cart/cartItem.js";
 import ClientOrderService from '../order/ClientOrderService.js';
+import ErrorRepsonse from '../../responses/ErrorResponse.js';
 const SESSION_KEY_CART = 'CART';
 const cartRepository = new CartRepository();
 const cartItemRepository = new CartItemRepository();
@@ -134,9 +135,12 @@ class CartServiceImp {
         }
         req.session[SESSION_KEY_CART] = cartMap;
       }
-    } catch ( error){
-      console.error('Error cant add to cart:', error);
-      throw error;
+    } catch (error) {
+      if (error instanceof ErrorRepsonse) {
+        throw error;
+      } else {
+        throw new ErrorRepsonse(500, 'Internal Server Error', error);
+      }
     }
   }
 
@@ -158,9 +162,12 @@ class CartServiceImp {
         delete cartMap[bookId];
         req.session[SESSION_KEY_CART] = cartMap;
       }
-    } catch( error){
-      console.error('Error cant remove from cart:', error);
-      throw error;
+    } catch (error) {
+      if (error instanceof ErrorRepsonse) {
+        throw error;
+      } else {
+        throw new ErrorRepsonse(500, 'Internal Server Error', error);
+      }
     }
   }
 
@@ -184,9 +191,12 @@ class CartServiceImp {
         }
         req.session[SESSION_KEY_CART] = cartMap;
       }
-    } catch( error){
-      console.error('Error cant update cart:', error);
-      throw error;
+    } catch (error) {
+      if (error instanceof ErrorRepsonse) {
+        throw error;
+      } else {
+        throw new ErrorRepsonse(500, 'Internal Server Error', error);
+      }
     }
   }
 
@@ -208,9 +218,12 @@ class CartServiceImp {
         cartMap = {};
         req.session[SESSION_KEY_CART] = cartMap;
       }
-    } catch( error){
-      console.error('Error cant clear cart:', error);
-      throw error;
+    } catch (error) {
+      if (error instanceof ErrorRepsonse) {
+        throw error;
+      } else {
+        throw new ErrorRepsonse(500, 'Internal Server Error', error);
+      }
     }
   }
 
@@ -226,9 +239,12 @@ class CartServiceImp {
         const cartMap = this.getCartFromSession(req);
         return Object.values(cartMap);
       }
-    } catch( error){
-      console.error('Error cant get cart:', error);
-      throw error;
+    } catch (error) {
+      if (error instanceof ErrorRepsonse) {
+        throw error;
+      } else {
+        throw new ErrorRepsonse(500, 'Internal Server Error', error);
+      }
     }
   }
   async getCartItem(cartItemId, req) {
@@ -242,7 +258,11 @@ class CartServiceImp {
           (model) => model._doc._id.equals(cartItemId)
         );
     
-        return cartItem;
+        if(cartItem)
+          return cartItem;
+        else{
+          throw new ErrorRepsonse(404, "Not Fould CartItem")
+        }
       } else {
         const cartMap = this.getCartFromSession(req);
     
@@ -250,11 +270,18 @@ class CartServiceImp {
           (model) => model._doc._id.equals(cartItemId)
         );
     
-        return cartItem;
+        if(cartItem)
+          return cartItem;
+        else{
+          throw new ErrorRepsonse(404, "Not Fould CartItem")
+        }
       }
-    } catch( error){
-      console.error('Error cant get from cartitem:', error);
-      throw error;
+    } catch (error) {
+      if (error instanceof ErrorRepsonse) {
+        throw error;
+      } else {
+        throw new ErrorRepsonse(500, 'Internal Server Error', error);
+      }
     }
   }
   
