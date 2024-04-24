@@ -69,7 +69,7 @@ const AddCategory = ({ onCategoryAdded }) => {
           style={{ marginRight: "16px", flex: 1 }}
         />
         <Button variant="contained" color="primary" onClick={handleAddCategory}>
-          Add
+          Add Category  
         </Button>
       </Box>
       {successMessage && (

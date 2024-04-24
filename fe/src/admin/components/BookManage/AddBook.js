@@ -1,3 +1,5 @@
+import React, { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import MuiAlert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -6,8 +8,6 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import React, { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import bookApi from "../../api/bookapi";
 import categoryApi from "../../api/categoryapi";
 
@@ -21,13 +21,14 @@ export default function AddBook({ onAdd }) {
   const [error, setError] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const [googleDriveLink, setGoogleDriveLink] = useState("");
+  const [imageSrc, setImageSrc] = useState(""); // State để lưu đường dẫn ảnh
+
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await categoryApi.getAllCategories();
-        console.log(response.data)
         setCategories(response.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -35,6 +36,14 @@ export default function AddBook({ onAdd }) {
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (googleDriveLink) {
+      setImageSrc(googleDriveLink);
+    } else {
+      setImageSrc("");
+    }
+  }, [googleDriveLink]);
 
   const handleSubmit = useCallback(
     async (event) => {
@@ -51,14 +60,11 @@ export default function AddBook({ onAdd }) {
         price,
         description,
         image: googleDriveLink,
-        categories: selectedCategories.map(category => ({ _id: category })),
+        categories: selectedCategories.map((category) => ({ _id: category })),
       };
-
-      console.log("Sending data:", bookData);
 
       try {
         const response = await bookApi.addBook(bookData);
-        console.log("Response:", response);
         if (typeof onAdd === "function") {
           onAdd(response);
         }
@@ -83,6 +89,7 @@ export default function AddBook({ onAdd }) {
     setDescription("");
     setGoogleDriveLink("");
     setError("");
+    setImageSrc("");
   };
 
   const handleBack = () => {
@@ -134,7 +141,7 @@ export default function AddBook({ onAdd }) {
                       checked={selectedCategories.includes(category._id)}
                       onChange={() => {
                         const updatedCategories = selectedCategories.includes(category._id)
-                          ? selectedCategories.filter(id => id !== category._id)
+                          ? selectedCategories.filter((id) => id !== category._id)
                           : [...selectedCategories, category._id];
                         setSelectedCategories(updatedCategories);
                       }}
@@ -175,6 +182,10 @@ export default function AddBook({ onAdd }) {
               <Typography variant="body2" color="error">
                 {error}
               </Typography>
+            )}
+            {/* Hiển thị ảnh từ link */}
+            {imageSrc && (
+              <img src={imageSrc} alt="Book" style={{ maxWidth: "100px", maxHeight: "100px", marginRight: "8px" }}/>
             )}
             <Box
               sx={{
