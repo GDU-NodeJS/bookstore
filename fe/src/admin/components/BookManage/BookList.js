@@ -87,14 +87,14 @@ export default function BookList() {
 
   const handleDeleteConfirm = async () => {
     try {
-      const bookToDelete = books.find((book) => book._id === selectedBookId);
+      const bookToDelete = books.find((book) => book.id === selectedBookId);
       if (!bookToDelete) {
         console.error("Book not found");
         return;
       }
       const bookName = bookToDelete.name;
       await bookApi.deleteBook(selectedBookId);
-      setBooks(books.filter((book) => book._id !== selectedBookId));
+      setBooks(books.filter((book) => book.id !== selectedBookId));
       setDeleteSuccessMessage(`Book "${bookName}" deleted successfully`);
       setDeleteDialogOpen(false);
       setTimeout(() => {
@@ -179,7 +179,7 @@ export default function BookList() {
                       return (
                         <TableCell key={column.id} align={column.align}>
                           <Typography variant="body2">
-                            {book.categories.map((category) => category.name).join(", ")}
+                            {book.categories.map((categories) => categories.name).join(", ")}
                           </Typography>
                         </TableCell>
                       );
@@ -195,7 +195,7 @@ export default function BookList() {
                           <Button
                             variant="contained"
                             color="primary"
-                            onClick={() => handleViewButtonClick(book._id)}
+                            onClick={() => handleViewButtonClick(book.id)}
                             style={{ marginRight: "8px" }}
                           >
                             View
@@ -203,7 +203,7 @@ export default function BookList() {
                           <Button
                             variant="contained"
                             color="error"
-                            onClick={() => handleDeleteButtonClick(book._id)}
+                            onClick={() => handleDeleteButtonClick(book.id)}
                           >
                             Delete
                           </Button>
