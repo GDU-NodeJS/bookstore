@@ -32,36 +32,53 @@ class ClientOrderServiceImp {
     return false;
   }
 
-  async createOrder(userId, cartItem, req) {
+  async checkout(cartItemId, req) {
     const isLoggedIn = this.isUserLoggedIn(req);
     if (!isLoggedIn) {
-      throw new Error("User is not logged in");
+      throw new Error('User must be logged in to checkout');
     }
-
+  
+    const cartItem = await this.getCartItem(cartItemId, req);
     const bookBuffer = cartItem.book.buffer;
     const bookId = bookBuffer.toString('hex');
-
-    const book = await bookRepository.findById(bookId);
-
-    const bookList = [cartItem.book];
-    const payment = book.price * cartItem.quantity;
-
-    const paymentOrderId = await paymentService.createPaymentOrder(payment);
-
-
-    const newOrderData = {
-      date: new Date(),
-      user: userId,
-      bookList,
-      payment,
-      paymentOrderId,
-      status: 'PENDING'
-    };
-
-    await orderRepository.user_createOrder(newOrderData);
-    return `https://www.paypal.com/checkoutnow?token=${paymentOrderId}`;
-  }
   
+    if (!cartItem) {
+      throw new Error('Cart item not found');
+    }
+  
+    try {
+      const userId = this.getUserId(req);
+  
+      // Make payment first
+      const paymentOrderId = await paymentService.createPaymentOrder(cartItem.book.price * cartItem.quantity);
+  
+      // Verify payment status before creating the order
+      const paymentStatus = await paymentService.getPaymentStatus(paymentOrderId);
+      if (paymentStatus === 'success') {
+        // Create order
+        const newOrderData = {
+          date: new Date(),
+          user: userId,
+          bookList: [cartItem.book],
+          payment: cartItem.book.price * cartItem.quantity,
+          paymentOrderId,
+          status: 'PENDING'
+        };
+  
+        await orderRepository.user_createOrder(newOrderData);
+  
+        // Remove from cart
+        await this.removeFromCart(req, bookId);
+  
+        return `https://www.paypal.com/checkoutnow?token=${paymentOrderId}`;
+      } else {
+        throw new Error('Payment failed');
+      }
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
   async getAllOrders(req) {
     const isLoggedIn = this.isUserLoggedIn(req);
     const user = await this.getUserFromSession(req);
