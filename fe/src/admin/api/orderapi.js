@@ -65,7 +65,7 @@ const orderApi = {
       axios.defaults.withCredentials = true;
       const headers = await getRequestHeaders();
       const response = await axios.post(
-        `${apiUrl}/order/update/${orderId}/?s=${status}`,
+        `${apiUrl}/order/update/${orderId}?status=${status}`,
         {},
         { headers }
       );
