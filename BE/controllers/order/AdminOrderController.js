@@ -136,11 +136,11 @@ class AdminOrderController {
     const book = await bookService.getBookById(bookId);
 
     return {
-      id: order._id,
+      _id: order._id,
       date: order.date,
       payment: order.payment,
       bookList: {
-        id: order.book,
+        _id: bookId,
         price: book.price,
         bookImage: book.image,
         name: book.name,

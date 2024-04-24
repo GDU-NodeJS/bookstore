@@ -168,13 +168,13 @@ class CartController {
     
     const book = await bookService.getBookById(bookId);
     return {
-      id: cart._id,
+      _id: cart._id,
       quantity: cart.quantity,
       cart: {
-        id: cart.cart
+        _id: cart.cart
       },
       book: {
-        id: cart.book,
+        _id: cart.book,
         price: book.price,
         bookImage: book.image,
         name: book.name,
