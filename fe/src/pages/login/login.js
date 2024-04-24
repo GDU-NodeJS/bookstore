@@ -142,9 +142,9 @@ const LoginPage = () => {
             <div style={{
                 height: `${height * (10 / 100)}px`,
                 display: 'flex',
-                'align-items': 'center',
-                'margin-left': '50px',
-                'font-size': '20px',
+                alignItems: 'center',
+                marginLeft: '50px',
+                fontSize: '20px',
             }}>
                 <h2>Bookstore</h2>
             </div>

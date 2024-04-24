@@ -64,19 +64,19 @@ const HomePage = () => {
                 axios.defaults.withCredentials = true;
                 const response = await cartApi.add(product.id)
                 // console.log('res: ',response)
-                // if (response.status === 200) {
-                //     console.log('them thanh coong')
-                getCart()
-                // }
+                if (response.status === 200) {
+                    console.log('them thanh coong')
+                    getCart()
+                }
             } else {
                 axios.defaults.withCredentials = true;
-                const response = await cartApi.addNoToken();
+                const response = await cartApi.addNoToken(product.id);
 
 
-                // if (response.data.status === 200) {// Xử lý response từ API nếu thành công
+                if (response.status === 200) {// Xử lý response từ API nếu thành công
                 console.log(' Chưa đăng nhập Sản phẩm đã được thêm vào giỏ hàng thành công:', response);
                 getCart()
-                //     }
+                    }
             }
         } catch (error) {
             // Xử lý lỗi nếu request gặp vấn đề
@@ -269,8 +269,8 @@ const HomePage = () => {
                 cartResponse = await cartApi.getAll();
                 console.log('da dang nhap')
             } else {
+                console.log('xxx')
                 // Người dùng chưa đăng nhập
-                axios.defaults.withCredentials = true;
                 cartResponse = await cartApi.getAllNoToken();
                 console.log('gio hang khi chua đnag nhap: ', cartResponse)
             }

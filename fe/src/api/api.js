@@ -109,7 +109,7 @@ const cartApi = {
     const token = cookies.get('token')
     try {
       axios.defaults.withCredentials = true
-      const response = await axios.get(`http://localhost:8090/api/customer/cart/getCart`,{
+      const response = await axios.get(`http://localhost:8090/api/customer/cart/getAll`,{
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -122,7 +122,7 @@ const cartApi = {
   getAllNoToken: async () => {
     try {
       axios.defaults.withCredentials = true
-      const response = await axios.get(`http://localhost:8090/api/guest/cart/getCart`)
+      const response = await axios.get(`http://localhost:8090/api/guest/cart/getAll`)
       return response.data
     } catch (e) {
       handleRequestError(e)

@@ -101,56 +101,60 @@ const RegisterForm = () => {
                     <h2>Đăng nhập</h2>
 
                     <form onSubmit={handleSubmit}>
-                        <label>
-                            Last Name:
+                        <div>
+                            <span>Last Name</span>
                             <input
+                                placeholder="Last name"
                                 type="text"
                                 name="lastName"
                                 value={formData.lastName}
                                 onChange={handleChange}
                             />
-                        </label>
-                        <br />
-                        <label>
-                            First Name:
+                        </div>
+                        <div>
+                            <span>First Name</span>
                             <input
+                                placeholder="First name"
                                 type="text"
                                 name="firstName"
                                 value={formData.firstName}
                                 onChange={handleChange}
                             />
-                        </label>
-                        <br />
-                        <label>
-                            Email:
+                        </div>
+
+                        <div>
+                            <span>Email</span>
                             <input
+                                placeholder="Email"
                                 type="email"
                                 name="email"
                                 value={formData.email}
                                 onChange={handleChange}
                             />
-                        </label>
-                        <br />
-                        <label>
-                            Password:
+                        </div>
+
+                        <div>
+                            <span>Password</span>
                             <input
+                                placeholder="Password"
                                 type="password"
                                 name="password"
                                 value={formData.password}
                                 onChange={handleChange}
                             />
-                        </label>
-                        <br />
-                        <label>
-                            Confirm Password:
+                        </div>
+
+                        <div>
+                            <span>Confirm password</span>
                             <input
+                                placeholder="Confirm password"
                                 type="password"
                                 name="confirmPassword"
                                 value={formData.confirmPassword}
                                 onChange={handleChange}
                             />
-                        </label>
-                        <br />
+                        </div>
+
                         <button type="submit">Register</button>
                     </form>
 
