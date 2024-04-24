@@ -54,7 +54,7 @@ const BookDetails = () => {
               // src={`data:image/jpeg;base64,${bookDetails.bookImage}`}
               src={bookDetails.image}
               alt="Book cover"
-              style={{ maxWidth: "90%", height: "auto" }}
+              style={{ maxWidth: "100%", height: "auto" }}
             />
           </Grid>
           {/* Right column for book details */}
@@ -66,32 +66,24 @@ const BookDetails = () => {
               <strong>Author:</strong> {bookDetails.author}
             </Typography>
             <Typography variant="body1">
-              <strong>Categories:</strong> {bookDetails.categories.map(category => category.name).join(", ")}
+              <strong>Categories:</strong>{" "}
+              {bookDetails.categories
+                .map((category) => category.name)
+                .join(", ")}
             </Typography>
-            <Typography variant="body1">
-              <strong>Description:</strong>{" "}
-              {bookDetails.description || "No description available"}
-            </Typography>
-            {/* <Typography variant="body1">
-              <strong>Number of Pages:</strong> {bookDetails.number_of_pages}
-            </Typography> */}
-            {/* <Typography variant="body1">
-              <strong>Language:</strong> {bookDetails.language}
-            </Typography> */}
-            {/* <Typography variant="body1">
-              <strong>Publication Date:</strong>{" "}
-              {formatDate(bookDetails.publication_date)}
-            </Typography> */}
-            {/* <Typography variant="body1">
-              <strong>Dimensions:</strong> {bookDetails.dimensions}
-            </Typography> */}
             <Typography variant="body1">
               <strong>Price:</strong> ${bookDetails.price}
             </Typography>
-            <Box mt={2}>
-              <Button variant="contained" onClick={handleEditClick}>
+            <Typography variant="body1" style={{ textAlign: "justify" }}>
+              <strong>Description:</strong>{" "}
+              <div style={{ display: "inline-block" }}>
+                {bookDetails.description || "No description available"}
+              </div>
+            </Typography>
+            <Box mt={2} style={{ display: "flex", justifyContent: "flex-end" }}>
+              <Button variant="contained" onClick={handleEditClick} style={{ marginRight: '10px' }}>
                 Edit
-              </Button>{" "}
+              </Button>
               <Button variant="outlined" onClick={handleBackClick}>
                 Back
               </Button>

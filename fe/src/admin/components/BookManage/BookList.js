@@ -87,14 +87,14 @@ export default function BookList() {
 
   const handleDeleteConfirm = async () => {
     try {
-      const bookToDelete = books.find((book) => book.id === selectedBookId);
+      const bookToDelete = books.find((book) => book._id === selectedBookId);
       if (!bookToDelete) {
         console.error("Book not found");
         return;
       }
       const bookName = bookToDelete.name;
       await bookApi.deleteBook(selectedBookId);
-      setBooks(books.filter((book) => book.id !== selectedBookId));
+      setBooks(books.filter((book) => book._id !== selectedBookId));
       setDeleteSuccessMessage(`Book "${bookName}" deleted successfully`);
       setDeleteDialogOpen(false);
       setTimeout(() => {
@@ -195,7 +195,7 @@ export default function BookList() {
                           <Button
                             variant="contained"
                             color="primary"
-                            onClick={() => handleViewButtonClick(book.id)}
+                            onClick={() => handleViewButtonClick(book._id)}
                             style={{ marginRight: "8px" }}
                           >
                             View
@@ -203,7 +203,7 @@ export default function BookList() {
                           <Button
                             variant="contained"
                             color="error"
-                            onClick={() => handleDeleteButtonClick(book.id)}
+                            onClick={() => handleDeleteButtonClick(book._id)}
                           >
                             Delete
                           </Button>

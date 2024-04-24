@@ -27,7 +27,7 @@ const columns = [
 
 const CategoryList = () => {
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [categories, setCategories] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -64,7 +64,7 @@ const CategoryList = () => {
   const handleDeleteCategory = async (categoryId) => {
     try {
       const categoryToDelete = categories.find(
-        (category) => category.id === categoryId
+        (category) => category._id === categoryId
       );
       if (!categoryToDelete) {
         console.error("Category not found");
@@ -120,7 +120,7 @@ const CategoryList = () => {
               <TableRow>
                 {columns.map((column) => (
                   <TableCell
-                    key={column.id}
+                    key={column._id}
                     align={column.align}
                     style={{ minWidth: column.minWidth }}
                   >
@@ -142,7 +142,7 @@ const CategoryList = () => {
                           color="error"
                           size="small"
                           style={{ marginLeft: "8px" }}
-                          onClick={() => handleDeleteDialogOpen(category.id)}
+                          onClick={() => handleDeleteDialogOpen(category._id)}
                         >
                           Delete
                         </Button>
@@ -153,7 +153,7 @@ const CategoryList = () => {
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[10, 25, 100]}
+          rowsPerPageOptions={[5, 10, 25, 100]}
           component="div"
           count={(filteredCategories && filteredCategories.length) || 0}
           rowsPerPage={rowsPerPage}

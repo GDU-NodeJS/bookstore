@@ -19,10 +19,11 @@ export default function UpdateBook({ onUpdate }) {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
-  const [bookImage, setImage] = useState(null);
-  const [imageName, setImageName] = useState("");
+  const [googleDriveLink, setGoogleDriveLink] = useState("");
   const [error, setError] = useState("");
   const [showAlert, setShowAlert] = useState(false);
+  const [imagePreview, setImagePreview] = useState("");
+  const [navigateBack, setNavigateBack] = useState(false);
   const navigate = useNavigate();
   const [initialBookDetails, setInitialBookDetails] = useState(null);
 
@@ -51,113 +52,93 @@ export default function UpdateBook({ onUpdate }) {
         setSelectedCategories(bookDetails.categories.map(categories => categories._id));
         const imageData = bookDetails.image;
         if (imageData) {
-          const byteCharacters = atob(imageData);
-          const byteNumbers = new Array(byteCharacters.length);
-          for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
-          }
-          const byteArray = new Uint8Array(byteNumbers);
-          const blob = new Blob([byteArray], { type: "image/jpeg" });
-          const file = new File([blob], "bookImage.jpg", { type: "image/jpeg" });
-          setImage(file);
-          setImageName("Current Image");
+          setGoogleDriveLink(imageData);
+          setImagePreview(imageData);
         }
         setInitialBookDetails(bookDetails);
       } catch (error) {
         console.error("Error fetching book details:", error);
       }
     };
-
+  
     fetchBookDetails();
   }, [_id]);
-  
+
   const handleSubmit = useCallback(
     async (event) => {
       event.preventDefault();
 
-      if (!name || !author || !price || !description || !bookImage) {
+      if (!name || !author || !price || !description || !googleDriveLink) {
         setError("Please fill in all fields.");
         return;
       }
 
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        const arrayBuffer = reader.result;
-        const bytes = new Uint8Array(arrayBuffer);
-        const base64 = Array.from(bytes)
-          .map((byte) => String.fromCharCode(byte))
-          .join("");
-
-        const bookData = {
-          name,
-          author,
-          price,
-          description,
-          image: btoa(base64),
-          categoriesSet: selectedCategories.map((category) => ({
-            categoriesID: category,
-          })),
-        };
-
-        console.log("Sending data:", bookData);
-
-        try {
-          const response = await bookApi.updateBook(_id, bookData);
-          console.log("Response:", response);
-          if (typeof onUpdate === "function") {
-            onUpdate(response);
-          }
-          setShowAlert(true);
-          setTimeout(() => {
-            setShowAlert(false);
-          }, 3000);
-        } catch (error) {
-          console.error("Error updating book:", error);
-          alert("Failed to update book. Please try again later.");
-        }
+      const bookData = {
+        name,
+        author,
+        price,
+        description,
+        image: googleDriveLink,
+        categories: selectedCategories.map((category) => ({
+          _id: category,
+        })),
       };
-      reader.readAsArrayBuffer(bookImage);
+
+      console.log("Sending data:", bookData);
+
+      try {
+        const response = await bookApi.updateBook(_id, bookData);
+        console.log("Response:", response);
+        if (typeof onUpdate === "function") {
+          onUpdate(response);
+        }
+        setShowAlert(true);
+        setTimeout(() => {
+          setShowAlert(false);
+        }, 3000);
+      } catch (error) {
+        console.error("Error updating book:", error);
+        alert("Failed to update book. Please try again later.");
+      }
     },
-    [_id, name, author, selectedCategories, price, description, bookImage, onUpdate]
+    [_id, name, author, selectedCategories, price, description, googleDriveLink, onUpdate]
   );
 
-  
-  const handleImageSelection = async (event) => {
-    const file = event.target.files[0];
-    setImage(file);
-    setImageName(file.name);
-  };
-
-  const handleImageClick = () => {
-    document.getElementById("imageInput").click();
-  };
-
   const handleCancel = () => {
-    if (initialBookDetails) {
-      setName(initialBookDetails.name);
-      setAuthor(initialBookDetails.author);
-      setPrice(initialBookDetails.price);
-      setDescription(initialBookDetails.description);
-      if (initialBookDetails.bookImage) {
-        const byteCharacters = atob(initialBookDetails.bookImage);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
+    if (navigateBack) {
+      setNavigateBack(false);
+    } else {
+      if (initialBookDetails) {
+        setName(initialBookDetails.name);
+        setAuthor(initialBookDetails.author);
+        setPrice(initialBookDetails.price);
+        setDescription(initialBookDetails.description);
+        if (initialBookDetails.image) {
+          setGoogleDriveLink(initialBookDetails.image);
+          setImagePreview(initialBookDetails.image);
+        } else {
+          setGoogleDriveLink("");
+          setImagePreview("");
         }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: "image/jpeg" });
-        const file = new File([blob], "bookImage.jpg", { type: "image/jpeg" });
-        setImage(file);
-        setImageName("Current Image");
-      } else {
-        setImage(null);
-        setImageName("");
       }
     }
   };
 
   const handleBack = () => {
     navigate(`/admin/books/${_id}`);
+  };
+
+  const renderImage = () => {
+    if (imagePreview) {
+      return <img src={imagePreview} alt="Book cover" style={{ maxWidth: "100px", maxHeight: "100px", marginRight: "8px" }} />;
+    }
+    return null;
+  };
+
+  const handleGoogleDriveLinkChange = (event) => {
+    const link = event.target.value;
+    setGoogleDriveLink(link);
+    setImagePreview(link);
   };
 
   return (
@@ -234,35 +215,15 @@ export default function UpdateBook({ onUpdate }) {
               rows={4}
               sx={{ backgroundColor: "white", fontWeight: 550 }}
             />
-            <input
-              id="imageInput"
-              type="file"
-              accept="image/*"
-              onChange={handleImageSelection}
-              style={{ display: "none" }}
+            <TextField
+              label="Link Image"
+              value={googleDriveLink}
+              onChange={handleGoogleDriveLinkChange}
+              margin="normal"
+              fullWidth
+              sx={{ backgroundColor: "white", fontWeight: 550 }}
             />
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleImageClick}
-              sx={{ mt: 1 }}
-            >
-              Chọn ảnh
-            </Button>
-            {bookImage && (
-              <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
-                <img
-                  src={URL.createObjectURL(bookImage)}
-                  alt="Book cover"
-                  style={{
-                    maxWidth: "100px",
-                    maxHeight: "100px",
-                    marginRight: "8px",
-                  }}
-                />
-                <Typography variant="body1">{imageName}</Typography>
-              </Box>
-            )}
+            {renderImage()}
             {error && (
               <Typography variant="body2" color="error">
                 {error}
@@ -279,6 +240,7 @@ export default function UpdateBook({ onUpdate }) {
                 type="submit"
                 variant="contained"
                 color="primary"
+                onClick={() => setNavigateBack(true)} // Đặt trạng thái khi nhấn nút "Update"
               >
                 Update
               </Button>

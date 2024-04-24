@@ -51,7 +51,7 @@ export default function AddBook({ onAdd }) {
         price,
         description,
         image: googleDriveLink,
-        categories: selectedCategories.map(category => ({ id: category })),
+        categories: selectedCategories.map(category => ({ _id: category })),
       };
 
       console.log("Sending data:", bookData);
@@ -128,14 +128,14 @@ export default function AddBook({ onAdd }) {
             <Paper elevation={3} sx={{ p: 1, marginLeft: "2px" }}>
               {categories.map((category) => (
                 <FormControlLabel
-                  key={category.id}
+                  key={category._id}
                   control={
                     <Checkbox
-                      checked={selectedCategories.includes(category.id)}
+                      checked={selectedCategories.includes(category._id)}
                       onChange={() => {
-                        const updatedCategories = selectedCategories.includes(category.id)
-                          ? selectedCategories.filter(id => id !== category.id)
-                          : [...selectedCategories, category.id];
+                        const updatedCategories = selectedCategories.includes(category._id)
+                          ? selectedCategories.filter(id => id !== category._id)
+                          : [...selectedCategories, category._id];
                         setSelectedCategories(updatedCategories);
                       }}
                       color="primary"
