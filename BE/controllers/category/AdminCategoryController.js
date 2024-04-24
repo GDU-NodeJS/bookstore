@@ -112,7 +112,7 @@ class AdminCategoryController {
 
     responseCategory(category) {
         return {
-            id: category._id,
+            _id: category._id,
             name: category.name
         }
     }

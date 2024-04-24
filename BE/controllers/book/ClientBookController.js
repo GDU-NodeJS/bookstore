@@ -47,7 +47,7 @@ class ClientBookController {
   }
   responseBook(book){
     return {
-      id: book._id,
+      _id: book._id,
       price: book.price,
       image: book.image,
       name: book.name,
