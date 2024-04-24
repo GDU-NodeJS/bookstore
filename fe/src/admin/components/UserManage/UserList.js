@@ -41,7 +41,7 @@ function Row(props) {
 
   const handleDelete = async () => {
     try {
-      if (user.role === "ADMIN") {
+      if (user.role === "Admin") {
         setErrorMessage("Cannot delete ADMIN account.");
         setTimeout(() => {
           setErrorMessage("");
@@ -49,13 +49,14 @@ function Row(props) {
         setOpenDialog(false);
         return;
       }
-      await onDelete(user.userID);
+      await onDelete(user._id); // Thay đổi user.userID thành user._id
       setDeleteSuccessMessage(
         `${user.firstName} ${user.lastName} | ${user.role} deleted successfully`
       );
       setTimeout(() => {
         setDeleteSuccessMessage("");
       }, 3000);
+      setOpenDialog(false);
     } catch (error) {
       console.error("Error deleting user:", error);
     }
@@ -63,7 +64,7 @@ function Row(props) {
 
   const handleToggleOrder = async () => {
     try {
-      const response = await orderApi.getUserOrders(user.userID);
+      const response = await orderApi.getUserOrders(user._id); // Thay đổi user.userID thành user._id
       const orders = response.data.map((order) => ({
         ...order,
         date: new Date(order.date).toLocaleDateString("en-GB", {
@@ -79,7 +80,7 @@ function Row(props) {
     }
   };
 
-  const isAdmin = userRole === "ADMIN";
+  const isAdmin = userRole === "Admin";
 
   return (
     <React.Fragment>
@@ -210,7 +211,7 @@ function Row(props) {
 
 Row.propTypes = {
   user: PropTypes.shape({
-    userID: PropTypes.number.isRequired,
+    _id: PropTypes.string.isRequired, // Sửa từ userID thành _id
     firstName: PropTypes.string.isRequired,
     lastName: PropTypes.string.isRequired,
     email: PropTypes.string.isRequired,
@@ -265,7 +266,7 @@ export default function UserList() {
         <TableBody>
           {users.map((user) => (
             <Row
-              key={user.userID}
+              key={user._id} // Sửa từ userID thành _id
               user={user}
               onDelete={handleDelete}
               userRole={user.role}

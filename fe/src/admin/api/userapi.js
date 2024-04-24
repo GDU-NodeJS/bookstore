@@ -17,7 +17,7 @@ const userApi = {
   deleteUser: async (userId) => {
     try {
       const headers = await getRequestHeaders();
-      const response = await axios.delete(`${apiUrl}/user/delete?id=${userId}`, { headers });
+      const response = await axios.post(`${apiUrl}/user/delete/${userId}`, {}, { headers });
       return response.data;
     } catch (error) {
       console.error(error);
@@ -27,7 +27,7 @@ const userApi = {
   findUserById: async (userId) => {
     try {
       const headers = await getRequestHeaders();
-      const response = await axios.get(`${apiUrl}/user/findbyid?id=${userId}`, { headers });
+      const response = await axios.get(`${apiUrl}/user/findbyid/${userId}`, { headers });
       return response.data;
     } catch (error) {
       console.error(error);

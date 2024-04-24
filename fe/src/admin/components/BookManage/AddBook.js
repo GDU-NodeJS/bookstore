@@ -18,16 +18,16 @@ export default function AddBook({ onAdd }) {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
-  const [bookImage, setImage] = useState(null);
-  const [imageName, setImageName] = useState("");
   const [error, setError] = useState("");
   const [showAlert, setShowAlert] = useState(false);
+  const [googleDriveLink, setGoogleDriveLink] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await categoryApi.getAllCategories();
+        console.log(response.data)
         setCategories(response.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -40,60 +40,40 @@ export default function AddBook({ onAdd }) {
     async (event) => {
       event.preventDefault();
 
-      if (!name || !author || !price || !description || !bookImage) {
+      if (!name || !author || !price || !description || !googleDriveLink) {
         setError("Please fill in all fields.");
         return;
       }
 
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        const arrayBuffer = reader.result;
-        const bytes = new Uint8Array(arrayBuffer);
-        const base64 = Array.from(bytes)
-        .map(byte => String.fromCharCode(byte))
-        .join('');
-
-        const bookData = {
-          name,
-          author,
-          price,
-          description,
-          bookImage: btoa(base64),
-          categoriesSet: selectedCategories.map(category => ({ _id: category })),
-        };
-
-        console.log("Sending data:", bookData);
-
-        try {
-          const response = await bookApi.addBook(bookData);
-          console.log("Response:", response);
-          if (typeof onAdd === "function") {
-            onAdd(response);
-          }
-          clearFields();
-          setShowAlert(true);
-          setTimeout(() => {
-            setShowAlert(false);
-          }, 3000);
-        } catch (error) {
-          console.error("Error adding book:", error);
-          alert("Failed to add book. Please try again later.");
-        }
+      const bookData = {
+        name,
+        author,
+        price,
+        description,
+        image: googleDriveLink,
+        categories: selectedCategories.map(category => ({ id: category })),
       };
-      reader.readAsArrayBuffer(bookImage);
+
+      console.log("Sending data:", bookData);
+
+      try {
+        const response = await bookApi.addBook(bookData);
+        console.log("Response:", response);
+        if (typeof onAdd === "function") {
+          onAdd(response);
+        }
+        clearFields();
+        setShowAlert(true);
+        setTimeout(() => {
+          setShowAlert(false);
+        }, 3000);
+      } catch (error) {
+        console.error("Error adding book:", error);
+        alert("Failed to add book. Please try again later.");
+      }
     },
-    [name, author, selectedCategories, price, description, bookImage, onAdd]
+    [name, author, selectedCategories, price, description, googleDriveLink, onAdd]
   );
-
-  const handleImageSelection = async (event) => {
-    const file = event.target.files[0];
-    setImage(file);
-    setImageName(file.name);
-  };
-
-  const handleImageClick = () => {
-    document.getElementById("imageInput").click();
-  };
 
   const clearFields = () => {
     setName("");
@@ -101,8 +81,7 @@ export default function AddBook({ onAdd }) {
     setSelectedCategories([]);
     setPrice("");
     setDescription("");
-    setImage(null);
-    setImageName("");
+    setGoogleDriveLink("");
     setError("");
   };
 
@@ -149,14 +128,14 @@ export default function AddBook({ onAdd }) {
             <Paper elevation={3} sx={{ p: 1, marginLeft: "2px" }}>
               {categories.map((category) => (
                 <FormControlLabel
-                  key={category._id}
+                  key={category.id}
                   control={
                     <Checkbox
-                      checked={selectedCategories.includes(category._id)}
+                      checked={selectedCategories.includes(category.id)}
                       onChange={() => {
-                        const updatedCategories = selectedCategories.includes(category._id)
-                          ? selectedCategories.filter(id => id !== category._id)
-                          : [...selectedCategories, category._id];
+                        const updatedCategories = selectedCategories.includes(category.id)
+                          ? selectedCategories.filter(id => id !== category.id)
+                          : [...selectedCategories, category.id];
                         setSelectedCategories(updatedCategories);
                       }}
                       color="primary"
@@ -184,35 +163,14 @@ export default function AddBook({ onAdd }) {
               rows={4}
               sx={{ backgroundColor: "white", fontWeight: 550 }}
             />
-            <input
-              id="imageInput"
-              type="file"
-              accept="image/*"
-              onChange={handleImageSelection}
-              style={{ display: "none" }}
+            <TextField
+              label="Link Image"
+              value={googleDriveLink}
+              onChange={(event) => setGoogleDriveLink(event.target.value)}
+              margin="normal"
+              fullWidth
+              sx={{ backgroundColor: "white", fontWeight: 550 }}
             />
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleImageClick}
-              sx={{ mt: 1 }}
-            >
-              Chọn ảnh
-            </Button>
-            {bookImage && (
-              <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
-                <img
-                  src={URL.createObjectURL(bookImage)}
-                  alt="Book cover"
-                  style={{
-                    maxWidth: "100px",
-                    maxHeight: "100px",
-                    marginRight: "8px",
-                  }}
-                />
-                <Typography variant="body1">{imageName}</Typography>
-              </Box>
-            )}
             {error && (
               <Typography variant="body2" color="error">
                 {error}
@@ -229,7 +187,7 @@ export default function AddBook({ onAdd }) {
                 type="submit"
                 variant="contained"
                 color="primary"
-                // disabled={!name || !author || !price || !description || !image}
+                // disabled={!name || !author || !price || !description || !googleDriveLink}
               >
                 Add
               </Button>
