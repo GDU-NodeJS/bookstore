@@ -64,7 +64,7 @@ function Row(props) {
 
   const handleToggleOrder = async () => {
     try {
-      const response = await orderApi.getUserOrders(user._id); // Thay đổi user.userID thành user._id
+      const response = await orderApi.getUserOrders(user._id);
       const orders = response.data.map((order) => ({
         ...order,
         date: new Date(order.date).toLocaleDateString("en-GB", {
@@ -129,8 +129,8 @@ function Row(props) {
                     </TableHead>
                     <TableBody>
                       {userOrders.map((order) => (
-                        <TableRow key={order.id}>
-                          <TableCell align="center">{order.id}</TableCell>
+                        <TableRow key={order._id}>
+                          <TableCell align="center">{order._id}</TableCell>
                           <TableCell align="center">{order.date}</TableCell>
                           <TableCell align="center">${order.payment}</TableCell>
                           <TableCell align="center">{order.status}</TableCell>

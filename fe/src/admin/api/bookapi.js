@@ -3,9 +3,12 @@ import CookieService from './cookie';
 
 const apiUrl = "http://localhost:8090/api/admin";
 
+axios.defaults.withCredentials = true;
+
 const bookApi = {
   getAll: async (params) => {
     try {
+      axios.defaults.withCredentials = true;
       const response = await requestWithToken(`${apiUrl}/book/getAll`, params);
       return response.data;
     } catch (error) {
@@ -14,6 +17,7 @@ const bookApi = {
   },
   getById: async (id) => {
     try {
+      axios.defaults.withCredentials = true;
       const response = await requestWithToken(`${apiUrl}/book/${id}`);
       return response.data;
     } catch (error) {
@@ -22,6 +26,7 @@ const bookApi = {
   },
   addBook: async (bookData) => {
     try {
+      axios.defaults.withCredentials = true;
       const response = await requestWithToken(`${apiUrl}/book/add`, {}, 'post', bookData);
       return response.data;
     } catch (error) {
@@ -30,6 +35,7 @@ const bookApi = {
   },
   updateBook: async (id, bookData) => {
     try {
+      axios.defaults.withCredentials = true;
       const response = await requestWithToken(`${apiUrl}/book/update/${id}`, {}, 'patch', bookData);
       return response.data;
     } catch (error) {
@@ -38,6 +44,7 @@ const bookApi = {
   },
   deleteBook: async (id) => {
     try {
+      axios.defaults.withCredentials = true;
       const response = await requestWithToken(`${apiUrl}/book/delete/${id}`, {}, 'delete');
       return response.data;
     } catch (error) {

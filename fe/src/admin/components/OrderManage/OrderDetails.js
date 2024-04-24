@@ -21,13 +21,13 @@ import "../../styles/order.scss";
 const OrderDetails = () => {
   const [orderInfo, setOrderInfo] = useState(null);
   const [userDetails, setUserDetails] = useState({});
-  const { id } = useParams();
+  const { _id } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
       try {
-        const response = await orderApi.getOrderById(id);
+        const response = await orderApi.getOrderById(_id);
         const order = response.data;
         order.date = new Date(order.date).toLocaleDateString("en-GB");
         setOrderInfo(order);
@@ -41,7 +41,7 @@ const OrderDetails = () => {
     };
 
     fetchOrderDetails();
-  }, [id]);
+  }, [_id]);
 
   const fetchUserDetails = async (userId) => {
     try {
@@ -58,7 +58,7 @@ const OrderDetails = () => {
   };
 
   const handleBack = () => {
-    navigate("/orders");
+    navigate("/admin/orders");
   };
 
   if (!orderInfo) {
@@ -92,7 +92,7 @@ const OrderDetails = () => {
             <Grid container spacing={2}>
               <Grid item xs={4}>
                 <Typography variant="body1">
-                  Order Number: {orderInfo.id}
+                  Order Number: {orderInfo._id}
                 </Typography>
                 <Typography variant="body1">
                   Order Date: {orderInfo.date}
@@ -137,36 +137,36 @@ const OrderDetails = () => {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Image</TableCell>
-                    <TableCell>Author</TableCell>
+                    <TableCell align="center">Name</TableCell>
+                    <TableCell align="center">Image</TableCell>
+                    <TableCell align="center">Author</TableCell>
                     <TableCell align="center">Categories</TableCell>
-                    <TableCell>Price</TableCell>
+                    <TableCell align="center">Price</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {orderInfo.booklist.map((book, index) => (
-                    <TableRow key={index}>
-                      <TableCell>{book.name}</TableCell>
-                      <TableCell>
-                        <img
-                          src={`data:image/jpeg;base64,${book.bookImage}`}
-                          alt={book.name}
-                          className="book-image"
-                        />
-                      </TableCell>
-                      <TableCell>{book.author}</TableCell>
-                      <TableCell>
-                        {book.categoriesSet.map((category, catIndex) => (
+                  <TableRow key={orderInfo._id}>
+                    <TableCell align="center">{orderInfo.bookList.name}</TableCell>
+                    <TableCell align="center">
+                      <img
+                        src={orderInfo.bookList.bookImage}
+                        alt={orderInfo.bookList.name}
+                        className="book-image"
+                      />
+                    </TableCell>
+                    <TableCell align="center">{orderInfo.bookList.author}</TableCell>
+                    <TableCell align="center">
+                      {orderInfo.bookList.categoriesSet &&
+                        orderInfo.bookList.categoriesSet.map((category, catIndex) => (
                           <span key={catIndex}>
                             {category.name}
-                            {catIndex !== book.categoriesSet.length - 1 && ", "}
+                            {catIndex !== orderInfo.bookList.categoriesSet.length - 1 &&
+                              ", "}
                           </span>
                         ))}
-                      </TableCell>
-                      <TableCell>${book.price}</TableCell>
-                    </TableRow>
-                  ))}
+                    </TableCell>
+                    <TableCell align="center">${orderInfo.bookList.price}</TableCell>
+                  </TableRow>
                 </TableBody>
               </Table>
             </TableContainer>

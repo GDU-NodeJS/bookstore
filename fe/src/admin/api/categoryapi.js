@@ -3,9 +3,12 @@ import CookieService from './cookie'; // Import service để làm việc với 
 
 const apiUrl = "http://localhost:8090/api/admin";
 
+axios.defaults.withCredentials = true;
+
 const categoryApi = {
   getAllCategories: async () => {
     try {
+      axios.defaults.withCredentials = true;
       const headers = await getRequestHeaders();
       const response = await axios.get(`${apiUrl}/category/getAll`, { headers });
       return response.data;
@@ -17,6 +20,7 @@ const categoryApi = {
 
   getBooksByCategoryId: async (id) => {
     try {
+      axios.defaults.withCredentials = true;
       const headers = await getRequestHeaders();
       const response = await axios.get(`${apiUrl}/category/${id}/books`, { headers });
       return response.data;
@@ -28,6 +32,7 @@ const categoryApi = {
   
   createCategory: async (categoryData) => {
     try {
+      axios.defaults.withCredentials = true;
       const headers = await getRequestHeaders();
       const response = await axios.post(`${apiUrl}/category/add`, categoryData, { headers });
       return response.data;
@@ -39,6 +44,7 @@ const categoryApi = {
 
   deleteCategory: async (id) => {
     try {
+      axios.defaults.withCredentials = true;
       const headers = await getRequestHeaders();
       const response = await axios.delete(`${apiUrl}/category/delete/${id}`, { headers });
       return response.data;

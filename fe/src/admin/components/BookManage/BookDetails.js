@@ -74,14 +74,18 @@ const BookDetails = () => {
             <Typography variant="body1">
               <strong>Price:</strong> ${bookDetails.price}
             </Typography>
+            <Typography variant="body1">
+              <strong>Description:</strong>
+            </Typography>
             <Typography variant="body1" style={{ textAlign: "justify" }}>
-              <strong>Description:</strong>{" "}
-              <div style={{ display: "inline-block" }}>
-                {bookDetails.description || "No description available"}
-              </div>
+              {bookDetails.description || "No description available"}
             </Typography>
             <Box mt={2} style={{ display: "flex", justifyContent: "flex-end" }}>
-              <Button variant="contained" onClick={handleEditClick} style={{ marginRight: '10px' }}>
+              <Button
+                variant="contained"
+                onClick={handleEditClick}
+                style={{ marginRight: "10px" }}
+              >
                 Edit
               </Button>
               <Button variant="outlined" onClick={handleBackClick}>

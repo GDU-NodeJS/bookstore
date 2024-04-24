@@ -3,12 +3,14 @@ import CookieService from "./cookie";
 
 const apiUrl = "http://localhost:8090/api/admin";
 
+axios.defaults.withCredentials = true;
+
 const orderApi = {
   getAllOrders: async () => {
     try {
+      axios.defaults.withCredentials = true;
       const headers = await getRequestHeaders();
       const response = await axios.get(`${apiUrl}/order/getAll`, { headers });
-      console.log(response)
       return response.data;
     } catch (error) {
       console.error(error);
@@ -18,6 +20,7 @@ const orderApi = {
 
   getOrderById: async (orderId) => {
     try {
+      axios.defaults.withCredentials = true;
       const headers = await getRequestHeaders();
       const response = await axios.get(`${apiUrl}/order/${orderId}`, {
         headers,
@@ -31,8 +34,9 @@ const orderApi = {
 
   getUserOrders: async (userID) => {
     try {
+      axios.defaults.withCredentials = true;
       const headers = await getRequestHeaders();
-      const response = await axios.get(`${apiUrl}/order/user?id=${userID}`, {
+      const response = await axios.get(`${apiUrl}/order/user/${userID}`, {
         headers,
       });
       return response.data;
@@ -44,6 +48,7 @@ const orderApi = {
 
   getOrderStatus: async () => {
     try {
+      axios.defaults.withCredentials = true;
       const headers = await getRequestHeaders();
       const response = await axios.get(`${apiUrl}/order/status`, {
         headers,
@@ -57,12 +62,14 @@ const orderApi = {
 
   updateOrderStatus: async (orderId, status) => {
     try {
+      axios.defaults.withCredentials = true;
       const headers = await getRequestHeaders();
       const response = await axios.post(
-        `${apiUrl}/order/update/${orderId}?s=${status}`,
+        `${apiUrl}/order/update/${orderId}/?s=${status}`,
         {},
         { headers }
       );
+      console.log(response);
       return response.data;
     } catch (error) {
       console.error(error);
@@ -72,10 +79,14 @@ const orderApi = {
 };
 
 const getRequestHeaders = async () => {
-  const token = CookieService.getCookie("jwt");
+  let token = sessionStorage.getItem("jwt"); // Lấy token từ session
   if (!token) {
-    console.error("Token not found in cookie.");
-    throw new Error("Token not found in cookie.");
+    // Nếu không tìm thấy token trong session, thử lấy từ cookie
+    token = CookieService.getCookie("jwt");
+  }
+  if (!token) {
+    console.error("Token not found in session or cookie.");
+    throw new Error("Token not found in session or cookie.");
   }
   return { Authorization: `Bearer ${token}` };
 };

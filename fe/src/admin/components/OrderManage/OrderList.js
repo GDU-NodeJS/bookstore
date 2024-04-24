@@ -202,9 +202,9 @@ export default function OrderList() {
             ? orders.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             : orders
           ).map((order) => (
-            <TableRow key={order.id}>
+            <TableRow key={order._id}>
               <TableCell component="th" scope="row" align="center">
-                {order.id}
+                {order._id}
               </TableCell>
               <TableCell align="center">{order.date}</TableCell>
               <TableCell align="center">${order.payment}</TableCell>
@@ -215,7 +215,7 @@ export default function OrderList() {
                 <Select
                   size="small"
                   value={orderStatuses[order._id]}
-                  onChange={(event) => handleStatusChange(event, order.id)}
+                  onChange={(event) => handleStatusChange(event, order._id)}
                 >
                   <MenuItem value="PENDING">Pending</MenuItem>
                   <MenuItem value="PROCESSING">Processing</MenuItem>
