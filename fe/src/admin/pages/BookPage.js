@@ -10,7 +10,7 @@ export default function BookPage() {
   const navigate = useNavigate();
 
   const handleAddBook = () => {
-    navigate("/admin/add-book");
+    navigate("/add-book");
   };
   return (
     <div className="bgcolor">

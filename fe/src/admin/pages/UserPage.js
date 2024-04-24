@@ -8,7 +8,7 @@ export default function UserPage() {
       <Box height={35} />
       <Box sx={{ display: "flex" }}>
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          <h1>User</h1>
+          <h1>Danh sách tài khoản</h1>
           <UserList />
         </Box>
       </Box>

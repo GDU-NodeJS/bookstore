@@ -125,7 +125,7 @@ export default function UpdateBook({ onUpdate }) {
   };
 
   const handleBack = () => {
-    navigate(`/admin/books/${_id}`);
+    navigate(`/books/${_id}`);
   };
 
   const renderImage = () => {
@@ -240,7 +240,7 @@ export default function UpdateBook({ onUpdate }) {
                 type="submit"
                 variant="contained"
                 color="primary"
-                onClick={() => setNavigateBack(true)} // Đặt trạng thái khi nhấn nút "Update"
+                onClick={() => setNavigateBack(true)}
               >
                 Update
               </Button>

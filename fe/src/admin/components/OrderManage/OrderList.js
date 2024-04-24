@@ -155,7 +155,7 @@ export default function OrderList() {
   };
 
   const handleViewOrder = (orderId) => {
-    navigate(`/admin/orders/${orderId}`);
+    navigate(`/orders/${orderId}`);
   };
 
   const handleUpdateOrder = async (orderId) => {

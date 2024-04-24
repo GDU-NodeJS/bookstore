@@ -43,7 +43,7 @@ const userApi = {
 };
 
 const getRequestHeaders = async () => {
-  const token = CookieService.getCookie('jwt');
+  const token = CookieService.getCookie('token');
   if (!token) {
     console.error("Token not found in cookie.");
     throw new Error("Token not found in cookie.");

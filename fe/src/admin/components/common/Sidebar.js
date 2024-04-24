@@ -89,7 +89,7 @@ export default function Sidebar() {
       <Drawer variant="permanent" open={open}>
         <DrawerHeader></DrawerHeader>
         <List>
-          <ListItem disablePadding sx={{ display: "block" }} onClick={()=>{navigate("/admin/dashboard")}}>
+          <ListItem disablePadding sx={{ display: "block" }} onClick={()=>{navigate("/dashboard")}}>
             <ListItemButton
               sx={{
                 minHeight: 48,
@@ -112,7 +112,7 @@ export default function Sidebar() {
             </ListItemButton>
           </ListItem>
 
-          <ListItem disablePadding sx={{ display: "block" }} onClick={()=>{navigate("/admin/books")}}>
+          <ListItem disablePadding sx={{ display: "block" }} onClick={()=>{navigate("/books")}}>
             <ListItemButton
               sx={{
                 minHeight: 48,
@@ -125,17 +125,17 @@ export default function Sidebar() {
                   minWidth: 0,
                   mr: open ? 3 : "auto",
                   justifyContent: "center",
-                  color: "#fff", // Set icon color to white
+                  color: "#fff",
                 }}
               />
               <ListItemText
                 primary="Quản lý sách"
-                sx={{ opacity: open ? 1 : 0, color: "#fff" }} // Set text color to white
+                sx={{ opacity: open ? 1 : 0, color: "#fff" }}
               />
             </ListItemButton>
           </ListItem>
 
-          <ListItem disablePadding sx={{ display: "block" }} onClick={()=>{navigate("/admin/categories")}}>
+          <ListItem disablePadding sx={{ display: "block" }} onClick={()=>{navigate("/categories")}}>
             <ListItemButton
               sx={{
                 minHeight: 48,
@@ -148,17 +148,17 @@ export default function Sidebar() {
                   minWidth: 0,
                   mr: open ? 3 : "auto",
                   justifyContent: "center",
-                  color: "#fff", // Set icon color to white
+                  color: "#fff",
                 }}
               />
               <ListItemText
                 primary="Quản lý danh mục"
-                sx={{ opacity: open ? 1 : 0, color: "#fff" }} // Set text color to white
+                sx={{ opacity: open ? 1 : 0, color: "#fff" }}
               />
             </ListItemButton>
           </ListItem>
 
-          <ListItem disablePadding sx={{ display: "block" }} onClick={()=>{navigate("/admin/users")}}>
+          <ListItem disablePadding sx={{ display: "block" }} onClick={()=>{navigate("/users")}}>
             <ListItemButton
               sx={{
                 minHeight: 48,
@@ -171,17 +171,17 @@ export default function Sidebar() {
                   minWidth: 0,
                   mr: open ? 3 : "auto",
                   justifyContent: "center",
-                  color: "#fff", // Set icon color to white
+                  color: "#fff",
                 }}
               />
               <ListItemText
                 primary="Quản lý người dùng"
-                sx={{ opacity: open ? 1 : 0, color: "#fff" }} // Set text color to white
+                sx={{ opacity: open ? 1 : 0, color: "#fff" }}
               />
             </ListItemButton>
           </ListItem>
 
-          <ListItem disablePadding sx={{ display: "block" }} onClick={()=>{navigate("/admin/orders")}}>
+          <ListItem disablePadding sx={{ display: "block" }} onClick={()=>{navigate("/orders")}}>
             <ListItemButton
               sx={{
                 minHeight: 48,
@@ -194,12 +194,12 @@ export default function Sidebar() {
                   minWidth: 0,
                   mr: open ? 3 : "auto",
                   justifyContent: "center",
-                  color: "#fff", // Set icon color to white
+                  color: "#fff",
                 }}
               />
               <ListItemText
                 primary="Quản lý đơn hàng"
-                sx={{ opacity: open ? 1 : 0, color: "#fff" }} // Set text color to white
+                sx={{ opacity: open ? 1 : 0, color: "#fff" }}
               />
             </ListItemButton>
           </ListItem>

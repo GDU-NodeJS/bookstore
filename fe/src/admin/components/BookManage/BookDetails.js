@@ -26,11 +26,11 @@ const BookDetails = () => {
   }, [_id]);
 
   const handleEditClick = () => {
-    navigate(`/admin/books/${_id}/edit`);
+    navigate(`/books/${_id}/edit`);
   };
 
   const handleBackClick = () => {
-    navigate("/admin/books");
+    navigate("/books");
   };
 
   if (loading) {

@@ -58,7 +58,7 @@ const OrderDetails = () => {
   };
 
   const handleBack = () => {
-    navigate("/admin/orders");
+    navigate("/orders");
   };
 
   if (!orderInfo) {

@@ -8,7 +8,7 @@ export default function OrderPage() {
       <Box height={35}/>
       <Box sx={{ display: "flex" }}>
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          <h1>Order</h1>
+          <h1>Danh sách đơn hàng</h1>
           <OrderList />
         </Box>
       </Box>

@@ -134,7 +134,7 @@ export default function Navbar() {
               fontWeight: "600",
               cursor: "pointer",
             }}
-            onClick={() => navigate("/admin/dashboard")}
+            onClick={() => navigate("/dashboard")}
           >
             BookStore Admin
           </Typography>

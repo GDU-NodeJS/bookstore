@@ -65,7 +65,7 @@ const orderApi = {
       axios.defaults.withCredentials = true;
       const headers = await getRequestHeaders();
       const response = await axios.post(
-        `${apiUrl}/order/update/${orderId}/?s=${status}`,
+        `${apiUrl}/order/update/${orderId}?status=${status}`,
         {},
         { headers }
       );
@@ -79,14 +79,10 @@ const orderApi = {
 };
 
 const getRequestHeaders = async () => {
-  let token = sessionStorage.getItem("jwt"); // Lấy token từ session
+  const token = CookieService.getCookie('token');
   if (!token) {
-    // Nếu không tìm thấy token trong session, thử lấy từ cookie
-    token = CookieService.getCookie("jwt");
-  }
-  if (!token) {
-    console.error("Token not found in session or cookie.");
-    throw new Error("Token not found in session or cookie.");
+    console.error("Token not found in cookie.");
+    throw new Error("Token not found in cookie.");
   }
   return { Authorization: `Bearer ${token}` };
 };

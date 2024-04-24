@@ -86,7 +86,7 @@ export default function AddBook({ onAdd }) {
   };
 
   const handleBack = () => {
-    navigate("/admin/books");
+    navigate("/books");
   };
 
   return (

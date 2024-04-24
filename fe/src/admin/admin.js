@@ -13,22 +13,22 @@ import Order from "./pages/OrderPage";
 import User from "./pages/UserPage";
 
 export default function Admin() {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   const jwtToken = getCookie("jwt");
+  useEffect(() => {
+    const jwtToken = getCookie("token");
 
-  //   if (!jwtToken) {
-  //     navigate("/");
-  //   }
-  // }, []);
+    if (!jwtToken) {
+      navigate("/");
+    }
+  }, []);
 
-  // // Hàm để lấy giá trị của cookie
-  // function getCookie(name) {
-  //   const value = `; ${document.cookie}`;
-  //   const parts = value.split(`; ${name}=`);
-  //   if (parts.length === 2) return parts.pop().split(";").shift();
-  // }
+  // Hàm để lấy giá trị của cookie
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  }
 
   return (
     <div>

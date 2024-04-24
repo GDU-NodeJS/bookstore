@@ -77,7 +77,7 @@ export default function BookList() {
   };
 
   const handleViewButtonClick = (bookId) => {
-    navigate(`/admin/books/${bookId}`);
+    navigate(`/books/${bookId}`);
   };
 
   const handleDeleteButtonClick = (bookId) => {

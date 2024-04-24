@@ -54,7 +54,7 @@ const bookApi = {
 };
 
 const requestWithToken = async (url, params = {}, method = 'get', data = {}) => {
-  const token = CookieService.getCookie('jwt');
+  const token = CookieService.getCookie('token');
   if (!token) {
     console.error("Token not found in cookie.");
     return Promise.reject("Token not found in cookie.");
