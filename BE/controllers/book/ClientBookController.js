@@ -1,12 +1,12 @@
-import AdminBookService from "../../services/book/AdminBookService.js"; // Assuming AdminBookService.js in the same directory
-const adminBookService = new AdminBookService();
+import ClientBookSerivce from "../../services/book/ClientBookService.js"; // Assuming clientBookService.js in the same directory
+const clientBookService = new ClientBookSerivce();
 
 class ClientBookController {
   constructor() {}
 
   async getBooks(req, res) {
     try {
-      const books = await adminBookService.getAllBooks();
+      const books = await clientBookService.getAllBooks();
       const response = books.map(book => this.responseBook(book));
       return res.status(res.statusCode).json({
         status: res.statusCode,
@@ -28,11 +28,11 @@ class ClientBookController {
   async getBookById(req, res) {
     try {
       const bookId = req.params.id;
-      const book = await adminBookService.findById(bookId);
+      const book = await clientBookService.getBookById(bookId);
       return res.status(res.statusCode).json({
         status: res.statusCode,
         message: "Successfully retrieved the book",
-        data: book,
+        data: this.responseBook(book),
       });
     } catch (err) {
       let errorMessage = err.message;
@@ -46,7 +46,6 @@ class ClientBookController {
     }
   }
   responseBook(book){
-    const categories = book.categories.map(category => category.name);
     return {
       id: book._id,
       price: book.price,
@@ -54,8 +53,8 @@ class ClientBookController {
       name: book.name,
       author: book.author,
       description: book.description,
-      categories: categories
-    };
+      categories: book.categories
+    }
   }
 }
 
