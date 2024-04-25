@@ -93,7 +93,7 @@ class CartController {
         message: 'Clear cart successfully'
       });
     } catch (err) {
-      next(err);
+      console.log(err);
     }
   }
   async checkout(req, res) {
@@ -106,7 +106,7 @@ class CartController {
         url: url
       });
     } catch (err) {
-      next(err);
+      console.log(err);
     }
   }
   async responseCart(cartItem) {
