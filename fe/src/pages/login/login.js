@@ -119,7 +119,7 @@ const LoginPage = () => {
                     handleDeleteItemCartSession(element)
                 })
             }
-            // window.location.href = '/';
+            window.location.href = '/';
         }
     };
     useEffect(() => {

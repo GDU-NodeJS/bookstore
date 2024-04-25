@@ -90,12 +90,12 @@ const FindPage = () => {
     const getBooksByCateOfParams = async (category) => {
         axios.defaults.withCredentials = true;
         const response = await bookApi.searchByCategory(category)
-        if (response.message === "Error searching for books by category") {
+        if (response.status === 200) {
+            setBooks(books)
+        } else {
             alert('không tìm thấy cuonons sách nào với categoty ban chọn')
             setBooks([])
-        } else {
 
-            setBooks(books)
         }
     }
     const handleAdd = async (product) => {
