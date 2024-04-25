@@ -102,12 +102,12 @@ export default function Sidebar() {
                   minWidth: 0,
                   mr: open ? 3 : "auto",
                   justifyContent: "center",
-                  color: "#fff", // Set icon color to white
+                  color: "#fff",
                 }}
               />
               <ListItemText
                 primary="Dashboard"
-                sx={{ opacity: open ? 1 : 0, color: "#fff" }} // Set text color to white
+                sx={{ opacity: open ? 1 : 0, color: "#fff" }}
               />
             </ListItemButton>
           </ListItem>

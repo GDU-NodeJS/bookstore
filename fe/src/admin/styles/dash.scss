@@ -25,3 +25,10 @@
     min-height: 100vh;
     background: #d9e3f0;
 }
+.chart-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+}
