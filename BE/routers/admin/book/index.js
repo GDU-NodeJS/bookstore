@@ -10,4 +10,5 @@ adminBook.post("/add", adminBookController.addBook.bind(adminBookController));
 adminBook.patch("/update/:id", adminBookController.updateBook.bind(adminBookController));
 adminBook.delete("/delete/:id", adminBookController.removeBook.bind(adminBookController));
 
+
 export default adminBook;

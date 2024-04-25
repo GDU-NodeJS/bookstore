@@ -1,13 +1,15 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Redirect } from "react-router-dom";
+import { Link, Redirect, useNavigate } from "react-router-dom";
 import Cookies from 'universal-cookie';
 import { getJsessionIdFromResponse } from "../../component";
 import { authenticateApi, cartApi } from "../../api/api";
+import '../login/style.scss'
 const LoginPage = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [cart, setCart] = useState()
+    const [height, setHeght] = useState()
     const cookies = new Cookies()
     const getCart = async () => {
         try {
@@ -19,14 +21,14 @@ const LoginPage = () => {
             const cartData = cartResponse;
             let sumQuantityBooks = 0;
             let sumPrice = 0;
-            const cart1 = {
+            if(cartData){const cart1 = {
                 products: cartData.data.map(cartProduct => {
                     sumQuantityBooks += cartProduct.quantity
                     sumPrice += cartProduct.quantity * cartProduct.book.price
                     return {
                         // idcart: cartProduct.cart.id,
                         idcartitem: cartProduct.id,
-                        id: cartProduct.book.id,
+                        id: cartProduct.book._id,
                         img: cartProduct.book.bookImage,
                         name: cartProduct.book.name,
                         author: cartProduct.book.author,
@@ -36,12 +38,12 @@ const LoginPage = () => {
                     };
                 })
             };
-            setCart(cart1);
-            console.log('cart1: ', cart1)
+            setCart(cart1);}
         } catch (error) {
             console.error('Lỗi khi kiểm tra và lấy dữ liệu giỏ hàng:', error);
         }
     };
+    console.log('cart: ',cart)
     useEffect(() => {
         getCart()
     }, [])
@@ -52,35 +54,26 @@ const LoginPage = () => {
         axios.defaults.withCredentials = true;
         try {
             if (isLoggedIn) {
-                for (let i = 0; i < quantity; i++) {
-                    const response = await axios.post(`http://localhost:8080/api/client/cart/add/${product.id}`, null, {
-                        // Đặt các headers cần thiết cho request, ví dụ như Authorization header nếu cần
-                        headers: {
-                            'Authorization': `Bearer ${isLoggedIn}`,
-                            'Content-Type': 'application/json'
-                        }
-                    });
-
-                    if (response.data.status === 200) {
+                    const response = await cartApi.addHaveQuantity(product.id,quantity);
+                    if (response.status === 200) {
                         console.log('Sản phẩm đã được thêm vào giỏ hàng thành công:', response.data);
-                        // getCart()
+                        getCart()
                     }
-                }
             } else {
-                for (let i = 0; i < quantity; i++) {
-                    const response = await axios.post(`http://localhost:8080/api/client/cart/add/${product.id}`, null, {
-                        // Đặt các headers cần thiết cho request, ví dụ như Authorization header nếu cần
-                        headers: {
-                            'Authorization': `Bearer ${isLoggedIn}`,
-                            'Content-Type': 'application/json'
-                        }
-                    });
+                // for (let i = 0; i < quantity; i++) {
+                //     const response = await axios.post(`http://localhost:8080/api/client/cart/add/${product.id}`, null, {
+                //         // Đặt các headers cần thiết cho request, ví dụ như Authorization header nếu cần
+                //         headers: {
+                //             'Authorization': `Bearer ${isLoggedIn}`,
+                //             'Content-Type': 'application/json'
+                //         }
+                //     });
 
-                    if (response.data.status === 200) {
-                        console.log('Sản phẩm đã được thêm vào giỏ hàng thành công:', response.data);
-                        // getCart()
-                    }
-                }
+                //     if (response.data.status === 200) {
+                //         console.log('Sản phẩm đã được thêm vào giỏ hàng thành công:', response.data);
+                //         // getCart()
+                //     }
+                // }
             }
         } catch (error) {
             // Xử lý lỗi nếu request gặp vấn đề
@@ -91,8 +84,8 @@ const LoginPage = () => {
     const handleDeleteItemCartSession = async (product) => {
 
         axios.defaults.withCredentials = true
-        const responsedelete = await axios.post(`http://localhost:8080/api/client/cart/delete/${product.id}`);
-        if (responsedelete.data.status === 200) {
+        const responsedelete = await cartApi.deleteNoToken(product.id)
+        if (responsedelete.status === 200) {
             console.log('Sản phẩm đã được xoa khoi giỏ hàng thành công:', responsedelete.data);
         }
     }
@@ -119,6 +112,7 @@ const LoginPage = () => {
             cookies.set('token', response.token, { path: '/', maxAge: 604800 }); // expires in 7 days
 
             console.log('Đăng nhập thành công');
+            console.log("cart: ",cart)
             if (cart) {
                 cart.products.forEach((element) => {
                     handleAddToCart(element, element.quantity)
@@ -128,35 +122,64 @@ const LoginPage = () => {
             window.location.href = '/';
         }
     };
-
-    const height = window.innerHeight;
+    useEffect(() => {
+        setHeght(window.innerHeight)
+    }, [])
     console.log('Chiều cao của màn hình:', height);
     return (
-        <div className="container" style={{height: `${height}px`}}>
-            <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                <div style={{width: '70%', height: `${height}px`}}>
+        <div className="containe" style={{ height: `${height}px` }}>
+            <div style={{
+                height: `${height * (10 / 100)}px`,
+                display: 'flex',
+                alignItems: 'center',
+                marginLeft: '50px',
+                fontSize: '20px',
+            }}>
+                <h2>Bookstore</h2>
+            </div>
+            <div style={{ height: `${height * (80 / 100)}px`, display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#9C90D0', margin: '' }}>
+                <div style={{ width: '70%', height: `${height * (80 / 100)}px` }} className="left">
                     <h1>Bookstore</h1>
+                    <span>Cửa hàng bán sách uy tín và chất lượng</span>
                 </div>
-                <div style={{width: '30%', height: `${height}px`}}>
+                <div style={{ width: '30%', }} className="right">
 
-                    <h2>Login Page</h2>
-                    <form onSubmit={() => handleLogin}>
-                        <input
-                            type="text"
-                            placeholder="Username"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                        />
-                        <input
-                            type="password"
-                            placeholder="Password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
-                        <button type="submit" >Login</button>
+                    <h2>Đăng nhập</h2>
+                    <form onSubmit={(e) => handleLogin(e)}>
+                        <div className="username">
+                            <span className="username_header">Username</span>
+                            <input
+                                type="text"
+                                placeholder="example@gmail.com"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                            />
+                        </div>
+                        <div className="password">
+                            <span className="password_header">Password</span>
+                            <input
+                                type="password"
+                                placeholder="example@123"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                            <Link>Quên mật khẩu</Link>
+                        </div>
+
+                        <button type="submit" >Đăng nhập</button>
+                        <div className="hr">
+
+                            <hr></hr>
+                            <span className="or">hoặc</span>
+                        </div>
+                        <div className="register">
+                            <span className="register_header">Bạn chưa có tài khoản? </span>
+                            <Link to='/register'>Đăng ký</Link>
+                        </div>
                     </form>
                 </div>
             </div>
+            <div style={{ height: `${height * (10 / 100)}px` }}></div>
         </div>
     );
 };

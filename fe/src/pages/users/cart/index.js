@@ -50,7 +50,7 @@ const Cart = () => {
                 cartResponse = await cartApi.getAll();
             } else {
                 axios.defaults.withCredentials = true;
-                cartResponse = await axios.get('http://localhost:8080/api/client/cart/getAll');
+                cartResponse = await cartApi.getAllNoToken();
             }
             const cartData = cartResponse;
             console.log('cartData: ', cartData)
@@ -59,24 +59,24 @@ const Cart = () => {
             const cartProducts = await Promise.all(cartData.data.map(async (cartProduct) => {
                 sumQuantityBooks += cartProduct.quantity
                 sumPrice += cartProduct.quantity * cartProduct.book.price
-                const b = await bookApi.getById(cartProduct.book)
-                console.log('b', b)
-                if (b.data != null) {
-                    return {
-                        idcart: cartProduct.cart,
-                        idcartitem: cartProduct._id,
-                        id: cartProduct.book,
-                        img: b.data.image,
-                        name: b.data.name,
-                        author: b.data.author,
-                        description: b.data.description,
-                        price: b.data.price,
-                        quantity: cartProduct.quantity
-                    };
-                }
+
+                return {
+                    idcart: cartProduct.cart._id,
+                    idcartitem: cartProduct._id,
+                    id: cartProduct.book._id,
+                    img: cartProduct.book.bookImage,
+                    name: cartProduct.book.name,
+                    author: cartProduct.book.author,
+                    description: cartProduct.book.description,
+                    price: cartProduct.book.price,
+                    quantity: cartProduct.quantity
+                };
+
             }));
+
             setTotalBooks(sumQuantityBooks)
             setTotalPrice(sumPrice)
+            console.log('cartProducts: ', cartProducts)
             setCart({ products: cartProducts });
         } catch (error) {
             console.error('Lỗi khi kiểm tra và lấy dữ liệu giỏ hàng:', error);
@@ -100,15 +100,14 @@ const Cart = () => {
             if (isLoggedIn) {
                 axios.defaults.withCredentials = true;
                 const response = await cartApi.add(product.id)
-                // if (response.data.status === 200) {
-                //     console.log('Sản phẩm đã được thêm vào giỏ hàng thành công:', response.data);
-                //     console.log('xxx')
-                getCart()
-                // }
+                if (response.status === 200) {
+                    console.log('Sản phẩm đã được thêm vào giỏ hàng thành công:', response);
+                    getCart()
+                }
             } else {
                 axios.defaults.withCredentials = true;
-                const response1 = await axios.post(`http://localhost:8080/api/client/cart/add/${product.id}`);
-                if (response1.data.status === 200) {
+                const response1 = await cartApi.addNoToken(product.id);
+                if (response1.status === 200) {
                     console.log('Chưa đăng nhập sản phẩm đã được thêm vào giỏ hàng thành công:', response1.data);
                     getCart()
                 }
@@ -124,40 +123,29 @@ const Cart = () => {
             if (isLoggedIn) {
                 if (updateQuantity < 1) {
                     axios.defaults.withCredentials = true;
-                    const responsedelete = await axios.post(`http://localhost:8080/api/client/cart/delete/${product.id}`, null, {
-                        headers: {
-                            'Authorization': `Bearer ${isLoggedIn}`,
-                            'Content-Type': 'application/json'
-                        }
-                    });
-                    if (responsedelete.data.status === 200) {
+                    const responsedelete = await cartApi.delete(product.id)
+                    if (responsedelete.status === 200) {
                         console.log('x')
                         getCart()
                     }
                 }
                 axios.defaults.withCredentials = true;
-                const response = await axios.post(`http://localhost:8080/api/client/cart/uppdate/${product.id}/${updateQuantity}`, null, {
-                    headers: {
-                        'Authorization': `Bearer ${isLoggedIn}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                if (response.data.status === 200) {
-                    console.log('Sản phẩm đã được xóa thành công:', response.data);
+                const response = await cartApi.update(product.id, updateQuantity)
+                if (response.status === 200) {
+                    console.log('Sản phẩm đã được xóa thành công:', response);
                     getCart()
                 }
             } else {
                 if (updateQuantity < 1) {
                     axios.defaults.withCredentials = true;
-                    const responsedelete = await axios.post(`http://localhost:8080/api/client/cart/delete/${product.id}`);
-                    if (responsedelete.data.status === 200) {
+                    const responsedelete = await cartApi.deleteNoToken(product.id)
+                    if (responsedelete.status === 200) {
                         getCart()
                     }
                 }
                 axios.defaults.withCredentials = true;
-                const response1 = await axios.post(`http://localhost:8080/api/client/cart/uppdate/${product.id}/${updateQuantity}`, null);
-                if (response1.data.status === 200) {
+                const response1 = await cartApi.updateNoToken(product.id, updateQuantity)
+                if (response1.status === 200) {
                     console.log('Chưa đăng nhập sản phẩm đã được xóa giỏ hàng thành công:', response1.data);
                     getCart()
                 }
@@ -195,7 +183,7 @@ const Cart = () => {
                                     <li className="cart__content_checkbox">
                                         <input type="checkbox" id={`book-${product.products.idcartitem}`} onChange={handleCheckboxChange} value={product.products.idcartitem}></input>
                                     </li>
-                                    <li className="cart__content_pic" style={{ backgroundImage: `url(${Image})` }}></li>
+                                    <li className="cart__content_pic" style={{ backgroundImage: `url(${product.products.img})` }}></li>
                                     <li className="cart__content_text">
                                         <ul>
                                             <li>{product.products.name}</li>

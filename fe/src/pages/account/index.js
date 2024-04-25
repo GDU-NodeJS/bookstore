@@ -6,10 +6,12 @@ import axios from 'axios'
 import Image from '../../assets/meo-chien-binh-tap-6-thoi-khac-tam-toi_128863_1.jpg'
 import './style.scss'
 import { bookApi, cartApi, orderApiForCustomer } from '../../api/api'
+import { formatCurrency } from '../../utils/format_tien'
 const Account = () => {
     const cookies = new Cookies()
     const [amount, setAmount] = useState(0)
     const [orders, setOrders] = useState()
+    const [language, setLanguage] = useState(0)
     const getCart = async () => {
         const isLoggedIn = cookies.get('token');
         console.log('token:', isLoggedIn)
@@ -23,7 +25,7 @@ const Account = () => {
             } else {
                 // Người dùng chưa đăng nhập
                 axios.defaults.withCredentials = true;
-                cartResponse = await axios.get('http://localhost:8080/api/client/cart/getAll');
+                cartResponse = await cartApi.getAll()
             }
 
             const cartData = cartResponse;
@@ -61,22 +63,23 @@ const Account = () => {
                 axios.defaults.withCredentials = true
                 const response = await orderApiForCustomer.getAll(isLoggedIn);
                 if (response.status === 200) {
-                    const orders = await Promise.all(response.data.map(async (b) => {
-                        console.log('booklist: ', b.booklist[0])
-                        const res = await bookApi.getById(b.booklist[0]);
-                        console.log('book: ',res.data)
-                        if (res.status === 200) {
-                            return {
-                                status: b.status,
-                                date: b.date,
-                                payment: b.payment,
-                                book: res.data,
-                                id: b.id,
-                                userid: b.user_id
-                            };
-                        }
-                    }));
-                    setOrders(orders.filter(order => order !== undefined)); // Loại bỏ các phần tử không xác định (undefined)
+                    // const orders = await Promise.all(response.data.map(async (b) => {
+                    //     // console.log('booklist: ', b.booklist[0])
+                    //     const res = await bookApi.getById(b.booklist[0]);
+                    //     console.log('book: ',res.data)
+                    //     if (res.status === 200) {
+                    //         return {
+                    //             status: b.status,
+                    //             date: b.date,
+                    //             payment: b.payment,
+                    //             book: res.data,
+                    //             id: b.id,
+                    //             userid: b.user_id
+                    //         };
+                    //     }
+                    // }));
+                    // setOrders(orders.filter(order => order !== undefined)); // Loại bỏ các phần tử không xác định (undefined)
+                    setOrders(response.data)
                 }
             } catch (e) {
                 console.error('Lỗi khi lấy đơn hàng:', e);
@@ -137,19 +140,19 @@ const Account = () => {
                         <div className='box_user_orders_body'>
                             {orders && orders.map((order, index) => (
                                 <div className='box_book'>
-                                    <div className='book_img' style={{ backgroundImage: `url(${Image})` }}></div>
+                                    <div className='book_img' style={{ backgroundImage: `url(${order.bookList.bookImage})` }}></div>
                                     <div className='book_detail'>
                                         <div className='detail'>
                                             <div className='name_author'>
-                                                <div>{order.name}</div>
-                                                <div>{order.author}</div>
+                                                <div>{order.bookList.name}</div>
+                                                <div>{order.bookList.author}</div>
                                             </div>
-                                            {/* <div className='book_quantity' style={{ textAlign: 'center' }}>{(order.payment / order.booklist[0].price)}</div> */}
-                                            <div className='book_quantity' style={{ textAlign: 'center' }}>{(order.payment)}</div>
+                                            <div className='book_quantity' style={{ textAlign: 'center' }}>{(order.payment / order.bookList.price)}</div>
+                                    
                                             <div className='price_payment' >
-                                                {/* <div style={{ textAlign: 'center' }}>{(order.payment / (order.payment / order.booklist[0].price)) + (order.payment % (order.payment / order.booklist[0].price))}</div> */}
-                                                <div style={{ textAlign: 'center' }}>{(order.payment)}</div>
-                                                <div style={{ textAlign: 'center' }}>{order.payment}</div>
+                                                <div style={{ textAlign: 'center' }}>{formatCurrency((order.payment / (order.payment / order.bookList.price)) + (order.payment % (order.payment / order.bookList.price)),language)}</div>
+                                                <div style={{ textAlign: 'center' }}>{formatCurrency(order.payment, language)}</div>
+                    
                                             </div>
                                         </div>
                                         <div className='box_status'>

@@ -56,6 +56,51 @@ class ClientBookController {
       categories: book.categories
     }
   }
+
+  async searchBookByName(req,res){
+    try{
+      const name = req.params.keyword;
+      const books  = await clientBookService.searchBookByName(name);
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
+        message: "Successfully retrieved the book by name '" + name + "'",
+        data: [books],
+      });
+    }catch(err){
+      let errorMessage = err.message;
+      if (errorMessage.startsWith('Error: ')) {
+          errorMessage = errorMessage.slice(7);
+        }
+      return res.status(res.statusCode).json({
+          status: res.statusCode,
+          message: errorMessage,
+          data: null
+      })
+    }
+  }
+
+  async searchBookByCategory(req,res){
+    try{
+      const categoryId = req.params.id;
+      const books  = await clientBookService.searchBookByCategory(categoryId);
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
+        message: "Successfully retrieved the book by categoryID '" + categoryId + "'",
+        data: [books],
+      });
+    }catch(err){
+      let errorMessage = err.message;
+      if (errorMessage.startsWith('Error: ')) {
+          errorMessage = errorMessage.slice(7);
+        }
+      return res.status(res.statusCode).json({
+          status: res.statusCode,
+          message: errorMessage,
+          data: null
+      })
+    }
+
+  }
 }
 
 export default ClientBookController;

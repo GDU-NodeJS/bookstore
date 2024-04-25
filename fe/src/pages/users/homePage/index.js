@@ -64,19 +64,21 @@ const HomePage = () => {
                 axios.defaults.withCredentials = true;
                 const response = await cartApi.add(product.id)
                 // console.log('res: ',response)
-                // if (response.status === 200) {
-                //     console.log('them thanh coong')
-                getCart()
-                // }
+                if (response.status === 200) {
+                    console.log('them thanh coong')
+                    getCart()
+                }
             } else {
+                console.log('product: ', product)
+                console.log('id: ', product._id)
                 axios.defaults.withCredentials = true;
-                const response = await cartApi.addNoToken();
+                const response = await cartApi.addNoToken(product._id);
 
 
-                // if (response.data.status === 200) {// Xử lý response từ API nếu thành công
-                console.log(' Chưa đăng nhập Sản phẩm đã được thêm vào giỏ hàng thành công:', response);
-                getCart()
-                //     }
+                if (response.status === 200) {// Xử lý response từ API nếu thành công
+                    console.log(' Chưa đăng nhập Sản phẩm đã được thêm vào giỏ hàng thành công:', response);
+                    getCart()
+                }
             }
         } catch (error) {
             // Xử lý lỗi nếu request gặp vấn đề
@@ -210,6 +212,7 @@ const HomePage = () => {
     //     );
     // };
     console.log('fe: ', featproducts)
+
     const renderSlider = () => {
         return (
             <>
@@ -227,11 +230,15 @@ const HomePage = () => {
                                         featproducts[item].products.map((item, key) => (
                                             <div key={key} >
                                                 <div className="categories_slider_item" >
+                                                    <div style={{
+                                                        height: '100%',
+                                                        paddingTop: '10px'}}>
+
                                                     <div className="categories_slider_pic" style={{ backgroundImage: `url(${item.image})` }} key={key}>
 
                                                         <ul className="featured__item_pic_hover">
                                                             <li>
-                                                                <button onClick={() => navigate(`/detail?id=${item.id}`)}>
+                                                                <button onClick={() => navigate(`/detail?id=${item._id}`)}>
                                                                     <FaEye />
                                                                 </button>
                                                             </li>
@@ -243,85 +250,94 @@ const HomePage = () => {
                                                             </li>
                                                         </ul>
                                                     </div>
-                                                    <div className="categories_slider_text">{item.name}</div>
-                                                    <div className="categories_slider_text">{formatCurrency(item.price)}</div>
                                                 </div>
+                                                <div className="categories_slider_text">{item.name}</div>
+                                                <div className="categories_slider_text">{item.author}</div>
+                                                <div className="categories_slider_text">{formatCurrency(item.price)}</div>
                                             </div>
-                                        ))
+                                            </div>
+                            ))
                                     }
-                                </Carousel>
-                            </div>
-                        </div>
+                        </Carousel>
                     </div>
+                        </div >
+                    </div >
                 ))}
 
             </>
         )
     }
-    const getCart = async () => {
-        const isLoggedIn = cookies.get('token');
-        console.log('token:', isLoggedIn)
-        try {
-            let cartResponse;
-            if (isLoggedIn) {
-                axios.defaults.withCredentials = true;
-                // Người dùng đã đăng nhập
-                cartResponse = await cartApi.getAll();
-                console.log('da dang nhap')
-            } else {
-                // Người dùng chưa đăng nhập
-                axios.defaults.withCredentials = true;
-                cartResponse = await cartApi.getAllNoToken();
-                console.log('gio hang khi chua đnag nhap: ', cartResponse)
-            }
+const getCart = async () => {
+    const isLoggedIn = cookies.get('token');
+    console.log('token:', isLoggedIn)
+    try {
+        let cartResponse;
+        if (isLoggedIn) {
+            axios.defaults.withCredentials = true;
+            // Người dùng đã đăng nhập
+            cartResponse = await cartApi.getAll();
+            console.log('da dang nhap')
+        } else {
+            console.log('xxx')
+            // Người dùng chưa đăng nhập
+            cartResponse = await cartApi.getAllNoToken();
+            console.log('gio hang khi chua đnag nhap: ', cartResponse)
+        }
+        if (cartResponse.status === 200) {
 
             const cartData = cartResponse;
+            console.log('cartData: ', cartData)
             let sumQuantityBooks = 0;
-            const cart1 = {
-                products: cartData.data.map(cartProduct => {
-                    sumQuantityBooks += cartProduct.quantity
-                    return {
-                        id: cartProduct.book.id,
-                        img: cartProduct.book.bookImage,
-                        name: cartProduct.book.name,
-                        author: cartProduct.book.author,
-                        description: cartProduct.book.description,
-                        price: cartProduct.book.price,
-                        quantity: cartProduct.quantity
-                    };
-                })
+            if (cartData.data.length > 0) {
+                const cart1 = {
+                    products: cartData.data.map(cartProduct => {
+                        sumQuantityBooks += parseInt(cartProduct.quantity)
+                        return {
+                            id: cartProduct.book.id,
+                            img: cartProduct.book.bookImage,
+                            name: cartProduct.book.name,
+                            author: cartProduct.book.author,
+                            description: cartProduct.book.description,
+                            price: cartProduct.book.price,
+                            quantity: parseInt(cartProduct.quantity)
+                        };
+                    })
+                }
+                console.log('cart: ', cart1)
             };
+            console.log('quantity: ', sumQuantityBooks)
             setAmount(sumQuantityBooks)
-        } catch (error) {
-            console.error('Lỗi khi kiểm tra và lấy dữ liệu giỏ hàng:', error);
         }
-    };
+    } catch (error) {
+        console.error('Lỗi khi kiểm tra và lấy dữ liệu giỏ hàng:', error);
+    }
+};
 
-    useEffect(() => {
-        getCart()
-    }, [])
-    return (
-        <>
-            <Header amount={amount} />
-            <div className="homepage">
-                <div className="categories_slider_body poster container">
-                    <Carousel responsive={responsive1} className="poster__slider categories_slider" autoPlay={true} // Thiết lập tự động di chuyển
-                        autoPlaySpeed={2000}
-                        infinite={true} >
-                        <div className="categories_slider_pic" style={{ backgroundImage: `url(${Image1})` }}></div>
-                        <div className="categories_slider_pic" style={{ backgroundImage: `url(${Image2})` }}></div>
-                        <div className="categories_slider_pic" style={{ backgroundImage: `url(${Image3})` }}></div>
-                        <div className="categories_slider_pic" style={{ backgroundImage: `url(${Image4})` }}></div>
-                        <div className="categories_slider_pic" style={{ backgroundImage: `url(${Image5})` }}></div>
-                        <div className="categories_slider_pic" style={{ backgroundImage: `url(${Image6})` }}></div>
-                    </Carousel>
-                </div>
-                <div style={{ marginBottom: 50 }}>
-                    {renderSlider()}
-                </div>
+useEffect(() => {
+    getCart()
+}, [])
+return (
+    <>
+        <Header amount={amount} />
+        <div className="homepage">
+            <div className="categories_slider_body poster container">
+                <Carousel responsive={responsive1} className="poster__slider categories_slider" autoPlay={true} // Thiết lập tự động di chuyển
+                    autoPlaySpeed={2000}
+                    infinite={true} >
+                    <div className="categories_slider_pic" style={{ backgroundImage: `url(${Image1})` }}></div>
+                    <div className="categories_slider_pic" style={{ backgroundImage: `url(${Image2})` }}></div>
+                    <div className="categories_slider_pic" style={{ backgroundImage: `url(${Image3})` }}></div>
+                    <div className="categories_slider_pic" style={{ backgroundImage: `url(${Image4})` }}></div>
+                    <div className="categories_slider_pic" style={{ backgroundImage: `url(${Image5})` }}></div>
+                    <div className="categories_slider_pic" style={{ backgroundImage: `url(${Image6})` }}></div>
+                </Carousel>
             </div>
-            <Footer />
-        </>
-    )
+            <div style={{ marginBottom: 50 }}>
+                {renderSlider()}
+            </div>
+        </div>
+        <Footer />
+    </>
+)
 }
 export default memo(HomePage)

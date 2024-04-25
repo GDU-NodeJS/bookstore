@@ -15,12 +15,12 @@ const Header = ({amount}) => {
     const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
     const cookies = new Cookies()
-    const [quantity, setQuantity] = useState(amount)
+    // const [quantity, setQuantity] = useState(amount)
     const [name, setName] = useState();
     useEffect(() => {
         const tokenExists = cookies.get('token');
         if (tokenExists) {
-            const initialName = cookies.get('name') || ''; // Kiểm tra xem cookie 'name' có tồn tại không
+            const initialName = cookies.get('firstname') +' '+ cookies.get('lastname'); // Kiểm tra xem cookie 'name' có tồn tại không
             setName(initialName);
         }
     }, []);
@@ -38,10 +38,8 @@ const Header = ({amount}) => {
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
-        };
-
+        }
         fetchData();
-        
     }, []);
     const handleSearch = (str, event) => {
         event.preventDefault();
@@ -85,7 +83,7 @@ const Header = ({amount}) => {
                                 <li className="categories__drop_header">Danh mục</li>
                                 {data.map((genre, index) => (
                                     <li key={index} className="categories__drop_item">
-                                        <Link to={`/find?category=${genre.name}`}>{genre.name}</Link>
+                                        <Link to={`/find?category=${genre._id}`}>{genre.name}</Link>
                                     </li>
 
                                 ))}
@@ -112,7 +110,7 @@ const Header = ({amount}) => {
                                 <Link to="/cart">
                                     <FaShoppingCart />
                                     <span className="cart__item_amount"></span>
-                                    <span className="header__cart_text">Giỏ hàng({updateAmount(quantity)})</span>
+                                    <span className="header__cart_text">Giỏ hàng({updateAmount(amount)})</span>
                                 </Link>
 
                             </div>
@@ -143,7 +141,7 @@ const Header = ({amount}) => {
                                     </button>
                                 </li>
                                 <li>
-                                    <button>
+                                    <button onClick={()=> navigate('/register')}>
                                         Đăng ký
                                     </button>
                                 </li>
