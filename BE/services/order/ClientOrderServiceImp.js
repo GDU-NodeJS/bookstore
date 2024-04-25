@@ -5,8 +5,6 @@ import PaymentService from "../../services/Payment/PaymentService.js";
 const orderRepository = new OrderRepository();
 const bookRepository = new BookRepository();
 const userRepository = new UserRepository();
-const paymentService = new PaymentService();
-
 
 class ClientOrderServiceImp {
 
@@ -45,21 +43,16 @@ class ClientOrderServiceImp {
 
     const bookList = [cartItem.book];
     const payment = book.price * cartItem.quantity;
-
-    const paymentOrderId = await paymentService.createPaymentOrder(payment);
-
-
+    
     const newOrderData = {
       date: new Date(),
       user: userId,
       bookList,
       payment,
-      paymentOrderId,
       status: 'PENDING'
     };
 
     await orderRepository.user_createOrder(newOrderData);
-    return `https://www.paypal.com/checkoutnow?token=${paymentOrderId}`;
   }
   
   async getAllOrders(req) {

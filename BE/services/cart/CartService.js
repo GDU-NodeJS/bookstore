@@ -20,8 +20,8 @@ class CartService {
     async clearCart(req) {
         return await cartServiceImp.clearCart(req);
     }
-    async checkout(cartItemId, req){
-        return await cartServiceImp.checkout(cartItemId, req);
+    async checkout(cartItemId, req, res){
+        return await cartServiceImp.checkout(cartItemId, req, res);
     }
 }
 export default CartService;

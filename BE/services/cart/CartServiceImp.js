@@ -4,11 +4,15 @@ import AdminBookServiceImp from '../book/AdminBookServiceImp.js';
 import CartItem from "../../models/cart/cartItem.js";
 import ClientOrderService from '../order/ClientOrderService.js';
 import ErrorRepsonse from '../../responses/ErrorResponse.js';
+import PaymentService from '../../services/Payment/Payment.js';
+import BookRepository from '../../dao/BookRepository.js'
 const SESSION_KEY_CART = 'CART';
 const cartRepository = new CartRepository();
 const cartItemRepository = new CartItemRepository();
 const adminBookServiceImp = new AdminBookServiceImp();
 const clientOrderService = new ClientOrderService();
+const bookRepository = new BookRepository();
+const paymentService = new PaymentService();
 
 class CartServiceImp {
 
@@ -51,17 +55,17 @@ class CartServiceImp {
   async getCartFromDatabase(userId) {
     try {
       const cart = await cartRepository.findByUserId(userId);
-      if (!cart){
+      if (!cart) {
         await cartRepository.create({
           user: userId,
           cartItem: []
         });
       }
       const cartMap = {};
-  
+
       if (cart && cart.cartItems) {
         cart.cartItems.forEach(item => {
-          if(item.book){
+          if (item.book) {
             cartMap[item.book._id] = item;
           }
         });
@@ -74,7 +78,7 @@ class CartServiceImp {
   }
 
   async storeCartInDatabase(userId, cartMap) {
-    try{
+    try {
       const cart = await cartRepository.findByUserId(userId);
 
       const newCartItems = [];
@@ -101,16 +105,15 @@ class CartServiceImp {
       await Promise.all(newCartItems.map(item => cartItemRepository.createCartItem(item)));
 
       cart.cartItems = [...updatedCartItems, ...newCartItems].map(item => item._id);
-      await cartRepository.update(cart._id,cart);
-    } catch ( error)
-    {
+      await cartRepository.update(cart._id, cart);
+    } catch (error) {
       console.error('Error can not store cart into data base:', error);
       throw error;
     }
   }
 
   async addToCart(req, bookId, quantity) {
-    try{
+    try {
       const isLoggedIn = this.isUserLoggedIn(req);
 
       if (isLoggedIn) {
@@ -118,7 +121,7 @@ class CartServiceImp {
         let cartMap = await this.getCartFromDatabase(userId);
         let cartItem = cartMap[bookId];
         if (cartItem) {
-          cartItem.quantity =(parseInt(cartItem.quantity) + parseInt(quantity)).toString();
+          cartItem.quantity = (parseInt(cartItem.quantity) + parseInt(quantity)).toString();
         } else {
           cartItem = { book: bookId, quantity };
           cartMap[bookId] = cartItem;
@@ -128,7 +131,7 @@ class CartServiceImp {
         const cartMap = this.getCartFromSession(req);
         let cartItem = cartMap[bookId];
         if (cartItem) {
-          cartItem.quantity =(parseInt(cartItem.quantity) + parseInt(quantity)).toString();
+          cartItem.quantity = (parseInt(cartItem.quantity) + parseInt(quantity)).toString();
         } else {
           cartItem = { book: bookId, quantity };
           cartMap[bookId] = cartItem;
@@ -145,7 +148,7 @@ class CartServiceImp {
   }
 
   async removeFromCart(req, bookId) {
-    try{
+    try {
       const isLoggedIn = this.isUserLoggedIn(req);
 
       if (isLoggedIn) {
@@ -172,7 +175,7 @@ class CartServiceImp {
   }
 
   async updateCart(req, bookId, quantity) {
-    try{
+    try {
       const isLoggedIn = this.isUserLoggedIn(req);
 
       if (isLoggedIn) {
@@ -201,7 +204,7 @@ class CartServiceImp {
   }
 
   async clearCart(req) {
-    try{
+    try {
       const session = req.session;
       const isLoggedIn = this.isUserLoggedIn(req);
 
@@ -228,9 +231,9 @@ class CartServiceImp {
   }
 
   async getCart(req) {
-    try{
+    try {
       const isLoggedIn = this.isUserLoggedIn(req);
-      
+
       if (isLoggedIn) {
         const userId = this.getUserId(req);
         const cartMap = await this.getCartFromDatabase(userId);
@@ -248,31 +251,31 @@ class CartServiceImp {
     }
   }
   async getCartItem(cartItemId, req) {
-    try{
+    try {
       const isLoggedIn = this.isUserLoggedIn(req);
-      
+
       if (isLoggedIn) {
         const userId = this.getUserId(req);
         const cartMap = await this.getCartFromDatabase(userId);
         const cartItem = Object.values(cartMap).find(
           (model) => model._doc._id.equals(cartItemId)
         );
-    
-        if(cartItem)
+
+        if (cartItem)
           return cartItem;
-        else{
+        else {
           throw new ErrorRepsonse(404, "Not Fould CartItem")
         }
       } else {
         const cartMap = this.getCartFromSession(req);
-    
+
         const cartItem = Object.values(cartMap).find(
           (model) => model._doc._id.equals(cartItemId)
         );
-    
-        if(cartItem)
+
+        if (cartItem)
           return cartItem;
-        else{
+        else {
           throw new ErrorRepsonse(404, "Not Fould CartItem")
         }
       }
@@ -284,32 +287,41 @@ class CartServiceImp {
       }
     }
   }
-  
-  async createCart(cart){
-    try{
+
+  async createCart(cart) {
+    try {
       return await cartRepository.create(cart);
-    } catch( error){
+    } catch (error) {
       console.error('Error cant create cart:', error);
       throw error;
     }
   }
-  async checkout(cartItemId, req) {
-    const isLoggedIn = this.isUserLoggedIn(req);
-    
-    if (!isLoggedIn) {
-      throw new Error('User must be logged in to checkout');
-    }
-    
-    const cartItem = await this.getCartItem(cartItemId, req);
-    const bookBuffer = cartItem.book.buffer;
-    const bookId = bookBuffer.toString('hex');
-    
-    if (!cartItem) {
-      throw new Error('Cart item not found');
-    }
-    
+  async checkout(cartItemId, req, res) {
     try {
+      const isLoggedIn = this.isUserLoggedIn(req);
+
+      if (!isLoggedIn) {
+        throw new Error('User must be logged in to checkout');
+      }
+
+      const cartItem = await this.getCartItem(cartItemId, req);
+      const bookBuffer = cartItem.book.buffer;
+      const bookId = bookBuffer.toString('hex');
+
+      if (!cartItem) {
+        throw new Error('Cart item not found');
+      }
+
       const userId = this.getUserId(req);
+      const book = await bookRepository.findById(bookId);
+      const quantity = cartItem.quantity;
+
+      const paymentOrderId = await paymentService.payProduct(book, quantity, req, res)
+
+      if (!paymentOrderId){
+        throw new Error('Payment failed')
+      }
+
       const order = await clientOrderService.createOrder(userId, cartItem, req);
       await this.removeFromCart(req, bookId);
       return order;
