@@ -23,5 +23,8 @@ class CartService {
     async checkout(cartItemId, req, res){
         return await cartServiceImp.checkout(cartItemId, req, res);
     }
+    async paymentSuccess(cartItemId, req, res){
+        await cartServiceImp.createOrder(cartItemId, req, res);
+    }
 }
 export default CartService;

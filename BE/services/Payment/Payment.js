@@ -1,5 +1,10 @@
 import paypal from 'paypal-rest-sdk';
 
+import ClientBookSerivce from "../../services/book/ClientBookService.js"
+import ClientOrderService from "../../services/order/ClientOrderService.js";
+const bookService = new ClientBookSerivce();
+const clientOrderService = new ClientOrderService();
+
 const configure = paypal.configure;
 const _payment = paypal.payment;
 
@@ -12,52 +17,77 @@ configure({
 class Payment {
 
     async payProduct(book, quantity, req, res) {
-
-        try {
-            const create_payment_json = {
-                "intent": "sale",
-                "payer": {
-                    "payment_method": "paypal"
-                },
-                "redirect_urls": {
-                    "return_url": "http://localhost:3000/success",
-                    "cancel_url": "http://localhost:3000/cancel"
-                },
-                "transactions": [{
-                    "item_list": {
-                        "items": [{
-                            "name": book.name,
-                            "sku": "001",
-                            "price": book.price,
+        return new Promise((resolve, reject) => {
+            try {
+                const create_payment_json = {
+                    "intent": "sale",
+                    "payer": {
+                        "payment_method": "paypal"
+                    },
+                    "redirect_urls": {
+                        "return_url": "http://localhost:8090/cart/success",
+                        "cancel_url": "http://localhost:3000/cart"
+                    },
+                    "transactions": [{
+                        "item_list": {
+                            "items": [{
+                                "name": book.name,
+                                "sku": "001",
+                                "price": book.price,
+                                "currency": "USD",
+                                "quantity": quantity
+                            }]
+                        },
+                        "amount": {
                             "currency": "USD",
-                            "quantity": quantity
-                        }]
-                    },
-                    "amount": {
-                        "currency": "USD",
-                        "total": book.price * quantity
-                    },
-                    "description": "Hat for the best team ever"
-                }]
-            };
+                            "total": book.price * quantity
+                        },
+                        "description": "Hat for the best team ever"
+                    }]
+                };
 
-            _payment.create(create_payment_json, function (error, payment) {
-                if (error) {
-                    throw error;
-                } else {
-                    for (let i = 0; i < payment.links.length; i++) {
-                        if (payment.links[i].rel === 'approval_url') {
-                            res.redirect(payment.links[i].href);
-                            
+                _payment.create(create_payment_json, function (error, payment) {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        let paymentLink;
+                        for (let i = 0; i < payment.links.length; i++) {
+                            if (payment.links[i].rel === 'approval_url') {
+                                res.paymentUrl = payment.links[i].href; 
+                                paymentLink = payment.links[i].href;
+                                resolve(paymentLink);
+                            }
                         }
                     }
-                }
-            });
+                });
+            } catch (error) {
+                console.log(error.message);
+                reject(error);
+            }
+        });
+    }
+    async handleSuccessfulPayment(req, res) {
+        try {
+            const paymentId = req.query.paymentId;
+            const payerId = req.query.PayerID;
+            const paymentDetails = _payment.execute(paymentId, payerId);
 
+            if (paymentDetails.state === 'approved') {
+                const userId = this.getUserId(req);
+                const cartItem = req.session.cartItem; 
+                const order = await clientOrderService.createOrder(userId, cartItem, req);
+
+                req.session.paymentUrl = null;
+                req.session.cartItem = null;
+
+                return res.status(200).json({ message: 'Payment successful, order created', order });
+            } else {
+                return res.status(400).json({ message: 'Payment failed' });
+            }
         } catch (error) {
             console.log(error.message);
+            return res.status(500).json({ message: 'Error processing payment' });
         }
-
     }
 }
 

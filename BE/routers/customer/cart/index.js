@@ -10,4 +10,7 @@ cart.post('/delete/:bookId', cartController.removeFromCart.bind(cartController))
 cart.post('/update/:bookId/:quantity',cartController.updateCart.bind(cartController))
 cart.post('/clearAll', cartController.clearCart.bind(cartController))
 cart.post('/checkout/:cartItemId', cartController.checkout.bind(cartController))
+
+cart.post('/success', cartController.paymentSuccess.bind(cartController))
+
 export default cart;

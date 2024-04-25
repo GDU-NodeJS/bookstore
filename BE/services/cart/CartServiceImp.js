@@ -312,19 +312,18 @@ class CartServiceImp {
         throw new Error('Cart item not found');
       }
 
-      const userId = this.getUserId(req);
       const book = await bookRepository.findById(bookId);
       const quantity = cartItem.quantity;
 
-      const paymentOrderId = await paymentService.payProduct(book, quantity, req, res)
-
-      if (!paymentOrderId){
-        throw new Error('Payment failed')
-      }
-
-      const order = await clientOrderService.createOrder(userId, cartItem, req);
-      await this.removeFromCart(req, bookId);
-      return order;
+      const payment = await paymentService.payProduct(book, quantity, req, res);
+      return payment;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+  async createOrder(cartItemId, req, res){
+    try {
+      await paymentService.handleSuccessfulPayment(req, res);
     } catch (error) {
       throw new Error(error);
     }

@@ -48,6 +48,7 @@ class CartController {
     try {
       const cartItemId = req.params.cartItemId;
       const cart = await this._cartService.getCartItem(cartItemId, req);
+
       return res.status(res.statusCode).json({
         status: res.statusCode,
         message: 'Get cart successfully',
@@ -103,7 +104,20 @@ class CartController {
       return res.status(res.statusCode).json({
         status: res.statusCode,
         message: 'Checkout cart successfully',
-        url: url
+        data: url
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async paymentSuccess(req, res){
+    try {
+      const cartItemId = req.params.cartItemId;
+      await this._cartService.paymentSuccess(cartItemId, req, res);
+      return res.status(res.statusCode).json({
+        status: res.statusCode,
+        message: 'Checkout cart successfully'
       });
     } catch (err) {
       console.log(err);
