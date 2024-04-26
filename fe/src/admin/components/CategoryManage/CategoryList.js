@@ -21,7 +21,7 @@ import AddCategory from "../../components/CategoryManage/AddCategory";
 import "../../styles/cate.scss";
 
 const columns = [
-  { id: "name", label: "Tên thể loại", minWidth: 170 },
+  { id: "name", label: "Category Name", minWidth: 170 },
   { id: "actions", label: "Actions", minWidth: 100, align: "center" },
 ];
 

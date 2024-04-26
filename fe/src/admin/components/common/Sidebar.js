@@ -15,7 +15,7 @@ import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { useBookStore } from './bookstore';
 
-const drawerWidth = 230;
+const drawerWidth = 260;
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
@@ -129,7 +129,7 @@ export default function Sidebar() {
                 }}
               />
               <ListItemText
-                primary="Quản lý sách"
+                primary="Book Management"
                 sx={{ opacity: open ? 1 : 0, color: "#fff" }}
               />
             </ListItemButton>
@@ -152,7 +152,7 @@ export default function Sidebar() {
                 }}
               />
               <ListItemText
-                primary="Quản lý danh mục"
+                primary="Categories Management"
                 sx={{ opacity: open ? 1 : 0, color: "#fff" }}
               />
             </ListItemButton>
@@ -175,7 +175,7 @@ export default function Sidebar() {
                 }}
               />
               <ListItemText
-                primary="Quản lý người dùng"
+                primary="Account Management"
                 sx={{ opacity: open ? 1 : 0, color: "#fff" }}
               />
             </ListItemButton>
@@ -198,7 +198,7 @@ export default function Sidebar() {
                 }}
               />
               <ListItemText
-                primary="Quản lý đơn hàng"
+                primary="Order Management"
                 sx={{ opacity: open ? 1 : 0, color: "#fff" }}
               />
             </ListItemButton>

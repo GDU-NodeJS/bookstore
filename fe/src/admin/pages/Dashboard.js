@@ -162,7 +162,7 @@ export default function Dashboard() {
         labels: labels,
         datasets: [
           {
-            label: "Doanh thu",
+            label: "Revenue",
             backgroundColor: "rgba(54, 162, 235, 0.5)",
             borderColor: "rgba(54, 162, 235, 1)",
             borderWidth: 1,
@@ -210,7 +210,7 @@ export default function Dashboard() {
                       component="div"
                       sx={{ color: "#ccd1d1" }}
                     >
-                      Tổng doanh thu đạt được
+                      Total revenue achieved
                     </Typography>
                   </CardContent>
                 </Card>
@@ -237,7 +237,7 @@ export default function Dashboard() {
                       component="div"
                       sx={{ color: "#ccd1d1" }}
                     >
-                      Số lượng đơn hàng
+                      Total order quantity
                     </Typography>
                   </CardContent>
                 </Card>
@@ -260,7 +260,7 @@ export default function Dashboard() {
                       </span>
                       <br />
                       <span className="pricesubtitle">
-                        Số lượng đơn hàng thành công
+                        Order delivered successfully
                       </span>
                     </div>
                   </Stack>
@@ -280,7 +280,7 @@ export default function Dashboard() {
                       </span>
                       <br />
                       <span className="pricesubtitle">
-                        Số lượng đơn hàng đã hủy
+                        Order was cancelled
                       </span>
                     </div>
                   </Stack>
@@ -306,7 +306,7 @@ export default function Dashboard() {
                     align="center"
                     style={{ marginTop: "10px" }}
                   >
-                    BIỂU ĐỒ THỐNG KÊ DOANH THU THEO NGÀY
+                    REVENUE STATISTICS CHART BY DAY
                   </Typography>
                 </CardContent>
               </Card>
@@ -317,7 +317,7 @@ export default function Dashboard() {
                 <CardContent>
                   <div className="paddingall">
                     <span className="pricetitle">
-                      Các thành viên trong nhóm
+                      Members of team 
                     </span>
                   </div>
                   <Team />

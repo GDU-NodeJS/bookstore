@@ -152,7 +152,7 @@ export default function UpdateBook({ onUpdate }) {
             justifyContent="space-between"
             height={70}
           >
-            <h1>Cập nhật thông tin sách</h1>
+            <h1>Update Book Information</h1>
             <Button onClick={handleBack} variant="outlined">
               Back
             </Button>

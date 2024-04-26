@@ -23,7 +23,7 @@ export default function BookPage() {
             justifyContent: "space-between",
           }}
         >
-          <h1 style={{ marginLeft: "25px" }}>Danh sách sách hiện có</h1>
+          <h1 style={{ marginLeft: "25px" }}>Books List</h1>
           <IconButton
             sx={{color:'#26a69a', display: { xs: "block", sm: "none" }}}
             aria-label="add book"

@@ -24,15 +24,23 @@ export default function ControlledAccordions() {
           aria-controls="panel1bh-content"
           id="panel1bh-header"
         >
-          <Typography
-            sx={{ width: "65%", flexShrink: 0 }}
-          >
+          <Typography sx={{ width: "65%", flexShrink: 0 }}>
             <span className="pricetitle">Trương Quang Hùng</span>
           </Typography>
           <Typography sx={{ color: "text.secondary" }}>Nhóm trưởng</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Typography>Thông tin chi tiết công việc</Typography>
+          <Typography>Đảm nhận công việc:</Typography>
+          <ul>
+            <li>
+              <Typography>• Use Case</Typography>
+              <Typography>• Mô tả Use Case</Typography>
+              <Typography>• Sơ đồ ECB</Typography>
+              <Typography>• Sơ đồ tuần tự</Typography>
+              <Typography>• Sơ đồ lớp</Typography>
+              <Typography>• Thiết kế Backend</Typography>
+            </li>
+          </ul>
         </AccordionDetails>
       </Accordion>
 
@@ -51,10 +59,20 @@ export default function ControlledAccordions() {
           >
             <span className="pricetitle">Trần Thanh Phúc</span>
           </Typography>
-          <Typography sx={{ color: "text.secondary" }}>Back End</Typography>
+          <Typography sx={{ color: "text.secondary" }}>Backend</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Typography>Thông tin chi tiết công việc</Typography>
+          <Typography>Đảm nhận công việc:</Typography>
+          <ul>
+            <li>
+              <Typography>• Use Case</Typography>
+              <Typography>• Mô tả Use Case</Typography>
+              <Typography>• Sơ đồ ECB</Typography>
+              <Typography>• Sơ đồ tuần tự</Typography>
+              <Typography>• Sơ đồ lớp</Typography>
+              <Typography>• Thiết kế Backend</Typography>
+            </li>
+          </ul>
         </AccordionDetails>
       </Accordion>
 
@@ -73,10 +91,20 @@ export default function ControlledAccordions() {
           >
             <span className="pricetitle">Nguyễn Văn Quốc Anh</span>
           </Typography>
-          <Typography sx={{ color: "text.secondary" }}>Back End</Typography>
+          <Typography sx={{ color: "text.secondary" }}>Backend</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Typography>Thông tin chi tiết công việc</Typography>
+          <Typography>Đảm nhận công việc:</Typography>
+          <ul>
+            <li>
+              <Typography>• Use Case</Typography>
+              <Typography>• Mô tả Use Case</Typography>
+              <Typography>• Sơ đồ ECB</Typography>
+              <Typography>• Sơ đồ tuần tự</Typography>
+              <Typography>• Sơ đồ lớp</Typography>
+              <Typography>• Thiết kế Backend</Typography>
+            </li>
+          </ul>
         </AccordionDetails>
       </Accordion>
 
@@ -95,12 +123,23 @@ export default function ControlledAccordions() {
           >
             <span className="pricetitle">Nguyễn Chung Hoàng</span>
           </Typography>
-          <Typography sx={{ color: "text.secondary" }}>Back End</Typography>
+          <Typography sx={{ color: "text.secondary" }}>Backend</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Typography>Thông tin chi tiết công việc</Typography>
+          <Typography>Đảm nhận công việc:</Typography>
+          <ul>
+            <li>
+              <Typography>• Use Case</Typography>
+              <Typography>• Mô tả Use Case</Typography>
+              <Typography>• Sơ đồ ECB</Typography>
+              <Typography>• Sơ đồ tuần tự</Typography>
+              <Typography>• Sơ đồ lớp</Typography>
+              <Typography>• Thiết kế Backend</Typography>
+            </li>
+          </ul>
         </AccordionDetails>
       </Accordion>
+
       <Accordion
         expanded={expanded === "panel5"}
         onChange={handleChange("panel5")}
@@ -116,10 +155,20 @@ export default function ControlledAccordions() {
           >
             <span className="pricetitle">Phạm Nguyễn Hoàng Thế Nghĩa</span>
           </Typography>
-          <Typography sx={{ color: "text.secondary" }}>Front End</Typography>
+          <Typography sx={{ color: "text.secondary" }}>Frontend</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Typography>Thông tin chi tiết công việc</Typography>
+          <Typography>Đảm nhận công việc:</Typography>
+          <ul>
+            <li>
+              <Typography>• Use Case</Typography>
+              <Typography>• Mô tả Use Case</Typography>
+              <Typography>• Sơ đồ ECB</Typography>
+              <Typography>• Sơ đồ tuần tự</Typography>
+              <Typography>• Sơ đồ lớp</Typography>
+              <Typography>• Thiết kế Frontend</Typography>
+            </li>
+          </ul>
         </AccordionDetails>
       </Accordion>
 
@@ -138,10 +187,20 @@ export default function ControlledAccordions() {
           >
             <span className="pricetitle">Nguyễn Lê Bảo Phước</span>
           </Typography>
-          <Typography sx={{ color: "text.secondary" }}>Front End</Typography>
+          <Typography sx={{ color: "text.secondary" }}>Frontend</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Typography>Thông tin chi tiết công việc</Typography>
+          <Typography>Đảm nhận công việc:</Typography>
+          <ul>
+            <li>
+              <Typography>• Use Case</Typography>
+              <Typography>• Mô tả Use Case</Typography>
+              <Typography>• Sơ đồ ECB</Typography>
+              <Typography>• Sơ đồ tuần tự</Typography>
+              <Typography>• Sơ đồ lớp</Typography>
+              <Typography>• Thiết kế Frontend</Typography>
+            </li>
+          </ul>
         </AccordionDetails>
       </Accordion>
     </div>

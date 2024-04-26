@@ -107,7 +107,7 @@ export default function AddBook({ onAdd }) {
             justifyContent="space-between"
             height={70}
           >
-            <h1>Thêm sách mới</h1>
+            <h1>Add New Book</h1>
             <Button onClick={handleBack} variant="outlined">
               Back
             </Button>

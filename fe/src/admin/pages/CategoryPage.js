@@ -5,10 +5,10 @@ import CategoryList from "../components/CategoryManage/CategoryList"
 export default function CategoryPage() {
   return (
     <div className="bgcolor">
-      <Box height={36} />
+      <Box height={35} />
       <Box sx={{ display: "flex" }}>
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          <h1>Danh sách thể loại</h1>
+          <h1>Categories List</h1>
           <CategoryList/>
         </Box>
       </Box>

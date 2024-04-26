@@ -109,15 +109,17 @@ function Row(props) {
       </TableRow>
       {!isAdmin && (
         <TableRow>
-          <TableCell style={{ paddingBottom: 0, paddingTop: 0}} colSpan={6} className="bgcolor">
+          <TableCell
+            style={{ paddingBottom: 0, paddingTop: 0 }}
+            colSpan={6}
+            className="bgcolor"
+          >
             <Collapse in={open} timeout="auto" unmountOnExit>
-              <Box sx={{ margin: 1 }} >
+              <Box sx={{ margin: 1 }}>
                 <Typography variant="h6" gutterBottom component="div">
-                  Orders
+                  Orders from {user.firstName} {user.lastName}
                 </Typography>
-                <TableContainer
-                  component={Paper}
-                >
+                <TableContainer component={Paper}>
                   <Table size="small" aria-label="purchases">
                     <TableHead>
                       <TableRow>

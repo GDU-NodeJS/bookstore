@@ -75,7 +75,7 @@ const OrderDetails = () => {
           justifyContent="space-between"
           height={70}
         >
-          <h1>Chi tiết đơn hàng</h1>
+          <h1>Order Details</h1>
           <Button onClick={handleBack} variant="outlined">
             Back
           </Button>
