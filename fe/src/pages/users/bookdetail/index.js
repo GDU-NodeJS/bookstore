@@ -179,7 +179,7 @@ const BookDetail = () => {
                     const existingProduct = cart.products.find(item => item.id === product.id)
                     if (existingProduct) {
                         oldQuantity = existingProduct.quantity
-                        const response = await cartApi.updateNoToken(product._id, quantity+oldQuantity)
+                        const response = await cartApi.updateNoToken(product._id, quantity)
                         if (response.status === 200) {
                       
                             getCart()
@@ -187,12 +187,7 @@ const BookDetail = () => {
                     } else {
                         const response = await cartApi.addNoTokenHaveQuantity(product._id,quantity)
                         if (response.status === 200) {
-                            // const response = await axios.post(`http://localhost:8080/api/client/cart/uppdate/${product.id}/${quantity}`);
-                            // if (response.data.status === 200) {
-
-                               
                                 getCart()
-                            // }
                         }
                     }
                 }

@@ -70,7 +70,7 @@ const Cart = () => {
             let sumQuantityBooks = 0;
             let sumPrice = 0;
             const cartProducts = await Promise.all(cartData.data.map(async (cartProduct) => {
-                sumQuantityBooks += cartProduct.quantity
+                sumQuantityBooks += parseInt(cartProduct.quantity)
                 sumPrice += cartProduct.quantity * cartProduct.book.price
 
                 return {
@@ -228,7 +228,7 @@ const Cart = () => {
                         {Arrayproducts.length !== 0 ? (
                                 cookies.get('token') ? (
                                     <ul>
-                                        <li>{totalBooks} books</li>
+                                        <li>{totalBooksSelected} books</li>
                                         <li>{formatCurrency(totalPrice)}</li>
                                         <li>(Shipping not included)</li>
                                         <button onClick={() => handleSubmitOrder()}>Order</button>

@@ -171,10 +171,11 @@ const FindPage = () => {
             }
 
             const cartData = cartResponse;
+            console.log('cartData: ',cartData)
             let sumQuantityBooks = 0;
             const cart1 = {
                 products: cartData.data.map(cartProduct => {
-                    sumQuantityBooks += cartProduct.quantity
+                    sumQuantityBooks += parseInt(cartProduct.quantity)
                     return {
                         id: cartProduct.book.id,
                         img: cartProduct.book.bookImage,

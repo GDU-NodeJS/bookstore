@@ -80,7 +80,7 @@ const Header = ({amount}) => {
                         <div className="categories__container">
                             <BiSolidCategory />
                             <ul className="categories__drop">
-                                <li className="categories__drop_header">Danh mục</li>
+                                <li className="categories__drop_header">Directory</li>
                                 {data.map((genre, index) => (
                                     <li key={index} className="categories__drop_item">
                                         <Link to={`/find?category=${genre._id}`}>{genre.name}</Link>
@@ -95,7 +95,7 @@ const Header = ({amount}) => {
                             <input
                                 type="text"
                                 className="header__mid_input"
-                                placeholder=" Tìm kiếm"
+                                placeholder=" Search"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}></input>
                             <button type="submit" className="button-submit" >
@@ -120,7 +120,7 @@ const Header = ({amount}) => {
 
                             <div className="boxuser">
                                 <FaUserCircle />
-                                {name ? <span className="header__user_text">{name}</span> :<span className="header__user_text">Tài khoản</span>}
+                                {name ? <span className="header__user_text">{name}</span> :<span className="header__user_text">Account</span>}
                             </div>
                             {cookies.get('token') ? <ul className="header__user__dropdow">
                                 <li >
@@ -131,18 +131,18 @@ const Header = ({amount}) => {
                                 <li>
                                     <button onClick={()=> handleLogout()}>
 
-                                       Đăng xuất
+                                       Logout
                                     </button>
                                 </li>
                             </ul>:<ul className="header__user__dropdow">
                                 <li>
                                     <button onClick={()=> handleLogin()}>
-                                    Đăng nhập
+                                    Login
                                     </button>
                                 </li>
                                 <li>
                                     <button onClick={()=> navigate('/register')}>
-                                        Đăng ký
+                                        Register
                                     </button>
                                 </li>
                             </ul>

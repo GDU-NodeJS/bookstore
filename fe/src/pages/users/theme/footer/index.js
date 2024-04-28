@@ -13,7 +13,7 @@ const Footer = () =>{
                         <div className="footer__about">
                             <h1 className="footer__about__logo">BookStore</h1>
                             <ul>
-                                <li>Address: Hẻm 24 Lam Sơn, Thành phố Hồ Chí Minh</li>
+                                <li>Address: Alley 24 Lam Son, Ho Chi Minh City</li>
                                 <li>Email: thenghia25022003@gmail.com</li>
                                 <li>Phone: 0582132246</li>
                             </ul>
