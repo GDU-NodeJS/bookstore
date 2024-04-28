@@ -59,7 +59,8 @@ export async function signin(req, res, next) {
                 firstName: user.firstName,
                 lastName: user.lastName,
                 email: user.email,
-                role: user.role
+                role: user.role,
+                id: user.id
             }]
         });
     } catch (error) {
