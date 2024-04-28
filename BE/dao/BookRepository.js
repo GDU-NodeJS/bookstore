@@ -124,6 +124,14 @@ class BookRepository {
   async findByIdAndUpdate(id, newBook){
     try {
       const updateBook = await Book.findByIdAndUpdate(id, newBook, { new: true });
+      for (const categoryId of newBook.categories) {
+        
+        const category = await Category.findByIdAndUpdate(categoryId, { $addToSet: { books: updateBook._id } }, { new: true });
+    
+        if (!category) {
+            throw new Error(`Category with id ${categoryId} not found`);
+        }
+    }
       return updateBook;
     } catch (err) {
       console.error(err);
@@ -131,31 +139,31 @@ class BookRepository {
     }
   }
 
+
   async findByCategory(categoryId) {
     try {
-      const category = await Category.findById(categoryId).populate({
-        path: 'books',
-        populate: { 
-          path: 'categories',
-          select: 'name'
-       }
+        // Tìm danh mục với ID đã cho và populate các cuốn sách liên quan
+        const category = await Category.findById(categoryId).populate({
+          path: 'books',
+          populate: {
+              path: 'categories',
+              select: 'name' // Chỉ lấy trường 'name' của các danh mục
+          }
       });
-      if (!category) {
-        throw new Error(`Category with ID ${categoryId} not found`);
-      }
-  
-      const books = category.books.filter(book => book.categories.some(cat => cat._id.toString() === categoryId.toString()));
-  
-      if (books.length === 0) {
-        throw new Error(`No books found for category with ID ${categoryId}`);
-      }
-  
-      return books;
-    } catch (err) {
-      console.error(err);
-      throw new Error('Error finding books by category');
+
+        if (!category) {
+            throw new Error(`Category with ID ${categoryId} not found`);
+        }
+
+        // Trả về danh sách các cuốn sách trong danh mục đã tìm thấy
+        return category.books;
+    } catch (error) {
+        console.error(error);
+        throw new Error('Error finding books by category');
     }
-  }
+}
+
+
   }
 
 
