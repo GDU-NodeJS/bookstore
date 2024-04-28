@@ -1,14 +1,13 @@
 import { Routes, Route,Navigate } from "react-router-dom";
-import { useNavigate } from 'react-router-dom';
-import HomePage from "./pages/users/homePage";
-import { ROUTER } from "./utils/router";
-import Cart from "./pages/users/cart";
-import Findpage from "./pages/users/findpage";
-import Bookdetail from "./pages/users/bookdetail";
-import LoginPage from "./pages/login/login";
-import Account from "./pages/account";
-import Createorder from "./pages/createorder";
-import RegisterForm from "./pages/register/register.js";
+import HomePage from "./user/pages/homePage/index.js";
+import { ROUTER } from "./user/utils/router.js";
+import Cart from "./user/pages/cart/index.js";
+import Findpage from "./user/pages/findpage/index.js";
+import Bookdetail from "./user/pages/bookdetail/index.js";
+import LoginPage from "./user/pages/login/login.js";
+import Account from "./user/pages/account/index.js";
+import Createorder from "./user/pages/createorder/index.js";
+import RegisterForm from "./user/pages/register/register.js";
 import Admin from "./admin/admin.js";
 
 const renderUserRouter = ({ role }) => {

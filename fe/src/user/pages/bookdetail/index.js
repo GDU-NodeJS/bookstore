@@ -1,17 +1,13 @@
 import React, { memo, useEffect, useState } from 'react';
-import Image from '../../../assets/meo-chien-binh-tap-6-thoi-khac-tam-toi_128863_1.jpg'
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
-import { getTokenFromCookie } from '../../../component';
-import { FaEye, FaShoppingCart } from "react-icons/fa";
-import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
-import '../bookdetail/style.scss'
+import './style.scss'
 import Header from '../theme/header';
 import Footer from '../theme/footer';
 import Cookies from 'universal-cookie';
-import { bookApi, cartApi } from '../../../api/api';
-import { formatCurrency } from '../../../utils/format_tien';
+import { bookApi, cartApi } from '../../api/api';
+import { formatCurrency } from '../../../user/utils/format_tien';
 const BookDetail = () => {
     const [book, setBook] = useState()
     const [cart, setCart] = useState();
@@ -198,55 +194,6 @@ const BookDetail = () => {
             // Hiển thị thông báo lỗi cho người dùng hoặc xử lý lỗi khác tùy theo nhu cầu
         }
     }
-
-    // const renderSlider = () => {
-    //     return (
-    //         <>
-
-
-    //                 <div style={{ marginBottom: 50 }}>
-    //                     <div className="container container__categories_slider">
-    //                         <div className="categories_slider_header">
-    //                             <div>Sách cùng thể loại</div>
-    //                             <Link to="">Tất cả</Link>
-    //                         </div>
-    //                         <div className="categories_slider_body">
-    //                             <Carousel responsive={responsive} className="categories_slider">
-    //                                 {
-    //                                     bookSomeGenre.map((item, key) => (
-    //                                         <div key={key} >
-    //                                             <div className="categories_slider_item" >
-    //                                                 <div className="categories_slider_pic" style={{ backgroundImage: `url(${Image})` }} key={key}>
-
-    //                                                     <ul className="featured__item_pic_hover">
-    //                                                         <li>
-    //                                                             <button onClick={() => navigate(`/detail?id=${item.id}`)}>
-    //                                                                 <FaEye />
-    //                                                             </button>
-    //                                                         </li>
-    //                                                         <li>
-    //                                                             <button onClick={() => handleAdd(item)}>
-
-    //                                                                 <FaShoppingCart />
-    //                                                             </button>
-    //                                                         </li>
-    //                                                     </ul>
-    //                                                 </div>
-    //                                                 <div className="categories_slider_text">{item.name}</div>
-    //                                                 <div className="categories_slider_text">{formatCurrency(item.price)}</div>
-    //                                             </div>
-    //                                         </div>
-    //                                     ))
-    //                                 }
-    //                             </Carousel>
-    //                         </div>
-    //                     </div>
-    //                 </div>
-
-
-    //         </>
-    //     )
-    // }
     return (
         <>
             <Header amount={amount} />

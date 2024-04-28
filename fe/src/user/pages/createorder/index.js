@@ -1,12 +1,12 @@
 import React, { memo, useState, useEffect } from "react";
-import Header from "../users/theme/header";
-import Footer from "../users/theme/footer";
+import Header from "../theme/header/index.js";
+import Footer from "../theme/footer/index.js";
 import axios from "axios";
 import Cookies from "universal-cookie";
 import './style.scss'
 import { useNavigate, useLocation } from "react-router-dom";
-import { cartApi } from "../../api/api";
-import { formatCurrency } from "../../utils/format_tien";
+import { cartApi } from "../../api/api.js";
+import { formatCurrency } from "../../utils/format_tien.js";
 const CreateOrder = () => {
     const [cart, setCart] = useState()
     const [amount, setAmount] = useState(0)
@@ -66,17 +66,21 @@ const CreateOrder = () => {
         }
     };
     const handleOrder = async (arr) => {
+        if(window.confirm("Are you sure you want to place this order?")){
 
-        for (const a of arr) {
-            try {
-                axios.defaults.withCredentials = true;
-                const response = await cartApi.checkout(a)
-                if (response.status === 200) {
-                    navigate('/cart')
+            for (const a of arr) {
+                try {
+                    axios.defaults.withCredentials = true;
+                    const response = await cartApi.checkout(a)
+                    if (response.status === 200) {
+                        navigate('/cart')
+                    }
+                } catch (error) {
+                    console.error('Lỗi khi thực hiện thanh toán và xóa giỏ hàng:', error);
                 }
-            } catch (error) {
-                console.error('Lỗi khi thực hiện thanh toán và xóa giỏ hàng:', error);
             }
+        } else {
+            return
         }
 
     }
@@ -97,7 +101,7 @@ const CreateOrder = () => {
                     backgroundColor: 'white',
                     borderBottom: '1px solid',
                     borderRadius: '10px 10px 0 0'
-                }}>header</div>
+                }}>Create order</div>
                 <div className="orderpage_header">
                     <span>Quantity</span>
                     <span>Price</span>
@@ -133,8 +137,8 @@ const CreateOrder = () => {
                     </div>
                 </div>
                 <div className="button_box">
-                    <button className="button_cancel" onClick={() => navigate('/cart')}>Cancel</button>
-                    <button className="button_order" onClick={() => handleOrder(selectedBooks)}>Order</button>
+                    <button className="button_cancel" style={{ cursor: 'pointer' , borderRadius: '10px'}} onClick={() => { if (window.confirm("Want to keep ordering?")) { return } else { navigate('/cart') } }}>Cancel</button>
+                    <button className="button_order" style={{ cursor: 'pointer' , borderRadius: '10px'}} onClick={() => handleOrder(selectedBooks)}>Order</button>
                 </div>
             </div >
             <Footer />
