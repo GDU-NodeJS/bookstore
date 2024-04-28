@@ -8,7 +8,6 @@ const LoginPage = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [cart, setCart] = useState()
-    const [height, setHeght] = useState()
     const cookies = new Cookies()
     const getCart = async () => {
         try {
@@ -18,12 +17,9 @@ const LoginPage = () => {
             cartResponse = await cartApi.getAllNoToken();
 
             const cartData = cartResponse;
-            let sumQuantityBooks = 0;
-            let sumPrice = 0;
+    
             if(cartData){const cart1 = {
                 products: cartData.data.map(cartProduct => {
-                    sumQuantityBooks += cartProduct.quantity
-                    sumPrice += cartProduct.quantity * cartProduct.book.price
                     return {
                         // idcart: cartProduct.cart.id,
                         idcartitem: cartProduct.id,
@@ -42,20 +38,18 @@ const LoginPage = () => {
             console.error('Lỗi khi kiểm tra và lấy dữ liệu giỏ hàng:', error);
         }
     };
-    console.log('cart: ',cart)
+
     useEffect(() => {
         getCart()
     }, [])
     const handleAddToCart = async (product, quantity) => {
         // Kiểm tra xem người dùng đã đăng nhập chưa
         const isLoggedIn = cookies.get('token')
-        console.log('token: ', isLoggedIn)
         axios.defaults.withCredentials = true;
         try {
             if (isLoggedIn) {
                     const response = await cartApi.addHaveQuantity(product.id,quantity);
                     if (response.status === 200) {
-                        console.log('Sản phẩm đã được thêm vào giỏ hàng thành công:', response.data);
                         getCart()
                     }
             } else {
@@ -70,9 +64,9 @@ const LoginPage = () => {
 
         axios.defaults.withCredentials = true
         const responsedelete = await cartApi.deleteNoToken(product.id)
-        if (responsedelete.status === 200) {
-            console.log('Sản phẩm đã được xoa khoi giỏ hàng thành công:', responsedelete.data);
-        }
+        // if (responsedelete.status === 200) {
+        //     console.log('Sản phẩm đã được xoa khoi giỏ hàng thành công:', responsedelete.data);
+        // }
     }
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -90,8 +84,7 @@ const LoginPage = () => {
                 cookies.set('username', response.data[0].email, { path: '/', maxAge: 604800 }); // expires in 7 days
                 cookies.set('token', response.token, { path: '/', maxAge: 604800 }); // expires in 7 days
     
-                console.log('Đăng nhập thành công');
-                console.log("cart: ",cart)
+        
                 if (cart) {
                     cart.products.forEach((element) => {
                         handleAddToCart(element, element.quantity)
@@ -111,10 +104,6 @@ const LoginPage = () => {
             }
         }
     };
-    useEffect(() => {
-        setHeght(window.innerHeight)
-    }, [])
-    console.log('Chiều cao của màn hình:', height);
     return (
         <div className="containe" style={{ height: `1064px` }}>
             <div style={{

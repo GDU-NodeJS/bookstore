@@ -37,7 +37,6 @@ const HomePage = () => {
         };
         fetchData();
     }, []);
-    console.log('books: ', data)
     useEffect(() => {
         const fetchData = async () => {
             axios.defaults.withCredentials = true;
@@ -71,7 +70,6 @@ const HomePage = () => {
 
 
                 if (response.status === 200) {// Xử lý response từ API nếu thành công
-                    console.log(' Chưa đăng nhập Sản phẩm đã được thêm vào giỏ hàng thành công:', response);
                     getCart()
                 }
             }
@@ -120,7 +118,6 @@ const HomePage = () => {
             items: 1
         }
     };
-    console.log('genre: ', categoryNames)
     const featproducts = {
         all: {
             title: "Toàn bộ",
@@ -210,24 +207,21 @@ const HomePage = () => {
     }
 const getCart = async () => {
     const isLoggedIn = cookies.get('token');
-    console.log('token:', isLoggedIn)
     try {
         let cartResponse;
         if (isLoggedIn) {
             axios.defaults.withCredentials = true;
             // Người dùng đã đăng nhập
             cartResponse = await cartApi.getAll();
-            console.log('da dang nhap')
         } else {
             console.log('xxx')
             // Người dùng chưa đăng nhập
             cartResponse = await cartApi.getAllNoToken();
-            console.log('gio hang khi chua đnag nhap: ', cartResponse)
+
         }
         if (cartResponse.status === 200) {
 
             const cartData = cartResponse;
-            console.log('cartData: ', cartData)
             let sumQuantityBooks = 0;
             if (cartData.data.length > 0) {
                 const cart1 = {
@@ -244,9 +238,8 @@ const getCart = async () => {
                         };
                     })
                 }
-                console.log('cart: ', cart1)
+
             };
-            console.log('quantity: ', sumQuantityBooks)
             setAmount(sumQuantityBooks)
         }
     } catch (error) {
