@@ -15,7 +15,7 @@ export default function BookPage() {
   return (
     <div className="bgcolor">
       <div className="page-wrapper">
-        <Box height={60} />
+        <Box height={85} />
         <Box
           sx={{
             display: "flex",
