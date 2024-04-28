@@ -98,8 +98,8 @@ const LoginPage = () => {
                         handleDeleteItemCartSession(element)
                     })
                 }
-                window.location.href = '/';
             }
+            window.location.href = '/';
         } catch (error) {
             if (error.response && error.response.status === 400) {
                 const elements = document.querySelectorAll('.input-box');

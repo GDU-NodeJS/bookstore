@@ -8,7 +8,7 @@ export const ROUTER = {
         CREATEORDER: "createorder",
     },
     ADMIN: {
-        HOME:"",
+        HOME:"*",
     },
     AUTHEN: {
         LOGIN: "login",

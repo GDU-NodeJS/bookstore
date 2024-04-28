@@ -9,6 +9,7 @@ import LoginPage from "./pages/login/login";
 import Account from "./pages/account";
 import Createorder from "./pages/createorder";
 import RegisterForm from "./pages/register/register.js";
+import Admin from "./admin/admin.js";
 
 const renderUserRouter = ({ role }) => {
     const userRouter = [
@@ -41,13 +42,13 @@ const renderUserRouter = ({ role }) => {
     const adminRouter = [
         {
             path: ROUTER.ADMIN.HOME,
-            Comment: <HomePage />
+            Comment: <Admin />
         }
     ];
     
     return (
         <>
-            {role === 'ADMIN' ? (
+            {role === 'Admin' ? (
                 <Routes>
                     {adminRouter.map((item, key) => (
                         <Route key={key} path={item.path} element={item.Comment} />
@@ -69,7 +70,6 @@ const renderUserRouter = ({ role }) => {
 };
 
 const RouterCustom = ({role}) => {
-    const navigate = useNavigate();
     return (
              renderUserRouter({ role })
     );
