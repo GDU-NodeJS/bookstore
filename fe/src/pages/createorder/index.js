@@ -4,7 +4,6 @@ import Footer from "../users/theme/footer";
 import axios from "axios";
 import Cookies from "universal-cookie";
 import './style.scss'
-import Image from '../../assets/meo-chien-binh-tap-6-thoi-khac-tam-toi_128863_1.jpg'
 import { useNavigate, useLocation } from "react-router-dom";
 import { cartApi } from "../../api/api";
 import { formatCurrency } from "../../utils/format_tien";
@@ -16,9 +15,8 @@ const CreateOrder = () => {
     const location = useLocation();
     const selectedBooks = location.state?.selectedBooks
     const cookies = new Cookies()
-    const [cartItemSelected, setCartItemSelected] = useState()
     const [paymentMethod, setPaymentMethod] = useState('cash_on_delivery')
-    console.log('pm',paymentMethod)
+    console.log('pm', paymentMethod)
     console.log('selected: ', selectedBooks)
     const [language, setLanguage] = useState(0)
     useEffect(() => {
@@ -73,7 +71,7 @@ const CreateOrder = () => {
             try {
                 axios.defaults.withCredentials = true;
                 const response = await cartApi.checkout(a)
-                if (response.data.status === 200) {
+                if (response.status === 200) {
                     navigate('/cart')
                 }
             } catch (error) {
@@ -93,9 +91,16 @@ const CreateOrder = () => {
         <>
             <Header amount={amount} />
             <div className="container" style={{ minHeight: '510px' }}>
+                <div style={{
+                    marginTop: '10px',
+                    padding: '10px',
+                    backgroundColor: 'white',
+                    borderBottom: '1px solid',
+                    borderRadius: '10px 10px 0 0'
+                }}>header</div>
                 <div className="orderpage_header">
-                    <span>Số lượng</span>
-                    <span>Giá</span>
+                    <span>Quantity</span>
+                    <span>Price</span>
                 </div>
                 <div className="list_book">
                     {cart ? (
@@ -107,31 +112,31 @@ const CreateOrder = () => {
                                     <div>{item.author}</div>
                                 </div>
                                 <div className="quantity"><span>{item.quantity}</span></div>
-                                <div className="price"><span>{formatCurrency((item.price * item.quantity),language)}</span></div>
+                                <div className="price"><span>{formatCurrency((item.price * item.quantity), language)}</span></div>
                             </div>
                         ))
                     ) : (
-                        <div>không kết nối được với giỏ hàng</div>
+                        <div>Can't connect to cart</div>
                     )}
                 </div>
                 <div className="box_payment_price">
                     <div className="payment_method">
-                        <div className="">Phương thức thanh toán:</div>
+                        <div className="">Payment methods:</div>
                         <select onChange={(e) => handlePaymentMethodChange(e.target.value)}>
-                            <option value="cash_on_delivery">Thanh toán khi nhận hàng</option>
-                            <option value="bank_transfer">Chuyển khoản</option>
+                            <option value="cash_on_delivery">Pay on delivery</option>
+                            <option value="bank_transfer">Bank Transfer</option>
                         </select>
                     </div>
                     <div className="price_box">
-                        <div>Tổng tiền:</div>
+                        {/* <div>Tổng tiền:</div> */}
                         <div>{formatCurrency(price, language)}</div>
                     </div>
                 </div>
                 <div className="button_box">
-                    <button className="button_cancel" onClick={() => navigate('/cart')}>Hủy</button>
-                    <button className="button_order" onClick={() => handleOrder(selectedBooks)}>Đặt hàng</button>
+                    <button className="button_cancel" onClick={() => navigate('/cart')}>Cancel</button>
+                    <button className="button_order" onClick={() => handleOrder(selectedBooks)}>Order</button>
                 </div>
-            </div>
+            </div >
             <Footer />
         </>
     )

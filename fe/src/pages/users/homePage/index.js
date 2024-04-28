@@ -8,7 +8,6 @@ import { Link, useNavigate } from "react-router-dom"
 import axios from 'axios';
 import { formatCurrency } from "../../../../src/utils/format_tien.js";
 import { useMediaQuery } from 'react-responsive';
-import Image from '../../../assets/meo-chien-binh-tap-6-thoi-khac-tam-toi_128863_1.jpg';
 import Image1 from '../../../assets/3d.jpg';
 import Image2 from '../../../assets/3dc9db62-b9b6-4f44-a584-c67eaa332c31.jpg';
 import Image3 from '../../../assets/6c826edd-f554-494b-972c-9fe51cdc5291.jpg';
@@ -62,15 +61,11 @@ const HomePage = () => {
         try {
             if (isLoggedIn) {
                 axios.defaults.withCredentials = true;
-                const response = await cartApi.add(product.id)
-                // console.log('res: ',response)
+                const response = await cartApi.add(product._id)
                 if (response.status === 200) {
-                    console.log('them thanh coong')
                     getCart()
                 }
             } else {
-                console.log('product: ', product)
-                console.log('id: ', product._id)
                 axios.defaults.withCredentials = true;
                 const response = await cartApi.addNoToken(product._id);
 
@@ -159,75 +154,21 @@ const HomePage = () => {
     const topBooks = data.slice(0, bookCount);
 
     featproducts.all.products = topBooks
-    window.featproducts = featproducts
-    // const renderfeaturedProducts = (data) => {
-    //     const tabList = [];
-    //     const tabPanels = [];
-    //     Object.keys(data).forEach((key, index) => {
-    //         tabList.push(<Tab key={index}>{data[key].title}</Tab>);
-    //         const tabPanel = []
-    //         data[key].products.forEach((item, index) => {
-    //             tabPanel.push(
-    //                 <div className="row_item"  key={index}>
-    //                     <div className="featured__item">
-    //                         <div className="featured__item_pic"
-    //                             style={{ backgroundImage: `url(${Image})` }}>
-    //                             <ul className="featured__item_pic_hover">
-    //                                 <li>
-    //                                     <FaEye />
-    //                                 </li>
-    //                                 <li>
-    //                                     <button onClick={() =>handleAdd(item)}>
-    //                                         <FaShoppingCart />
-    //                                     </button>
-    //                                 </li>
-    //                             </ul>
-    //                         </div>
-    //                         <div className="featured__item_text">
-    //                             <h6>
-    //                                 <Link to="">{item.title}</Link>
-    //                             </h6>
-    //                             <h5>{formatCurrency(item.price)}</h5>
-    //                         </div>
-    //                     </div>
-    //                 </div>
-    //             )
-    //         })
-    //         tabPanels.push(tabPanel);
-    //     });
-
-    //     return (
-    //         <Tabs>
-    //             <TabList>
-    //                 {tabList}
-    //             </TabList>
-    //             {tabPanels.map((item, key) => (
-    //                 <TabPanel key={key}>
-    //                     <div className="content">
-    //                         <div className="row">{item}</div>
-    //                     </div>
-    //                 </TabPanel>
-    //             ))}
-    //         </Tabs>
-    //     );
-    // };
-    console.log('fe: ', featproducts)
-
     const renderSlider = () => {
         return (
             <>
 
-                {categoryNames.map((item, index) => (index < 3 &&
+                {cate && cate.map((item, index) => (index < 3 &&
                     <div style={{ marginBottom: 50 }} key={index}>
                         <div className="container container__categories_slider">
                             <div className="categories_slider_header">
-                                <div>{item}</div>
-                                <Link to={`/find?category=${item}`}>Tất cả</Link>
+                                <div>{item.name}</div>
+                                <Link to={`/find?category=${item._id}`}>All</Link>
                             </div>
                             <div className="categories_slider_body">
                                 <Carousel responsive={responsive} className="categories_slider" key={index}>
                                     {
-                                        featproducts[item].products.map((item, key) => (
+                                        featproducts[item.name].products.map((item, key) => (
                                             <div key={key} >
                                                 <div className="categories_slider_item" >
                                                     <div style={{
@@ -251,9 +192,9 @@ const HomePage = () => {
                                                         </ul>
                                                     </div>
                                                 </div>
-                                                <div className="categories_slider_text">{item.name}</div>
-                                                <div className="categories_slider_text">{item.author}</div>
-                                                <div className="categories_slider_text">{formatCurrency(item.price)}</div>
+                                                <div className="categories_slider_text" style={{minHeight: '35px', fontSize: '16px'}}>{item.name}</div>
+                                                <div className="" style={{backgroundColor: 'white', paddingBottom: '5px', paddingLeft: '10px'}}>{item.author}</div>
+                                                <div className="" style={{fontWeight: '600', backgroundColor: 'white', paddingLeft: '10px'}}>{formatCurrency(item.price)}</div>
                                             </div>
                                             </div>
                             ))

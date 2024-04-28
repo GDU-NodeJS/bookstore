@@ -11,7 +11,6 @@ const RegisterForm = () => {
         confirmPassword: '',
     });
     const navigate = useNavigate()
-    const [height, setHeght] = useState()
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
@@ -20,35 +19,47 @@ const RegisterForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // Gửi dữ liệu form đến server để xử lý đăng ký
-        console.log(formData);
-        if (formData.password !== formData.confirmPassword) {
-            const elementArray = Array.from(document.querySelectorAll('.password_body'));
-            elementArray.forEach((e) => e.classList.add('error')); // Thêm class 'error' cho mỗi phần tử
-            return
-        }
-        const params = {
-            'email': `${formData.email}`,
-            'password': `${formData.password}`,
-            'firstName': `${formData.firstName}`,
-            'lastName': `${formData.lastName}`,
-        }
-        console.log('params: ', params)
-        const response = await authenticateApi.resgister(params)
-        if (response.status === 201) {
-            alert('Kiểm tra email để kích hoạt tài khoản')
-            navigate('/login')
+        try{
+            if (formData.password.length < 6){
+                const elementArray = Array.from(document.querySelectorAll('.password_body'));
+                elementArray.forEach((e) => e.classList.add('error')); // Thêm class 'error' cho mỗi phần tử
+                alert('Password must be more than 6 characters')
+                return
+            }
+            if (formData.password !== formData.confirmPassword) {
+                const elementArray = Array.from(document.querySelectorAll('.password_body'));
+                elementArray.forEach((e) => e.classList.add('error'));
+                alert('Password and Confirm password must be the same')
+                return
+            }
+            const params = {
+                'email': `${formData.email}`,
+                'password': `${formData.password}`,
+                'firstName': `${formData.firstName}`,
+                'lastName': `${formData.lastName}`,
+            }
+            console.log('params: ', params)
+            const response = await authenticateApi.resgister(params)
+            if (response.status === 201) {
+                alert('Check your email to activate your account')
+                navigate('/login')
+            }
+        } catch (error) {
+            if (error.response && error.response.status === 400) {
+                const elements = document.querySelectorAll('.email');
+                elements.forEach((element) => {
+                    element.classList.add('error');
+                });
+                alert('Email registered for the account')
+            } else {
+                console.log('loi dang nhap: ', error);
+            }
         }
     };
-
-    useEffect(() => {
-        setHeght(window.innerHeight)
-    }, [window.innerHeight])
-    console.log('Chiều cao của màn hình:', height);
     return (
-        <div className="containe" style={{ height: `${height}px` }}>
+        <div className="containe" style={{ height: `1064px` }}>
             <div style={{
-                height: `${height * (10 / 100)}px`,
+                height: `10%`,
                 display: 'flex',
                 'align-items': 'center',
                 'margin-left': '50px',
@@ -56,14 +67,14 @@ const RegisterForm = () => {
             }}>
                 <h2>Bookstore</h2>
             </div>
-            <div style={{ height: `${height * (80 / 100)}px`, display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#9C90D0', margin: '' }}>
-                <div style={{ width: '70%', height: `${height * (80 / 100)}px` }} className="left">
+            <div style={{ height: `80%`, display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#9C90D0', margin: '' }}>
+                <div style={{ width: '70%', height: `100%` }} className="left">
                     <h1>Bookstore</h1>
-                    <span>Cửa hàng bán sách uy tín và chất lượng</span>
+                    <span>Reputable and quality book store</span>
                 </div>
                 <div style={{ width: '30%', }} className="right">
 
-                    <h2>Đăng ký</h2>
+                    <h2>Resgister</h2>
 
                     <form onSubmit={handleSubmit}>
                         <div className='lastname'>
@@ -72,6 +83,7 @@ const RegisterForm = () => {
                                 placeholder="Last name"
                                 type="text"
                                 name="lastName"
+                                required
                                 value={formData.lastName}
                                 onChange={handleChange}
                             />
@@ -82,6 +94,7 @@ const RegisterForm = () => {
                                 placeholder="First name"
                                 type="text"
                                 name="firstName"
+                                required
                                 value={formData.firstName}
                                 onChange={handleChange}
                             />
@@ -93,6 +106,7 @@ const RegisterForm = () => {
                                 placeholder="Email"
                                 type="email"
                                 name="email"
+                                required
                                 value={formData.email}
                                 onChange={
 
@@ -108,6 +122,7 @@ const RegisterForm = () => {
                                 placeholder="Password"
                                 type="password"
                                 name="password"
+                                required
                                 value={formData.password}
                                 onChange={handleChange}
                         
@@ -121,6 +136,7 @@ const RegisterForm = () => {
                                 placeholder="Confirm password"
                                 type="password"
                                 name="confirmPassword"
+                                required
                                 value={formData.confirmPassword}
                                 onChange={handleChange}
                             />
@@ -131,17 +147,17 @@ const RegisterForm = () => {
                         <div className="hr">
 
                             <hr></hr>
-                            <span className="or">hoặc</span>
+                            <span className="or">Or</span>
                         </div>
                         <div>
-                            <span>Bạn đã có tài khoản? </span>
-                            <Link to='/login'>Đăng nhập</Link>
+                            <span>Already have an account? </span>
+                            <Link to='/login'>Login</Link>
                         </div>
                     </form>
 
                 </div>
             </div>
-            <div style={{ height: `${height * (10 / 100)}px` }}></div>
+            <div style={{ height: `10%` }}></div>
         </div>
     );
 }

@@ -109,8 +109,8 @@ const Header = ({amount}) => {
 
                                 <Link to="/cart">
                                     <FaShoppingCart />
-                                    <span className="cart__item_amount"></span>
-                                    <span className="header__cart_text">Giỏ hàng({updateAmount(amount)})</span>
+                                    <span className="cart__item_amount">{updateAmount(amount)}</span>
+                                    {/* <span className="header__cart_text">Giỏ hàng({updateAmount(amount)})</span> */}
                                 </Link>
 
                             </div>

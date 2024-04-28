@@ -1,3 +1,6 @@
+@use "sass:map";
+@import "src/styles/pages/theme";
+@import "src/styles/pages/responsive";
 .orderpage_header {
     margin-top: 10px;
     background-color: white;
@@ -102,7 +105,13 @@
     height: 50px;
     margin-bottom: 10px;
 
-    .button_cancel,
+    .button_cancel{
+        border: 1px solid map-get($map: $theme-color, $key: 'main');
+        width: 8%;
+        margin-right: 10px;
+        background-color: white;
+        color: map-get($map: $theme-color, $key: 'main' );
+    }
     .button_order {
         width: 8%;
         margin-right: 10px;

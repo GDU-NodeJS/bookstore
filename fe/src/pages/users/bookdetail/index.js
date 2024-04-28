@@ -19,7 +19,7 @@ const BookDetail = () => {
     const [searchParams] = useSearchParams();
     const searchTerm = searchParams.get('id');
     const [bookSomeGenre, setBookSomeGenre] = useState()
-    const [amount, setAmount] = useState()
+    const [amount, setAmount] = useState(0)
     const getBooksByWord = async () => {
         console.log('searchTerm: ', searchTerm)
         try {
@@ -132,7 +132,7 @@ const BookDetail = () => {
 
                     if (response.status === 200) {
                         console.log('Sản phẩm đã được thêm vào giỏ hàng thành công:', response.data);
-                        updateCartItemCount(response.data.status)
+
                         getCart()
                     }
                 } else {
@@ -142,7 +142,7 @@ const BookDetail = () => {
                         oldQuantity = parseInt(existingProduct.quantity)
                         const response = await cartApi.update(product._id, quantity)
                         if (response.status === 200) {
-                            updateCartItemCount(response.status)
+    
                             getCart()
                         }
                     } else {
@@ -157,7 +157,7 @@ const BookDetail = () => {
                             // });
                             if (response.status === 200) {
 
-                                updateCartItemCount(response.status)
+       
                                 getCart()
                             }
                         }
@@ -171,7 +171,7 @@ const BookDetail = () => {
 
                     if (response.status === 200) {
                         console.log('Sản phẩm đã được thêm vào giỏ hàng thành công:', response.data);
-                        updateCartItemCount(response.status)
+       
                         getCart()
                     }
                 } else {
@@ -181,8 +181,7 @@ const BookDetail = () => {
                         oldQuantity = existingProduct.quantity
                         const response = await cartApi.updateNoToken(product._id, quantity+oldQuantity)
                         if (response.status === 200) {
-
-                            updateCartItemCount(response.status)
+                      
                             getCart()
                         }
                     } else {
@@ -191,7 +190,7 @@ const BookDetail = () => {
                             // const response = await axios.post(`http://localhost:8080/api/client/cart/uppdate/${product.id}/${quantity}`);
                             // if (response.data.status === 200) {
 
-                                updateCartItemCount(response.status)
+                               
                                 getCart()
                             // }
                         }
@@ -204,11 +203,7 @@ const BookDetail = () => {
             // Hiển thị thông báo lỗi cho người dùng hoặc xử lý lỗi khác tùy theo nhu cầu
         }
     }
-    const updateCartItemCount = (status) => {
-        if (status === 200) {
-            alert('Successfull', 'Đã thêm sản phẩm vào giỏ hàng')
-        }
-    };
+
     // const renderSlider = () => {
     //     return (
     //         <>

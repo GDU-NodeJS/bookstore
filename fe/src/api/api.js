@@ -90,7 +90,7 @@ const orderApiForCustomer = {
     const token = cookies.get('token')
     try {
       axios.defaults.withCredentials = true
-      const response = await axios.get(`http://localhost:8090/api/customer/order/${id}`,{
+      const response = await axios.post(`http://localhost:8090/api/customer/order/${id}`,null,{
         headers: {
           Authorization: `Bearer ${token}`
         }

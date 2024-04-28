@@ -8,7 +8,6 @@ import Bookdetail from "./pages/users/bookdetail";
 import LoginPage from "./pages/login/login";
 import Account from "./pages/account";
 import Createorder from "./pages/createorder";
-import Admin from "./pages/admin/admin.js";
 import RegisterForm from "./pages/register/register.js";
 
 const renderUserRouter = ({ role }) => {
@@ -42,7 +41,7 @@ const renderUserRouter = ({ role }) => {
     const adminRouter = [
         {
             path: ROUTER.ADMIN.HOME,
-            Comment: <Admin />
+            Comment: <HomePage />
         }
     ];
     

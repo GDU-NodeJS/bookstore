@@ -2,9 +2,8 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link, Redirect, useNavigate } from "react-router-dom";
 import Cookies from 'universal-cookie';
-import { getJsessionIdFromResponse } from "../../component";
 import { authenticateApi, cartApi } from "../../api/api";
-import '../login/style.scss'
+import './style.scss'
 const LoginPage = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -60,20 +59,6 @@ const LoginPage = () => {
                         getCart()
                     }
             } else {
-                // for (let i = 0; i < quantity; i++) {
-                //     const response = await axios.post(`http://localhost:8080/api/client/cart/add/${product.id}`, null, {
-                //         // Đặt các headers cần thiết cho request, ví dụ như Authorization header nếu cần
-                //         headers: {
-                //             'Authorization': `Bearer ${isLoggedIn}`,
-                //             'Content-Type': 'application/json'
-                //         }
-                //     });
-
-                //     if (response.data.status === 200) {
-                //         console.log('Sản phẩm đã được thêm vào giỏ hàng thành công:', response.data);
-                //         // getCart()
-                //     }
-                // }
             }
         } catch (error) {
             // Xử lý lỗi nếu request gặp vấn đề
@@ -91,35 +76,39 @@ const LoginPage = () => {
     }
     const handleLogin = async (e) => {
         e.preventDefault();
-        axios.defaults.withCredentials = true;
-        const params = {
-            "email": `${username}`,
-            "password": `${password}`
-        }
-        const response = await authenticateApi.authen(params)
-        if (response.status === 200) {
-            // Lưu JSESSIONID vào cookies
-            // console.log('response: ', response.headers)
-            // const jsessionId = getJsessionIdFromResponse(response);
-            // console.log('session: ',jsessionId)
-            // cookies.set('JSESSIONID', jsessionId, { path: '/' });
-
-            // Lưu các thông tin khác vào cookies
-            cookies.set('userRole', response.data[0].role, { path: '/', maxAge: 604800 }); // expires in 7 days
-            cookies.set('firstname', response.data[0].firstName, { path: '/', maxAge: 604800 }); // expires in 7 days
-            cookies.set('lastname', response.data[0].lastName, { path: '/', maxAge: 604800 }); // expires in 7 days
-            cookies.set('username', response.data[0].email, { path: '/', maxAge: 604800 }); // expires in 7 days
-            cookies.set('token', response.token, { path: '/', maxAge: 604800 }); // expires in 7 days
-
-            console.log('Đăng nhập thành công');
-            console.log("cart: ",cart)
-            if (cart) {
-                cart.products.forEach((element) => {
-                    handleAddToCart(element, element.quantity)
-                    handleDeleteItemCartSession(element)
-                })
+        try {
+            axios.defaults.withCredentials = true;
+            const params = {
+                "email": `${username}`,
+                "password": `${password}`
             }
-            window.location.href = '/';
+            const response = await authenticateApi.authen(params)
+            if (response.status === 200) {
+                cookies.set('userRole', response.data[0].role, { path: '/', maxAge: 604800 }); // expires in 7 days
+                cookies.set('firstname', response.data[0].firstName, { path: '/', maxAge: 604800 }); // expires in 7 days
+                cookies.set('lastname', response.data[0].lastName, { path: '/', maxAge: 604800 }); // expires in 7 days
+                cookies.set('username', response.data[0].email, { path: '/', maxAge: 604800 }); // expires in 7 days
+                cookies.set('token', response.token, { path: '/', maxAge: 604800 }); // expires in 7 days
+    
+                console.log('Đăng nhập thành công');
+                console.log("cart: ",cart)
+                if (cart) {
+                    cart.products.forEach((element) => {
+                        handleAddToCart(element, element.quantity)
+                        handleDeleteItemCartSession(element)
+                    })
+                }
+                window.location.href = '/';
+            }
+        } catch (error) {
+            if (error.response && error.response.status === 400) {
+                const elements = document.querySelectorAll('.input-box');
+                elements.forEach((element) => {
+                    element.classList.add('error');
+                });
+            } else {
+                console.log('loi dang nhap: ', error);
+            }
         }
     };
     useEffect(() => {
@@ -127,9 +116,9 @@ const LoginPage = () => {
     }, [])
     console.log('Chiều cao của màn hình:', height);
     return (
-        <div className="containe" style={{ height: `${height}px` }}>
+        <div className="containe" style={{ height: `1064px` }}>
             <div style={{
-                height: `${height * (10 / 100)}px`,
+                height: `10%`,
                 display: 'flex',
                 alignItems: 'center',
                 marginLeft: '50px',
@@ -137,49 +126,56 @@ const LoginPage = () => {
             }}>
                 <h2>Bookstore</h2>
             </div>
-            <div style={{ height: `${height * (80 / 100)}px`, display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#9C90D0', margin: '' }}>
-                <div style={{ width: '70%', height: `${height * (80 / 100)}px` }} className="left">
+            <div style={{ height: `80%`, display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#9C90D0', margin: '' }}>
+                <div style={{ width: '70%', height: `100%` }} className="left">
                     <h1>Bookstore</h1>
-                    <span>Cửa hàng bán sách uy tín và chất lượng</span>
+                    <span>Reputable and quality book store</span>
                 </div>
                 <div style={{ width: '30%', }} className="right">
 
-                    <h2>Đăng nhập</h2>
+                    <h2>Login</h2>
                     <form onSubmit={(e) => handleLogin(e)}>
-                        <div className="username">
+                        <div className="username input-box">
                             <span className="username_header">Username</span>
                             <input
-                                type="text"
+                                type="email"
                                 placeholder="example@gmail.com"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
+                                required value={username}
+                                onChange={(e) => {
+                                    setUsername(e.target.value);
+                                    e.target.parentElement.classList.remove('error');
+                                }}
                             />
                         </div>
-                        <div className="password">
+                        <div className="password input-box">
                             <span className="password_header">Password</span>
                             <input
                                 type="password"
                                 placeholder="example@123"
+                                required 
                                 value={password}
-                                onChange={(e) => setPassword(e.target.value)}
+                                onChange={(e) => {
+                                    setPassword(e.target.value);
+                                    e.target.parentElement.classList.remove('error');
+                                }}
                             />
-                            <Link>Quên mật khẩu</Link>
+                            <Link>Forgot password</Link>
                         </div>
 
-                        <button type="submit" >Đăng nhập</button>
+                        <button type="submit" className="btn_login">Login</button>
                         <div className="hr">
 
                             <hr></hr>
-                            <span className="or">hoặc</span>
+                            <span className="or">Or</span>
                         </div>
                         <div className="register">
-                            <span className="register_header">Bạn chưa có tài khoản? </span>
-                            <Link to='/register'>Đăng ký</Link>
+                            <span className="register_header">Don't have an account yet? </span>
+                            <Link to='/register'>Register</Link>
                         </div>
                     </form>
                 </div>
             </div>
-            <div style={{ height: `${height * (10 / 100)}px` }}></div>
+            <div style={{ height: `10%` }}></div>
         </div>
     );
 };
