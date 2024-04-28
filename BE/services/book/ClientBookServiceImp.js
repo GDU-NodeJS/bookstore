@@ -1,8 +1,5 @@
 import BookRepository from "../../dao/BookRepository.js";
-import CategoryRepository from "../../dao/categoryRepository.js";
 const bookRepository = new BookRepository();
-const categoryRepository = new CategoryRepository();
-
 
 class ClientBookSerivceImp {
     async getAllBooks() {

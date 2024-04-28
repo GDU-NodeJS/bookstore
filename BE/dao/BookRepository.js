@@ -1,5 +1,5 @@
-import Book from '../models/Book.js';
-import Category from '../models/Category.js';
+import Book from '../models/book.js';
+import Category from '../models/category.js';
 
 class BookRepository {
   constructor() {}
