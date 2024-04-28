@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import RouterCustom from "./router.js";
-import LoginPage from "../src/pages/login/login.js";
 import Cookies from "universal-cookie";
 const App = () => {
     const [role, setRole] = useState('');

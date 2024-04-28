@@ -1,11 +1,11 @@
 import React, { memo, useEffect, useState } from 'react'
-import Header from '../users/theme/header'
-import Footer from '../users/theme/footer'
+import Header from '../theme/header/index.js'
+import Footer from '../theme/footer/index.js'
 import Cookies from 'universal-cookie'
 import axios from 'axios'
 import './style.scss'
-import { bookApi, cartApi, orderApiForCustomer } from '../../api/api'
-import { formatCurrency } from '../../utils/format_tien'
+import { bookApi, cartApi, orderApiForCustomer } from '../../api/api.js'
+import { formatCurrency } from '../../utils/format_tien.js'
 const Account = () => {
     const cookies = new Cookies()
     const [amount, setAmount] = useState(0)
@@ -86,9 +86,17 @@ const Account = () => {
         }
     }
     const handleCancel = async (id) => {
-        const response = await orderApiForCustomer.cancel(id)
-        if (response.status === 200) {
-            getOrder()
+        try{
+            if(window.confirm("Are you sure you want to cancel your order?")){
+                const response = await orderApiForCustomer.cancel(id)
+                if (response.status === 200) {
+                    getOrder()
+                }
+            } else {
+                return
+            }
+        } catch (e) {
+            console.log('error: ',e)
         }
     }
     console.log('orders: ', orders)

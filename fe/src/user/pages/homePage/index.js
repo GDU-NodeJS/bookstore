@@ -6,18 +6,18 @@ import { FaEye, FaShoppingCart } from "react-icons/fa";
 import "./style.scss"
 import { Link, useNavigate } from "react-router-dom"
 import axios from 'axios';
-import { formatCurrency } from "../../../../src/utils/format_tien.js";
+import { formatCurrency } from "../../../user/utils/format_tien.js";
 import { useMediaQuery } from 'react-responsive';
-import Image1 from '../../../assets/3d.jpg';
-import Image2 from '../../../assets/3dc9db62-b9b6-4f44-a584-c67eaa332c31.jpg';
-import Image3 from '../../../assets/6c826edd-f554-494b-972c-9fe51cdc5291.jpg';
-import Image4 from '../../../assets/banner1.jpg';
-import Image5 from '../../../assets/cc52f903-4e81-48bd-9a3c-0dd02878e446.jpg';
-import Image6 from '../../../assets/loai-3-01.jpg';
+import Image1 from '../../assets/3d.jpg';
+import Image2 from '../../assets/3dc9db62-b9b6-4f44-a584-c67eaa332c31.jpg';
+import Image3 from '../../assets/6c826edd-f554-494b-972c-9fe51cdc5291.jpg';
+import Image4 from '../../assets/banner1.jpg';
+import Image5 from '../../assets/cc52f903-4e81-48bd-9a3c-0dd02878e446.jpg';
+import Image6 from '../../assets/loai-3-01.jpg';
 import Header from "../theme/header/index.js";
 import Footer from "../theme/footer/index.js";
 import Cookies from "universal-cookie";
-import { bookApi, cartApi, categoryApi } from "../../../api/api.js";
+import { bookApi, cartApi, categoryApi } from "../../api/api.js";
 
 const HomePage = () => {
     const cookies = new Cookies()

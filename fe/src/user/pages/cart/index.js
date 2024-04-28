@@ -1,12 +1,12 @@
 import { memo, useState, useEffect } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { formatCurrency } from "../../../utils/format_tien"
+import { formatCurrency } from "../../../user/utils/format_tien"
 import "./styles.scss"
 import axios from "axios"
 import Cookies from 'universal-cookie'
 import Header from "../theme/header"
 import Footer from "../theme/footer"
-import { bookApi, cartApi } from "../../../api/api"
+import { bookApi, cartApi } from "../../api/api"
 const Cart = () => {
     const cookies = new Cookies()
     const [cart, setCart] = useState();
@@ -42,13 +42,13 @@ const Cart = () => {
     const handleSubmitOrder = () => {
         const isLoggedIn = cookies.get('token')
         if (selectedBooks.length < 1) {
-            alert('Vui lòng chọn sản phẩm để đặt hàng')
+            alert("Please select products to order")
             return
         }
         if (isLoggedIn) {
             navigate('/createorder', { state: { selectedBooks } });
         } else {
-            alert('Bạn chưa đăng nhập. Vui lòng đăng nhập để tiếp tục.');
+            alert("You're not signed in. Please log in to continue.");
         }
     };
     
@@ -134,11 +134,16 @@ const Cart = () => {
         try {
             if (isLoggedIn) {
                 if (updateQuantity < 1) {
-                    axios.defaults.withCredentials = true;
-                    const responsedelete = await cartApi.delete(product.id)
-                    if (responsedelete.status === 200) {
-                        console.log('x')
-                        getCart()
+                    if (window.confirm("Are you sure you want to remove this product from your cart?")) {
+                        axios.defaults.withCredentials = true;
+                        const responsedelete = await cartApi.delete(product.id);
+                        if (responsedelete.status === 200) {
+                            console.log('Sản phẩm đã được xóa thành công');
+                            getCart();
+                            return;
+                        }
+                    } else {
+                        return;
                     }
                 }
                 axios.defaults.withCredentials = true;
@@ -149,10 +154,15 @@ const Cart = () => {
                 }
             } else {
                 if (updateQuantity < 1) {
-                    axios.defaults.withCredentials = true;
-                    const responsedelete = await cartApi.deleteNoToken(product.id)
-                    if (responsedelete.status === 200) {
-                        getCart()
+                    if (window.confirm("Are you sure you want to remove this product from your cart?")) {
+                        axios.defaults.withCredentials = true;
+                        const responsedelete = await cartApi.deleteNoToken(product.id);
+                        if (responsedelete.status === 200) {
+                            getCart();
+                            return;
+                        }
+                    } else {
+                        return;
                     }
                 }
                 axios.defaults.withCredentials = true;
@@ -167,21 +177,26 @@ const Cart = () => {
         }
     }
     const handleDelete = async (product) => {
-        const isLoggedIn = cookies.get('token')
+        const isLoggedIn = cookies.get('token');
         if (isLoggedIn) {
-            axios.defaults.withCredentials = true
-            const responsedelete = await cartApi.delete(product.id)
-            if (responsedelete.status === 200) {
-                getCart()
+            axios.defaults.withCredentials = true;
+            if (window.confirm("Are you sure you want to remove this product from your cart?")) {
+                const responsedelete = await cartApi.delete(product.id);
+                if (responsedelete.status === 200) {
+                    getCart();
+                }
             }
         } else {
-            axios.defaults.withCredentials = true
-            const responsedelete = await cartApi.deleteNoToken(product.id)
-            if (responsedelete.status === 200) {
-                getCart()
+            axios.defaults.withCredentials = true;
+            if (window.confirm("Are you sure you want to remove this product from your cart?")) {
+                const responsedelete = await cartApi.deleteNoToken(product.id);
+                if (responsedelete.status === 200) {
+                    getCart();
+                }
             }
         }
     }
+    
     console.log('arr: ', Arrayproducts)
     return (
         <>
@@ -201,7 +216,7 @@ const Cart = () => {
                                         <ul>
                                             <li>{product.products.name}</li>
                                             <li>{product.products.author}</li>
-                                            <li><button onClick={() => { handleDelete(product.products) }} >Delete</button></li>
+                                            <li><button style={{cursor: 'pointer'}} onClick={() => { handleDelete(product.products) }} >Delete</button></li>
                                         </ul>
                                     </li>
                                     <li className="cart__content_price">{formatCurrency(product.products.price)} /book</li>
@@ -231,7 +246,7 @@ const Cart = () => {
                                         <li>{totalBooksSelected} books</li>
                                         <li>{formatCurrency(totalPrice)}</li>
                                         <li>(Shipping not included)</li>
-                                        <button onClick={() => handleSubmitOrder()}>Order</button>
+                                        <button style={{cursor: 'pointer'}} onClick={() => handleSubmitOrder()}>Order</button>
                                     </ul>
                                 ) : (
                                     <div style={{backgroundColor: 'white', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>

@@ -7,7 +7,7 @@ import { BiSolidCategory } from "react-icons/bi";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Cookies from "universal-cookie";
-import { categoryApi } from "../../../../api/api";
+import { categoryApi } from "../../../api/api";
 const API_URL = 'https://fakestoreapi.com/products';
 const Header = ({amount}) => {
     const [data, setData] = useState([]);
@@ -124,24 +124,24 @@ const Header = ({amount}) => {
                             </div>
                             {cookies.get('token') ? <ul className="header__user__dropdow">
                                 <li >
-                                    <button onClick={()=>{navigate('/account')}}>
+                                    <button style={{cursor: 'pointer'}} onClick={()=>{navigate('/account')}}>
                                     {cookies.get('username')}
                                     </button>
                                 </li>
                                 <li>
-                                    <button onClick={()=> handleLogout()}>
+                                    <button style={{cursor: 'pointer'}} onClick={()=> handleLogout()}>
 
                                        Logout
                                     </button>
                                 </li>
                             </ul>:<ul className="header__user__dropdow">
                                 <li>
-                                    <button onClick={()=> handleLogin()}>
+                                    <button style={{cursor: 'pointer'}} onClick={()=> handleLogin()}>
                                     Login
                                     </button>
                                 </li>
                                 <li>
-                                    <button onClick={()=> navigate('/register')}>
+                                    <button style={{cursor: 'pointer'}} onClick={()=> navigate('/register')}>
                                         Register
                                     </button>
                                 </li>

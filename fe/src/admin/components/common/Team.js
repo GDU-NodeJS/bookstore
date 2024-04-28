@@ -25,7 +25,7 @@ export default function ControlledAccordions() {
           id="panel1bh-header"
         >
           <Typography sx={{ width: "65%", flexShrink: 0 }}>
-            <span className="pricetitle">Trương Quang Hùng</span>
+            <span className="pricetitle">Nguyễn Chung Hoàng</span>
           </Typography>
           <Typography sx={{ color: "text.secondary" }}>Nhóm trưởng</Typography>
         </AccordionSummary>
@@ -121,7 +121,7 @@ export default function ControlledAccordions() {
             className="pricetitle"
             sx={{ width: "65%", flexShrink: 0 }}
           >
-            <span className="pricetitle">Nguyễn Chung Hoàng</span>
+            <span className="pricetitle">Trương Quang Hùng</span>
           </Typography>
           <Typography sx={{ color: "text.secondary" }}>Backend</Typography>
         </AccordionSummary>

@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link, Redirect, useNavigate } from "react-router-dom";
 import Cookies from 'universal-cookie';
-import { authenticateApi, cartApi } from "../../api/api";
+import { authenticateApi, cartApi } from "../../api/api.js";
 import './style.scss'
 const LoginPage = () => {
     const [username, setUsername] = useState("");

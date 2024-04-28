@@ -1,14 +1,14 @@
 import React, { memo, useEffect, useState } from "react";
 import axios from 'axios'
-import '../findpage/style.scss'
+import './style.scss'
 import ReactPaginate from 'react-paginate';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { FaEye, FaShoppingCart } from "react-icons/fa";
-import { formatCurrency } from "../../../utils/format_tien";
+import { formatCurrency } from "../../../user/utils/format_tien";
 import Header from "../theme/header";
 import Footer from "../theme/footer";
 import Cookies from "universal-cookie";
-import { bookApi, cartApi, categoryApi } from "../../../api/api";
+import { bookApi, cartApi, categoryApi } from "../../api/api";
 const FindPage = () => {
     const navigate = useNavigate()
     const [searchParams] = useSearchParams();

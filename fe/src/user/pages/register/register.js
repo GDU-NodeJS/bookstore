@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import '../register/style.scss'
-import { authenticateApi } from '../../api/api';
+import './style.scss'
+import { authenticateApi } from '../../api/api.js';
 import {useNavigate, Link} from 'react-router-dom'
 const RegisterForm = () => {
     const [formData, setFormData] = useState({

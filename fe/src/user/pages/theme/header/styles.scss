@@ -1,6 +1,6 @@
 @use "sass:map";
-@import "src/styles/pages/theme";
-@import "src/styles/pages/responsive";
+@import "../../../styles/pages/theme";
+@import "../../../styles/pages/responsive";
 
 .header {
     background-color: map-get($map: $theme-color, $key: 'main');
