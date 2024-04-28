@@ -315,7 +315,7 @@ class CartServiceImp {
       const book = await bookRepository.findById(bookId);
       const quantity = cartItem.quantity;
 
-      const payment = await paymentService.payProduct(book, quantity, req, res);
+      const payment = await paymentService.payProduct(cartItemId, book, quantity, req, res);
       return payment;
     } catch (error) {
       throw new Error(error);
@@ -323,7 +323,9 @@ class CartServiceImp {
   }
   async createOrder(cartItemId, req, res){
     try {
-      await paymentService.handleSuccessfulPayment(req, res);
+      const cartItem = await this.getCartItem(cartItemId, req);
+      const order = await paymentService.handleSuccessfulPayment(cartItem, req, res);
+      return order;
     } catch (error) {
       throw new Error(error);
     }

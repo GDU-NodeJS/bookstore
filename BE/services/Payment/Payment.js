@@ -16,7 +16,7 @@ configure({
 
 class Payment {
 
-    async payProduct(book, quantity, req, res) {
+    async payProduct(cartItemId, book, quantity, req, res) {
         return new Promise((resolve, reject) => {
             try {
                 const create_payment_json = {
@@ -25,7 +25,7 @@ class Payment {
                         "payment_method": "paypal"
                     },
                     "redirect_urls": {
-                        "return_url": "http://localhost:8090/cart/success",
+                        "return_url": `http://localhost:8090/api/customer/cart/pay/success/?c=${cartItemId}`,
                         "cancel_url": "http://localhost:3000/cart"
                     },
                     "transactions": [{
@@ -66,27 +66,25 @@ class Payment {
             }
         });
     }
-    async handleSuccessfulPayment(req, res) {
+    async handleSuccessfulPayment(cartItem, req, res) {
         try {
             const paymentId = req.query.paymentId;
             const payerId = req.query.PayerID;
             const paymentDetails = _payment.execute(paymentId, payerId);
 
             if (paymentDetails.state === 'approved') {
-                const userId = this.getUserId(req);
-                const cartItem = req.session.cartItem; 
+                const userId = req.user.id;
                 const order = await clientOrderService.createOrder(userId, cartItem, req);
 
                 req.session.paymentUrl = null;
                 req.session.cartItem = null;
 
-                return res.status(200).json({ message: 'Payment successful, order created', order });
+                return order;
             } else {
-                return res.status(400).json({ message: 'Payment failed' });
+                throw new Error("Payment failed")
             }
         } catch (error) {
-            console.log(error.message);
-            return res.status(500).json({ message: 'Error processing payment' });
+            throw new Error(error)
         }
     }
 }

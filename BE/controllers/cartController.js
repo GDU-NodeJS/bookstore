@@ -46,7 +46,7 @@ class CartController {
 
   async getCartItem(req, res, next) {
     try {
-      const cartItemId = req.params.cartItemId;
+      const cartItemId = req.query.c;
       const cart = await this._cartService.getCartItem(cartItemId, req);
 
       return res.status(res.statusCode).json({
@@ -113,11 +113,12 @@ class CartController {
 
   async paymentSuccess(req, res){
     try {
-      const cartItemId = req.params.cartItemId;
-      await this._cartService.paymentSuccess(cartItemId, req, res);
+      const cartItemId = req.query.c;
+      const order = await this._cartService.paymentSuccess(cartItemId, req, res);
       return res.status(res.statusCode).json({
         status: res.statusCode,
-        message: 'Checkout cart successfully'
+        message: 'Checkout cart successfully',
+        data: order
       });
     } catch (err) {
       console.log(err);

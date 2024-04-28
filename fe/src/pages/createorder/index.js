@@ -73,8 +73,10 @@ const CreateOrder = () => {
             try {
                 axios.defaults.withCredentials = true;
                 const response = await cartApi.checkout(a)
-                if (response.data.status === 200) {
-                    navigate('/cart')
+                console.log(response.data)
+                if (response.status === 200) {
+                    window.open(response.data, '_blank')
+                    // navigate(response.data)
                 }
             } catch (error) {
                 console.error('Lỗi khi thực hiện thanh toán và xóa giỏ hàng:', error);
