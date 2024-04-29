@@ -38,7 +38,7 @@ const RegisterForm = () => {
                 'firstName': `${formData.firstName}`,
                 'lastName': `${formData.lastName}`,
             }
-            console.log('params: ', params)
+
             const response = await authenticateApi.resgister(params)
             if (response.status === 201) {
                 alert('Check your email to activate your account')

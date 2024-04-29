@@ -88,13 +88,11 @@ const Cart = () => {
             }));
 
             setTotalBooks(sumQuantityBooks)
-            console.log('cartProducts: ', cartProducts)
             setCart({ products: cartProducts });
         } catch (error) {
             console.error('Lỗi khi kiểm tra và lấy dữ liệu giỏ hàng:', error);
         }
     };
-    console.log('cart: ', cart)
     const Arrayproducts = []
     if (cart && cart.products) {
         cart.products.forEach((cartproduct) => {
@@ -113,14 +111,14 @@ const Cart = () => {
                 axios.defaults.withCredentials = true;
                 const response = await cartApi.add(product.id)
                 if (response.status === 200) {
-                    console.log('Sản phẩm đã được thêm vào giỏ hàng thành công:', response);
+    
                     getCart()
                 }
             } else {
                 axios.defaults.withCredentials = true;
                 const response1 = await cartApi.addNoToken(product.id);
                 if (response1.status === 200) {
-                    console.log('Chưa đăng nhập sản phẩm đã được thêm vào giỏ hàng thành công:', response1.data);
+
                     getCart()
                 }
             }
@@ -138,7 +136,7 @@ const Cart = () => {
                         axios.defaults.withCredentials = true;
                         const responsedelete = await cartApi.delete(product.id);
                         if (responsedelete.status === 200) {
-                            console.log('Sản phẩm đã được xóa thành công');
+        
                             getCart();
                             return;
                         }
@@ -149,7 +147,7 @@ const Cart = () => {
                 axios.defaults.withCredentials = true;
                 const response = await cartApi.update(product.id, updateQuantity)
                 if (response.status === 200) {
-                    console.log('Sản phẩm đã được xóa thành công:', response);
+
                     getCart()
                 }
             } else {
@@ -168,7 +166,7 @@ const Cart = () => {
                 axios.defaults.withCredentials = true;
                 const response1 = await cartApi.updateNoToken(product.id, updateQuantity)
                 if (response1.status === 200) {
-                    console.log('Chưa đăng nhập sản phẩm đã được xóa giỏ hàng thành công:', response1.data);
+
                     getCart()
                 }
             }
@@ -197,7 +195,6 @@ const Cart = () => {
         }
     }
     
-    console.log('arr: ', Arrayproducts)
     return (
         <>
             <Header amount={totalBooks} />

@@ -17,7 +17,6 @@ const BookDetail = () => {
     const [bookSomeGenre, setBookSomeGenre] = useState()
     const [amount, setAmount] = useState(0)
     const getBooksByWord = async () => {
-        console.log('searchTerm: ', searchTerm)
         try {
             axios.defaults.withCredentials = true;
             const response = await bookApi.getById(searchTerm);
@@ -70,7 +69,6 @@ const BookDetail = () => {
 
     useEffect(() => {
         getBooks()
-        console.log('bsg: ', bookSomeGenre)
     }, [searchParams])
     useEffect(() => {
         getCart();
@@ -92,7 +90,6 @@ const BookDetail = () => {
             }
 
             const cartData = cartResponse;
-            console.log('cartData:', cartData);
             let sumQuantityBooks = 0
             const cart = {
                 products: cartData.data.map(cartProduct => {
@@ -127,15 +124,14 @@ const BookDetail = () => {
                     const response = await cartApi.add(product._id)
 
                     if (response.status === 200) {
-                        console.log('Sản phẩm đã được thêm vào giỏ hàng thành công:', response.data);
 
                         getCart()
                     }
                 } else {
-                    let oldQuantity
+
                     const existingProduct = cart.products.find(item => item.id === product._id)
                     if (existingProduct) {
-                        oldQuantity = parseInt(existingProduct.quantity)
+
                         const response = await cartApi.update(product._id, quantity)
                         if (response.status === 200) {
     
@@ -144,13 +140,6 @@ const BookDetail = () => {
                     } else {
                         const response = await cartApi.addHaveQuantity(product._id,quantity)
                         if (response.status === 200) {
-                            // const response = await axios.post(`http://localhost:8080/api/client/cart/uppdate/${product.id}/${quantity}`, null, {
-                            //     // Đặt các headers cần thiết cho request, ví dụ như Authorization header nếu cần
-                            //     headers: {
-                            //         'Authorization': `Bearer ${isLoggedIn}`,
-                            //         'Content-Type': 'application/json'
-                            //     }
-                            // });
                             if (response.status === 200) {
 
        
@@ -166,15 +155,15 @@ const BookDetail = () => {
                     const response = await cartApi.addNoToken(product._id)
 
                     if (response.status === 200) {
-                        console.log('Sản phẩm đã được thêm vào giỏ hàng thành công:', response.data);
+
        
                         getCart()
                     }
                 } else {
-                    let oldQuantity
+      
                     const existingProduct = cart.products.find(item => item.id === product.id)
                     if (existingProduct) {
-                        oldQuantity = existingProduct.quantity
+    
                         const response = await cartApi.updateNoToken(product._id, quantity)
                         if (response.status === 200) {
                       

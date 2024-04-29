@@ -21,7 +21,6 @@ const FindPage = () => {
     const [amount, setAmount] = useState(0)
     const cookies = new Cookies()
     const chonsse = (idcategoryname) => {
-        console.log('idcategoryname: ',idcategoryname)
         // if (idcategoryname) {
             if (idcategoryname === '') {
                 const element = document.getElementById('all');
@@ -32,13 +31,10 @@ const FindPage = () => {
                 if (element) {
                     // Thêm class 'selected' vào phần tử
                     element.classList.add('selected');
-                    console.log('class: ', element.classList)
+
                 }
             } else {
-                console.log('da den day')
-                console.log('idcategoryname: ',idcategoryname)
                 const element = document.getElementById(idcategoryname);
-                console.log('element: ',element)
                 const elementselected = document.querySelector(`.selected`);
                 if (elementselected) {
                     elementselected.classList.remove('selected')
@@ -59,7 +55,6 @@ const FindPage = () => {
     const getBooksByWord = async (searchTerm) => {
         try {
             const e = document.querySelector('.selected')
-            console.log('e: ',e)
             if (e) {
                 e.classList.remove('selected')
             }
@@ -75,7 +70,7 @@ const FindPage = () => {
                 }
             }
         } catch (e) {
-            console.log('error',e)
+            console.error('error',e)
         }
     }
     const getBooks = async () => {
@@ -87,7 +82,6 @@ const FindPage = () => {
     useEffect(() => {
         getCates()
         if (searchTerm) {
-            console.log('tim theo key word')
             getBooksByWord(searchTerm)
         } else {
             if (idcategory) {
@@ -101,7 +95,6 @@ const FindPage = () => {
     const pageCount = Math.ceil(books.length / booksPerPage); // Tính tổng số trang
 
     const handlePageChange = ({ selected }) => {
-        console.log('selected: ', selected)
         setPageNumber(selected);
     };
     const getBooksByCateOfParams = async (idcategory) => {
@@ -132,17 +125,14 @@ const FindPage = () => {
                 const response = await cartApi.add(product._id)
 
                 if (response.status === 200) {// Xử lý response từ API nếu thành công
-                    console.log('Sản phẩm đã được thêm vào giỏ hàng thành công:', response.data);
                     getCart()
-                    updateCartItemCount(response.data.status)
                 }
             } else {
 
                 const response1 = await cartApi.addNoToken(product._id)
                 if (response1.status === 200) {
                     getCart()
-                    console.log('Chưa đăng nhập sản phẩm đã được thêm vào giỏ hàng thành công:', response1.data);
-                    updateCartItemCount(response1.data.status)
+  
                 }
             }
         } catch (error) {
@@ -151,11 +141,7 @@ const FindPage = () => {
             // Hiển thị thông báo lỗi cho người dùng hoặc xử lý lỗi khác tùy theo nhu cầu
         }
     }
-    const updateCartItemCount = (status) => {
-        if (status === 200) {
-            alert('Successfull', 'Đã thêm sản phẩm vào giỏ hàng')
-        }
-    };
+
     const getCart = async () => {
         const isLoggedIn = cookies.get('token');
         try {
@@ -171,7 +157,7 @@ const FindPage = () => {
             }
 
             const cartData = cartResponse;
-            console.log('cartData: ',cartData)
+
             let sumQuantityBooks = 0;
             const cart1 = {
                 products: cartData.data.map(cartProduct => {
@@ -196,10 +182,6 @@ const FindPage = () => {
     useEffect(() => {
         getCart()
     }, [])
-    const nospace = (str) => {
-        const validClassName = str.replace(/[^\w-]/g, '');
-        return validClassName
-    }
     return (
         <>
             <Header amount={amount} />

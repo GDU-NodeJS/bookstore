@@ -13,14 +13,12 @@ const Account = () => {
     const [language, setLanguage] = useState(0)
     const getCart = async () => {
         const isLoggedIn = cookies.get('token');
-        console.log('token:', isLoggedIn)
         try {
             let cartResponse;
             if (isLoggedIn) {
                 axios.defaults.withCredentials = true;
                 // Người dùng đã đăng nhập
                 cartResponse = await cartApi.getAll();
-                console.log('da dang nhap')
             } else {
                 // Người dùng chưa đăng nhập
                 axios.defaults.withCredentials = true;
@@ -62,22 +60,6 @@ const Account = () => {
                 axios.defaults.withCredentials = true
                 const response = await orderApiForCustomer.getAll(isLoggedIn);
                 if (response.status === 200) {
-                    // const orders = await Promise.all(response.data.map(async (b) => {
-                    //     // console.log('booklist: ', b.booklist[0])
-                    //     const res = await bookApi.getById(b.booklist[0]);
-                    //     console.log('book: ',res.data)
-                    //     if (res.status === 200) {
-                    //         return {
-                    //             status: b.status,
-                    //             date: b.date,
-                    //             payment: b.payment,
-                    //             book: res.data,
-                    //             id: b.id,
-                    //             userid: b.user_id
-                    //         };
-                    //     }
-                    // }));
-                    // setOrders(orders.filter(order => order !== undefined)); // Loại bỏ các phần tử không xác định (undefined)
                     setOrders(response.data)
                 }
             } catch (e) {
@@ -99,8 +81,6 @@ const Account = () => {
             console.log('error: ',e)
         }
     }
-    console.log('orders: ', orders)
-    window.orders = orders
     return (
         <>
             <Header amount={amount} />

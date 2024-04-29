@@ -16,8 +16,6 @@ const CreateOrder = () => {
     const selectedBooks = location.state?.selectedBooks
     const cookies = new Cookies()
     const [paymentMethod, setPaymentMethod] = useState('cash_on_delivery')
-    console.log('pm', paymentMethod)
-    console.log('selected: ', selectedBooks)
     const [language, setLanguage] = useState(0)
     useEffect(() => {
         getCart();
@@ -52,12 +50,8 @@ const CreateOrder = () => {
                 };
 
             }));
-            console.log('cartdata: ', cartData.data)
             setAmount(sumQuantityBooks)
-            console.log('cart1: ', cartProducts)
-            // const selectedBooksInCart = cartProducts.filter(item => selectedBooks.includes(item.idcartitem));
             const selectedBooksInCart = cartProducts.filter(item => selectedBooks.includes(item.idcartitem));
-            console.log('select: ', selectedBooksInCart)
             selectedBooksInCart.map((item) => sumPrice += item.price * item.quantity)
             setPrice(sumPrice)
             setCart(selectedBooksInCart);
@@ -66,18 +60,15 @@ const CreateOrder = () => {
         }
     };
     const handleOrder = async (arr) => {
-        if(window.confirm("Are you sure you want to place this order?")){
-
-            for (const a of arr) {
-                try {
+        if (window.confirm("Are you sure you want to place this order?")) {
+            try {
+                for (const a of arr) {
                     axios.defaults.withCredentials = true;
-                    const response = await cartApi.checkout(a)
-                    if (response.status === 200) {
-                        navigate('/cart')
-                    }
-                } catch (error) {
-                    console.error('Lỗi khi thực hiện thanh toán và xóa giỏ hàng:', error);
+                    await cartApi.checkout(a)
                 }
+                navigate('/cart')
+            } catch (error) {
+                console.error('Lỗi khi thực hiện thanh toán và xóa giỏ hàng:', error);
             }
         } else {
             return
@@ -86,11 +77,7 @@ const CreateOrder = () => {
     }
     const handlePaymentMethodChange = (selectedMethod) => {
         setPaymentMethod(selectedMethod);
-        // Thực hiện các hành động tương ứng với phương thức thanh toán được chọn
-        console.log('Phương thức thanh toán đã chọn:', selectedMethod);
     };
-    console.log('cart', cart)
-    window.cart = cart
     return (
         <>
             <Header amount={amount} />
@@ -137,8 +124,8 @@ const CreateOrder = () => {
                     </div>
                 </div>
                 <div className="button_box">
-                    <button className="button_cancel" style={{ cursor: 'pointer' , borderRadius: '10px'}} onClick={() => { if (window.confirm("Want to keep ordering?")) { return } else { navigate('/cart') } }}>Cancel</button>
-                    <button className="button_order" style={{ cursor: 'pointer' , borderRadius: '10px'}} onClick={() => handleOrder(selectedBooks)}>Order</button>
+                    <button className="button_cancel" style={{ cursor: 'pointer', borderRadius: '10px' }} onClick={() => { if (window.confirm("Want to keep ordering?")) { return } else { navigate('/cart') } }}>Cancel</button>
+                    <button className="button_order" style={{ cursor: 'pointer', borderRadius: '10px' }} onClick={() => handleOrder(selectedBooks)}>Order</button>
                 </div>
             </div >
             <Footer />
